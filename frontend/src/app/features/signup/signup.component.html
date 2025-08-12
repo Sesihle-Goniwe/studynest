@@ -1,0 +1,33 @@
+<!-- src/app/features/signup/signup.component.html -->
+<mat-card class="signup-card">
+  <mat-card-header>
+    <mat-card-title>Create Your Account</mat-card-title>
+    <mat-card-subtitle>Join Campus Study Buddy with your university account</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <button mat-raised-button color="primary" class="full-width google-btn" 
+            (click)="onGoogleSignup()" [disabled]="googleLoading">
+      <img src="assets/icons/google.png" alt="Google logo" class="provider-logo">
+      Sign up with Google
+      @if (googleLoading) {
+        <mat-spinner diameter="20"></mat-spinner>
+      }
+    </button>
+
+    <div class="divider">OR</div>
+
+    <button mat-raised-button color="primary" class="full-width microsoft-btn" 
+            (click)="onMicrosoftSignup()" [disabled]="microsoftLoading">
+      <img src="assets/icons/microsoft.png" alt="Microsoft logo" class="provider-logo">
+      Sign up with Microsoft
+      @if (microsoftLoading) {
+        <mat-spinner diameter="20"></mat-spinner>
+      }
+    </button>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button color="accent" (click)="navigateToLogin()">
+      Already have an account? Login
+    </button>
+  </mat-card-actions>
+</mat-card>
