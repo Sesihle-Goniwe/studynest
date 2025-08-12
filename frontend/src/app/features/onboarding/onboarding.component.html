@@ -1,0 +1,49 @@
+<!-- src/app/features/onboarding/onboarding.component.html -->
+<mat-card class="onboarding-card">
+  <mat-card-header>
+    <mat-card-title>Complete Your Profile</mat-card-title>
+    <mat-card-subtitle>Help us connect you with the right study partners</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="onboardingForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>University</mat-label>
+        <mat-select formControlName="university" required>
+          <mat-option *ngFor="let uni of universities" [value]="uni">{{uni}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="onboardingForm.get('university')?.hasError('required')">
+          University is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Course</mat-label>
+        <mat-select formControlName="course" required>
+          <mat-option *ngFor="let course of courses" [value]="course">{{course}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="onboardingForm.get('course')?.hasError('required')">
+          Course is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Year of Study</mat-label>
+        <input matInput formControlName="year" type="number" min="1" max="5" required>
+        <mat-error *ngIf="onboardingForm.get('year')?.hasError('required')">
+          Year is required
+        </mat-error>
+        <mat-error *ngIf="onboardingForm.get('year')?.hasError('min') || onboardingForm.get('year')?.hasError('max')">
+          Please enter a valid year (1-5)
+        </mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="!onboardingForm.valid || isLoading">
+        @if (isLoading) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Continue to Dashboard
+        }
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

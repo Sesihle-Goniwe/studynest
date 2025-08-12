@@ -1,0 +1,6 @@
+<ul>
+  @for (student of students; track student.full_name) {
+    <li>{{ student.full_name }} - {{ student.email }} - {{student.created_at}} - {{student.id}} </li>
+  }
+</ul>
+<p>End of list</p>
