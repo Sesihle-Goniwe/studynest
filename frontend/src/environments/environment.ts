@@ -12,4 +12,5 @@ export const environment = {
       detectSessionInUrl: true
     }
   }
+  apiBaseUrl='https://studynester.onrender.com'
 };
