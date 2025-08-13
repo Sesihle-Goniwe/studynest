@@ -11,6 +11,6 @@ export const environment = {
       autoRefreshToken: true,
       detectSessionInUrl: true
     }
-  }
-  apiBaseUrl='https://studynester.onrender.com'
+  },
+  apiBaseUrl:'https://studynester.onrender.com'
 };
