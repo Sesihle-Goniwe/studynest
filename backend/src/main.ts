@@ -7,23 +7,28 @@ async function bootstrap() {
 
   app.enableCors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // allow mobile apps/curl/no-origin
+      if (!origin) return callback(null, true); // Allow no-origin requests (mobile apps, curl, etc.)
 
       const allowedOrigins = [
-        'https://studynester.pages.dev', // production Cloudflare
-        'http://localhost:4200',         // local dev
+        'http://localhost:4200', // Local dev
       ];
 
-      // Allow any Cloudflare preview subdomain
-      const cloudflarePreviewPattern = /\.pages\.dev$/;
+      // Match ANY pages.dev subdomain (e.g., Cloudflare preview or production)
+      const pagesDevPattern = /\.pages\.dev$/;
 
-      if (
-        allowedOrigins.includes(origin) ||
-        cloudflarePreviewPattern.test(new URL(origin).hostname)
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
+      try {
+        const hostname = new URL(origin).hostname;
+
+        if (
+          allowedOrigins.includes(origin) ||
+          pagesDevPattern.test(hostname)
+        ) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      } catch (err) {
+        callback(new Error('Invalid origin'));
       }
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -33,3 +38,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
+
