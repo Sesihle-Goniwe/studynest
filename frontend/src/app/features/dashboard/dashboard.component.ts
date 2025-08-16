@@ -1,5 +1,6 @@
 // src/app/features/dashboard/dashboard.component.ts
 import { Component } from '@angular/core';
+import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../auth/auth.service';
@@ -7,12 +8,14 @@ import { AuthService } from '../auth/auth.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule],
+  imports: [CommonModule, MatCardModule, RouterModule],
   template: `
     <mat-card>
       <mat-card-content>
         <h2>Welcome to your Dashboard</h2>
         <p>You're successfully logged in and onboarded!</p>
+        <button [routerLink]="['/studygroup']">Study Groups</button>
+        
       </mat-card-content>
     </mat-card>
   `,

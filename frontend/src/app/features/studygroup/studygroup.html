@@ -1,0 +1,17 @@
+<div class="studygroup-container">
+  <h2>My Study Groups</h2>
+
+  <div *ngIf="groupChats.length > 0; else noGroups">
+    <ul>
+      <li *ngFor="let item of groupChats" class="group-item">
+        <strong>{{ item.group.name }}</strong>
+        <span class="role">({{ item.role }})</span>
+        <p>{{ item.group.description || 'No description yet' }}</p>
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #noGroups>
+    <p>You are not a member of any study groups yet.</p>
+  </ng-template>
+</div>

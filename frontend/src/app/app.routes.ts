@@ -26,13 +26,15 @@ export const routes: Routes = [
     loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
   },
   {
-        path: 'students',
-        loadComponent : ()=> 
-            import('./features/students/students').then(m=>m.StudentsList),
-    },
-      {
-        path: 'signup',
-        loadComponent : ()=> 
-            import('./features/signup/signup.component').then(m=>m.SignupComponent)
-    }
+    path: 'students',
+    loadComponent : ()=> import('./features/students/students').then(m=>m.StudentsList),
+  },
+  {
+    path: 'signup',
+    loadComponent : ()=> import('./features/signup/signup.component').then(m=>m.SignupComponent)
+  },
+  {
+    path:'studygroup',
+    loadComponent : ()=> import('./features/studygroup/studygroup').then(m => m.StudygroupComponent)
+  }
 ];
