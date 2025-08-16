@@ -34,5 +34,10 @@ export const routes: Routes = [
         path: 'signup',
         loadComponent : ()=> 
             import('./features/signup/signup.component').then(m=>m.SignupComponent)
+      },
+    {
+      path: 'profile',
+      loadComponent : ()=>
+      import('./features/profile/profile').then(m=>m.Profile)
     }
 ];
