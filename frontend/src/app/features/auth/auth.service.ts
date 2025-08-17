@@ -46,6 +46,18 @@ export class AuthService {
   return this.currentUser.value;
 }
 
+getUserDisplayName () : string | null{
+    const user = this.currentUser.value;
+
+
+    return(
+      user?.user_metadata?.['full_name'] ||
+      user?.user_metadata?.['name'] ||
+      user?.email ||
+      null
+    );
+}
+
   // Handle authentication state changes
   private async handleAuthChange(user: User | null) {
     this.currentUser.next(user);
@@ -93,7 +105,6 @@ export class AuthService {
 
       return !data;
     } catch (error) {
-      console.error('Error checking new user:', error);
       return true;
     }
   }

@@ -1,0 +1,66 @@
+<div class="profile-container">
+  <!-- Top Section -->
+  <div class="profile-header">
+    <img
+      [src]="profileImage || 'assets/default-avatar.png'"
+      alt="Profile Picture"
+      class="profile-pic"
+    />
+    <div class="profile-info">
+      <h2>{{ displayName || 'Student Name' }}</h2>
+      <p class="university">{{ university || 'University Name' }}</p>
+      <p class="year">Year {{ yearOfStudy || 'N/A' }}</p>
+    </div>
+    <button class="edit-btn" (click)="toggleEdit()">
+      {{ isEditMode ? 'Cancel' : 'Edit Profile' }}
+    </button>
+  </div>
+
+  <!-- Editable Section 
+  <div class="profile-body" *ngIf="isEditMode; else viewMode">
+    <form (ngSubmit)="saveProfile()">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [value]="email" disabled />
+      </div>
+
+      <div class="form-group">
+        <label>Course</label>
+        <input type="text" [(ngModel)]="course" name="course" />
+      </div>
+
+
+      <div class="form-group">
+        <label>Skills</label>
+        <input
+          type="text"
+          [(ngModel)]="skills"
+          name="skills"
+          placeholder="e.g. Math, Physics, Programming"
+        />
+      </div>
+    
+      <div class="form-group">
+        <label>Study Preference</label>
+        <select [(ngModel)]="studyPreference" name="studyPreference">
+          <option value="morning">Morning</option>
+          <option value="afternoon">Afternoon</option>
+          <option value="night">Night</option>
+          <option value="hybrid">Hybrid</option>
+        </select>
+      </div>
+
+      <button type="submit" class="save-btn">Save Changes</button>
+    </form>
+  </div>
+-->
+  <!-- Readonly Section -->
+  <ng-template #viewMode>
+    <div class="profile-view">
+      <p><strong>Email:</strong> {{ email }}</p>
+      <p><strong>Course:</strong> {{ course }}</p>
+      <p><strong>Skills:</strong> {{ skills || 'Not specified' }}</p>
+      <p><strong>Preference:</strong> {{ studyPreference || 'Not specified' }}</p>
+    </div>
+  </ng-template>
+</div>
