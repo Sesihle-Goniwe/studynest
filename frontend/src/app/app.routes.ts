@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { CallbackComponent } from './features/auth/callback.component';
 import {Home} from './features/home/home';
+import { Profile } from './features/profile/profile';
 
 
 export const routes: Routes = [
@@ -34,5 +35,11 @@ export const routes: Routes = [
         path: 'signup',
         loadComponent : ()=> 
             import('./features/signup/signup.component').then(m=>m.SignupComponent)
-      }
+    },
+    {
+      path: 'profile',
+      loadComponent : ()=>
+      import('./features/profile/profile').then(m=>m.Profile)
+    }
+    
 ];

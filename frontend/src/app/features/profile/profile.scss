@@ -1,0 +1,103 @@
+.profile-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+
+  .profile-info {
+    flex: 1;
+    margin-left: 1rem;
+
+    h2 {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .university {
+      color: #666;
+      margin: 0.2rem 0;
+    }
+
+    .year {
+      font-size: 0.9rem;
+      color: #888;
+    }
+  }
+
+  .edit-btn {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: #1565c0;
+    }
+  }
+}
+
+.profile-pic {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #1976d2;
+}
+
+.profile-body,
+.profile-view {
+  margin-top: 1rem;
+
+  .form-group {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      resize: none;
+    }
+  }
+
+  .save-btn {
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: #1b5e20;
+    }
+  }
+}

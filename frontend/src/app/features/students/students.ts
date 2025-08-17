@@ -10,7 +10,6 @@ import { Students, _Student } from '../../services/students';
 
 export class StudentsList implements OnInit {
   students : _Student[]= [];
-
   constructor (private studentSerive: Students) {}
   
   ngOnInit()
