@@ -3,7 +3,7 @@
     <h1>📚 Campus Study Buddy - Dashboard</h1>
     <h2>Welcome, {{ displayName }}</h2>
         <button > Notifications</button>
-            <button > Track progress</button>
+            <button (click)="goToProgress()" > Track progress</button>
     <button (click)="goToStudyGroups()">  Group sessions</button>
     <button (click)="goToProfile()"> User Profile</button>
   </header>

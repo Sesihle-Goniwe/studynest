@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #f7f7f7;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  background: #222;
+  color: #fff;
+  padding: 0.5rem 1.5rem;
+  .sidebar-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    margin-right: 1rem;
+    cursor: pointer;
+  }
+  .app-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 190px;
+  height: 100vh;
+  background: #333;
+  color: #fff;
+  padding: 2rem 1rem;
+  transition: left 0.3s;
+  z-index: 1000;
+  &.open {
+    left: 0;
+  }
+  h2 {
+    margin-top: 0;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    li {
+      margin: 1rem 0;
+      a {
+        color: #fff;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+.main-content {
+  margin-left: 0;
+  transition: margin-left 0.3s;
+  padding: 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 90vh;
+}
+
+.sidebar.open ~ .main-content {
+  margin-left: 220px;
+}
+.sidebar-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropzone-container {
+  width: 90vw;
+  max-width: 700px;
+  min-height: 260px;
+  background: #f0f0f0;
+  border: 2px dashed #bbb;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2.5rem 2rem 1.5rem 2rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  margin-top: 2rem;
+
+  &:hover, &:focus-within {
+    background: #e6e6e6;
+    border-color: #888;
+  }
+
+  .dropzone-label {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dropzone-content {
+    text-align: center;
+    color: #444;
+    .upload-link {
+      color: #1976d2;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  .stats-footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    color: #333;
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+  }
+}
+.ai-result {
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 2rem;
+  max-width: 700px;
+  word-break: break-word;
+}
