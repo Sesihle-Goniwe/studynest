@@ -34,4 +34,8 @@ export class DashboardComponent  {
   {
     this.router.navigate(['/profile']);
   }
+  goToStudyGroups()
+  {
+    this.router.navigate(['/studygroup']);
+  }
 }
