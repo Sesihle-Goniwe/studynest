@@ -1,0 +1,35 @@
+name: Deploy Backend to Render
+
+on:
+  push:
+    branches:
+      - main  # Trigger only on pushes to main
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Install dependencies
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm install
+
+      # Optional: run tests
+      - name: Run backend tests
+        run: |
+          cd backend
+          npm test
+
+      # Step 3: Trigger Render deploy via hook
+      - name: Deploy to Render
+        run: |
+          echo "Triggering backend deploy on Render..."
+          curl -s -X POST "$RENDER_DEPLOY_HOOK"
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
