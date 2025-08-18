@@ -1,0 +1,48 @@
+<div class="studygroup-container">
+  <h2>Create a New Study Group</h2>
+  <form (ngSubmit)="createGroup()" #groupForm="ngForm" class="create-group-form">
+    <input
+      type="text"
+      [(ngModel)]="newGroupName"
+      name="name"
+      placeholder="Enter group name"
+      required
+    />
+    <input
+      type="text"
+      [(ngModel)]="newGroupDescription"
+      name="description"
+      placeholder="Enter group description"
+      required
+    />
+    <button type="submit" [disabled]="!groupForm.form.valid">Create Group</button>
+  </form>
+
+  <h2>My Study Groups</h2>
+  <div *ngIf="memberGroups.length > 0; else noMemberGroups">
+    <ul>
+      <li *ngFor="let item of memberGroups" class="group-item">
+        <strong>{{ item.group.name }}</strong>
+        <span class="role">({{ item.role }})</span>
+        <p>{{ item.group.description || 'No description yet' }}</p>
+      </li>
+    </ul>
+  </div>
+  <ng-template #noMemberGroups>
+    <p>You are not a member of any study groups yet.</p>
+  </ng-template>
+
+  <h2>Other Available Study Groups</h2>
+  <div *ngIf="nonMemberGroups.length > 0; else noOtherGroups">
+    <ul>
+      <li *ngFor="let group of nonMemberGroups" class="group-item">
+        <strong>{{ group.name }}</strong>
+        <p>{{ group.description || 'No description yet' }}</p>
+        <button (click)="joinGroup(group.id)">Join</button>
+      </li>
+    </ul>
+  </div>
+  <ng-template #noOtherGroups>
+    <p>There are no other study groups available right now.</p>
+  </ng-template>
+</div>

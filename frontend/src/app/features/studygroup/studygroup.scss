@@ -1,0 +1,132 @@
+.studygroup-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  h2 {
+    color: #023e8a;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #0077b6;
+    padding-bottom: 0.3rem;
+  }
+
+  .create-group-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+
+    input {
+      padding: 0.75rem;
+      border-radius: 5px;
+      border: 1px solid #0077b6;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+
+      &:focus {
+        border-color: #023e8a;
+      }
+    }
+
+    button {
+      padding: 0.75rem;
+      background: #0077b6;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover:enabled {
+        background: #023e8a;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .group-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #caf0f8;
+    margin-bottom: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.15s, box-shadow 0.15s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    strong {
+      font-size: 1.2rem;
+      color: #023e8a;
+    }
+
+    .role {
+      margin-left: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #0077b6;
+    }
+
+    p {
+      margin: 0.5rem 0 0 0;
+      color: #555;
+    }
+
+    button {
+      align-self: flex-start;
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      background: #0077b6;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #023e8a;
+      }
+    }
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .studygroup-container {
+    padding: 0.5rem;
+
+    .create-group-form input, .create-group-form button {
+      font-size: 0.95rem;
+    }
+
+    .group-item {
+      padding: 0.75rem 1rem;
+
+      strong {
+        font-size: 1rem;
+      }
+
+      button {
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
