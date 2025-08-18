@@ -1,0 +1,87 @@
+<nav class="main-nav">
+  <button class="sidebar-toggle" (click)="sidebarOpen = !sidebarOpen" aria-label="Toggle sidebar">
+    ☰
+  </button>
+  <span class="app-title">Log Notes</span>
+</nav>
+
+<aside class="sidebar" [class.open]="sidebarOpen">
+  <button class="sidebar-close" (click)="sidebarOpen = false" aria-label="Close sidebar">
+    <img src="assets/icons/back48.png" alt="Back" width="20" height="20" />
+    
+  </button>
+  <h2>Sidebar</h2>
+  <ul>
+    <li><a href="#">Dashboard</a></li>
+    <li><a href="#">Progress</a></li>
+    <li><a href="#">Settings</a></li>
+  </ul>
+</aside>
+
+<main class="main-content">
+  <section class="dropzone-container"
+    tabindex="0"
+    (click)="fileInput.click()"
+    (keydown.enter)="fileInput.click()"
+    (dragover)="onDragOver($event)"
+    (drop)="onDrop($event)"
+    aria-label="Upload Study Notes"
+  >
+    <label for="fileUpload" class="dropzone-label">
+      <input #fileInput type="file" id="fileUpload" (change)="onFileSelected($event)" hidden />
+      <div class="dropzone-content">
+        <h2>Upload Study Notes</h2>
+        <p>
+          <strong>Drop your study notes here</strong> or <span class="upload-link">click to upload</span>
+        </p>
+        @if(selectedFile) { 
+          <p> Selected: {{ selectedFile.name }}</p> 
+        }
+      </div>
+    </label>
+    <footer class="stats-footer">
+      <div>
+        <strong>Topics Completed:</strong> {{ completedTopics.length }}
+      </div>
+      <div>
+        <strong>Hours Studied:</strong> {{ totalHoursStudied }}
+      </div>
+    </footer>
+  </section>
+
+ @if(aiExtractedText) {
+  <section  class="ai-result">
+  <h2>AI Extracted Data</h2>
+  <pre>{{ aiExtractedText }}</pre>
+</section>
+ }
+<section aria-labelledby="completed-topics-title" class="topics-section">
+  <h2 id="completed-topics-title">Completed Topics</h2>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Topic</th>
+        <th scope="col">Date Completed</th>
+      </tr>
+    </thead>
+
+    @if (completedTopics.length) {
+      <tbody>
+        @for (topic of completedTopics; track $index) {
+          <tr>
+            <td>{{ topic.name }}</td>
+            <td>{{ topic.dateCompleted | date:'short' }}</td>
+          </tr>
+        }
+      </tbody>
+    } @else {
+      <tfoot>
+        <tr>
+          <td colspan="2">No topics completed yet.</td>
+        </tr>
+      </tfoot>
+    }
+  </table>
+</section>
+
+</main>
