@@ -71,6 +71,7 @@ Campus Study Buddy is a platform designed to help university students find study
 ## Installation
 
 ### Backend
+```
 cd backend
 npm install
 npm run start:dev
