@@ -1,4 +1,3 @@
-<!-- src/app/features/onboarding/onboarding.component.html -->
 <mat-card class="onboarding-card">
   <mat-card-header>
     <mat-card-title>Complete Your Profile</mat-card-title>
@@ -28,12 +27,11 @@
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Year of Study</mat-label>
-        <input matInput formControlName="year" type="number" min="1" max="5" required>
+        <mat-select formControlName="year" required>
+          <mat-option *ngFor="let year of yearsOfStudy" [value]="year">{{year}}</mat-option>
+        </mat-select>
         <mat-error *ngIf="onboardingForm.get('year')?.hasError('required')">
-          Year is required
-        </mat-error>
-        <mat-error *ngIf="onboardingForm.get('year')?.hasError('min') || onboardingForm.get('year')?.hasError('max')">
-          Please enter a valid year (1-5)
+          Year of study is required
         </mat-error>
       </mat-form-field>
 
