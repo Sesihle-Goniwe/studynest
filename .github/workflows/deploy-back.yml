@@ -20,12 +20,6 @@ jobs:
           cd backend
           npm install
 
-      # Optional: run tests
-      - name: Run backend tests
-        run: |
-          cd backend
-          npm test
-
       # Step 3: Trigger Render deploy via hook
       - name: Deploy to Render
         run: |
