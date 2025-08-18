@@ -18,4 +18,40 @@ export class StudentsService {
 
     return data;
   }
+
+  async getStudentsbyUid(uid : string)
+  {
+    try{
+    const {data,error}=  await this.supabaseService
+    .getClient()
+    .from('students')
+    .select('*')
+    .eq('user_id',uid)
+    .single();
+
+    return data;
+    }
+    catch (error){
+        
+    } 
+  }
+
+  async updateStudentP(uid: string, updateDto:any)
+  {
+      const {data,error}  = await this.supabaseService
+      .getClient()
+      .from('students')
+      .update(updateDto)
+      .eq('user_id',uid)
+      .select()
+      .single();
+
+      if(error)
+      {
+          throw new Error (error.message);
+      }
+
+      return data;
+  }
+
 }
