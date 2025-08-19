@@ -38,4 +38,9 @@ export class DashboardComponent  {
   {
     this.router.navigate(['/studygroup']);
   }
+
+  goToStudyPartner(){
+    this.router.navigate(['/matches']);
+  }
+
 }
