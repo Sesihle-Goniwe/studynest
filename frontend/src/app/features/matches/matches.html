@@ -1,0 +1,16 @@
+<div class="matches-container" *ngIf="matches.length > 0; else noMatches">
+  <div class="student-card" *ngFor="let student of matches">
+    <h3>{{student.students.user_id}}</h3>
+    <p>University: {{student.students.university}}</p>
+    <p>Year: {{student.students.year}}</p>
+    <p>Common courses:
+      <span *ngFor="let course of student.courses">{{course.course_code}} </span>
+    </p>
+    <button (click)="connect(student)">Connect</button>
+    <button (click)="skip(student)">Skip</button>
+  </div>
+</div>
+
+<ng-template #noMatches>
+  <p>No matches found. Try adding more courses!</p>
+</ng-template>
