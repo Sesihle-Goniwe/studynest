@@ -1,2 +1,94 @@
-<p>This is  you home page!</p>
-<button (click)="goToLogin()" > llogin</button>
+<div class="home-container">
+  <nav class="home-nav">
+    <div class="nav-content">
+      <div class="logo">
+        <h1>Campus Study Buddy</h1>
+      </div>
+      <button class="login-button" (click)="goToLogin()">
+        Sign In
+      </button>
+    </div>
+  </nav>
+  
+  <main class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Study Together,<br>
+        <span class="accent">Succeed Together</span>
+      </h1>
+      <p class="hero-subtitle">
+        Connect with fellow students, join study groups, and achieve your academic goals with Campus Study Buddy.
+      </p>
+      <div class="hero-actions">
+        <button class="primary-button" (click)="goToLogin()">
+          Get Started
+        </button>
+        <button class="secondary-button">
+          Learn More
+        </button>
+      </div>
+    </div>
+    
+    <div class="hero-visual">
+      <div class="floating-card card-1">
+        <div class="card-icon">📚</div>
+        <h3>Study Groups</h3>
+        <p>Join or create study sessions</p>
+      </div>
+      <div class="floating-card card-2">
+        <div class="card-icon">📊</div>
+        <h3>Track Progress</h3>
+        <p>Monitor your study habits</p>
+      </div>
+      <div class="floating-card card-3">
+        <div class="card-icon">🤝</div>
+        <h3>Connect</h3>
+        <p>Find study partners</p>
+      </div>
+    </div>
+  </main>
+  
+  <section class="features-section">
+    <div class="features-content">
+      <h2>Everything you need to excel</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h3>Collaborative Learning</h3>
+          <p>Study with peers in real-time sessions</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <h3>Schedule Management</h3>
+          <p>Organize your study sessions efficiently</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <h3>Progress Tracking</h3>
+          <p>Monitor your academic improvement</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
