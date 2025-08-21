@@ -44,6 +44,11 @@ export const routes: Routes = [
     {
       path:'studygroup',
       loadComponent : ()=> import('./features/studygroup/studygroup').then(m => m.StudygroupComponent)
+    },
+    {
+        path: 'progress',
+        loadComponent : () =>
+            import('./features/progress/progress').then(m=>m.ProgressTracker),
     }
-    
+
 ];

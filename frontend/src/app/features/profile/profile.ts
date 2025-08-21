@@ -1,4 +1,4 @@
-import { Component,OnInit } from '@angular/core';
+import { Component,ElementRef,OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
@@ -20,11 +20,11 @@ export class Profile implements OnInit {
     university : string | null = null;
     year : null | undefined;
     isEditMode : boolean =false;
-    bio : null | undefined;
     skills :  null | undefined;
     studyPreference : string = "Not specified";
-    ID: string | null = null;
     students : _Student | null=null;
+   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
+
     constructor (private authser: AuthService, private studentService : Students,private http:HttpClient){}
    
 ngOnInit() {
@@ -44,6 +44,7 @@ ngOnInit() {
         this.skills = data.skills || null; // default to null if empty
         this.studyPreference = data.studyPreference || "Not specified";
         this.year = data.year || null;
+      
       },
   });
     
@@ -61,6 +62,12 @@ ngOnInit() {
           const uid = user?.id;
           if(uid)
           {
+            const formData= new FormData();
+            formData.append('course',this.course?? '');
+            formData.append('skills',this.skills??'');
+            formData.append('studyPreference',this.studyPreference);
+            formData.append('year',this.year??'');
+              /*
               const updateDto = {
                 course: this.course,
                 skills:this.skills,
@@ -68,12 +75,38 @@ ngOnInit() {
                 year: this.year
           
               };
-                    this.studentService.updatestudentbyUid(uid,updateDto)
+              */
+             const file = this.fileInput.nativeElement.files?.[0];
+             if(file)
+             {
+              formData.append('profileImage',file);
+             }
+                    this.studentService.updatestudentbyUid(uid,formData)
                     .subscribe(updated=>{
                     this.isEditMode=false;
               });
         }
-      }    
+      }
+      
+      OnImageClick()
+      {
+          this.fileInput.nativeElement.click();
+      }
+
+      onFileSelected(event:any)
+      {
+        const file: File = event.target.files[0];
+      if (file) 
+        {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.profileImage = e.target.result; 
+      };
+      reader.readAsDataURL(file);
+
+ 
+    }
+      }
 }
 
 
