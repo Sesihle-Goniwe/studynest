@@ -6,6 +6,17 @@
       [src]="profileImage || 'assets/default-avatar.png'"
       alt="Profile Picture"
       class="profile-pic"
+      (click)="OnImageClick()"
+      />
+      
+    <input
+    type="file"
+    accept="image/*"
+    #fileInput
+    style="display: none"
+    (change)="onFileSelected($event)"
+    />
+
     />
 <div class="profile-info">
   <!-- Display name always visible -->
