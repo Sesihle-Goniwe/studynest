@@ -44,6 +44,7 @@ ngOnInit() {
         this.skills = data.skills || null; // default to null if empty
         this.studyPreference = data.studyPreference || "Not specified";
         this.year = data.year || null;
+        this.profileImage = data.profileImage || null;
       
       },
   });
@@ -62,12 +63,6 @@ ngOnInit() {
           const uid = user?.id;
           if(uid)
           {
-            const formData= new FormData();
-            formData.append('course',this.course?? '');
-            formData.append('skills',this.skills??'');
-            formData.append('studyPreference',this.studyPreference);
-            formData.append('year',this.year??'');
-              /*
               const updateDto = {
                 course: this.course,
                 skills:this.skills,
@@ -75,38 +70,46 @@ ngOnInit() {
                 year: this.year
           
               };
-              */
-             const file = this.fileInput.nativeElement.files?.[0];
-             if(file)
-             {
-              formData.append('profileImage',file);
-             }
-                    this.studentService.updatestudentbyUid(uid,formData)
+             this.studentService.updatestudentbyUid(uid,updateDto)
                     .subscribe(updated=>{
                     this.isEditMode=false;
               });
         }
       }
+
+    uploadPhoto(file: File) 
+    {
+    const formData = new FormData();
+    formData.append('profileImage', file);
+
+    const user = this.authser.getCurrentUser();
+    if (!user?.id) return;
+
+    this.studentService.updatestudentPhoto(user.id, formData).subscribe({
+      next: updated => {
+        this.profileImage = updated.profileImage; 
+      },
+      error: err => console.error('Failed to upload profile image', err)
+    });
+  }
       
       OnImageClick()
       {
           this.fileInput.nativeElement.click();
       }
 
-      onFileSelected(event:any)
-      {
-        const file: File = event.target.files[0];
-      if (file) 
-        {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.profileImage = e.target.result; 
-      };
-      reader.readAsDataURL(file);
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (!file) return;
 
- 
-    }
-      }
+    // Preview the image immediately
+    const reader = new FileReader();
+    reader.onload = e => this.profileImage = e.target?.result as string;
+    reader.readAsDataURL(file);
+
+    // Immediately upload and save to DB
+    this.uploadPhoto(file);
+  }
 }
 
 

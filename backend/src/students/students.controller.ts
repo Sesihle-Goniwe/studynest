@@ -4,6 +4,8 @@ import { StudentsService } from './students.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import type { Express } from 'express';
+import { memoryStorage } from 'multer';
+
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
@@ -28,14 +30,14 @@ export class StudentsController {
       return this.studentsService.updateStudentP(uid,updateDto);
     }
   
-    @Put(':uid')
-    @UseInterceptors(FileInterceptor('profileImage'))
-    async updateStudent(
-      @Param('uid') uid: string,
-      @UploadedFile() file: Express.Multer.File,
-      @Body() body: UpdateStudentDto,
-    )
-    {
-      return this.studentsService.updateStudentWithImage(uid, body, file);
-    }
+  @Put(':uid/photo')
+  @UseInterceptors(FileInterceptor('profileImage',{storage: memoryStorage()}))
+  async updatePhoto(
+    @Param('uid') uid: string,
+    @UploadedFile() file?: Express.Multer.File
+  ) 
+  {
+    if (!file) throw new Error('No file uploaded');
+    return this.studentsService.updateStudentWithImage(uid, {}, file);
+  }
 }
