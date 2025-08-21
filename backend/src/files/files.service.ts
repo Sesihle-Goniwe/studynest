@@ -1,13 +1,13 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
-import { File as MulterFile } from 'multer';
+import type {Express} from 'express';
 
 @Injectable()
 export class FilesService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
   // Modify the method to accept userId as an argument.
-  async upload(file: MulterFile, userId: string) {
+  async upload(file: Express.Multer.File, userId: string) {
     console.log(`--- UPLOAD PROCESS STARTED FOR USER: ${userId} ---`);
     if (!file) {
       throw new InternalServerErrorException('File is undefined.');

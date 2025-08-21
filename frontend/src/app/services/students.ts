@@ -10,6 +10,7 @@ export interface _Student {
   university : string;
   course: string;
   year: string;
+  profileImage: string;
 }
 
 @Injectable (
@@ -36,9 +37,10 @@ export class Students {
   {
     return this.http.put<_Student>(`${this.baseUrl}/${uid}`,updateDto);
   }
-/*
-  uupdateStudentWithImage(uid: string, formData: FormData) {
-  // No need to set Content-Type; browser sets it automatically for FormData
-  return this.http.put(`/api/students/${uid}`, formData);
-}*/
+
+  updatestudentPhoto(uid: string, formData: FormData) 
+  {
+    return this.http.put<_Student>(`${this.baseUrl}/${uid}/photo`, formData);
+  }
+
 }

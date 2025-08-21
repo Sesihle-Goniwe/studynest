@@ -4,7 +4,7 @@
 import { Controller, Post, UploadedFile, UseInterceptors, Body } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
-import { File as MulterFile } from 'multer';
+import type { Express } from 'express';
 
 @Controller('files')
 export class FilesController {
@@ -13,7 +13,7 @@ export class FilesController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   // 1. Use the @Body() decorator to get the other form fields
-  async uploadFile(@UploadedFile() file: MulterFile, @Body() body: { userId: string }) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body: { userId: string }) {
     // 2. Extract the userId from the body
     const userId = body.userId;
 

@@ -55,7 +55,7 @@ export class StudentsService {
       return data;
   }
 
-  async updateStudentsP(uid : string, updateDto:UpdateStudentDto)
+  async updatestudentbyUid(uid : string, updateDto:UpdateStudentDto)
   {
     const {data}= await this.supabaseService
     .getClient()
@@ -68,20 +68,23 @@ export class StudentsService {
     return data;
   }
 
-  async uploadProfileImage(file: Express.Multer.File, uid: string) {
+  async uploadProfileImage(file: Express.Multer.File, uid: string) 
+  {
+        if (!file.buffer) throw new Error('File buffer is empty');
   const filePath = `profiles/${uid}-${Date.now()}-${file.originalname}`;
-  const { data} = await this.supabaseService
+  const { data, error} = await this.supabaseService
     .getClient()
     .storage
     .from('student-avatars')
     .upload(filePath, file.buffer, { upsert: true });
+       if (error) throw new Error(`Upload failed: ${error.message}`);
 
   const { data: publicUrl } = this.supabaseService
     .getClient()
     .storage
     .from('student-avatars')
     .getPublicUrl(filePath);
-
+if (!publicUrl?.publicUrl) throw new Error('Failed to get public URL');
   return publicUrl.publicUrl;
 }
 
