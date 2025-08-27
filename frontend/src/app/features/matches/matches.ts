@@ -9,34 +9,35 @@ import { StudentCoursesService } from '../../services/student_courses.services';
   styleUrl: './matches.scss'
 })
 export class Matches implements OnInit {
-  matches: any[] = [];
-  currentUserId: string = '298c258e-10fd-4cb2-84ab-95e449b6d44e'; // replace with actual logged-in user
-
+  matches: any[] = []; 
+  currentUserId: string = '906607d7-4752-45b3-bfd2-ed0f119a61be'; // replace with actual logged-in user
+  currentIndex = 0;
   constructor(private studentCoursesService: StudentCoursesService) {}
 
   ngOnInit(): void {
-    this.loadMatches();
+    this.fetchmatches();
   }
 
-  loadMatches() {
-    this.studentCoursesService.getMatches(this.currentUserId)
+  fetchmatches() {
+    this.studentCoursesService.getMatchingStudents(this.currentUserId)
       .subscribe((data: any) => {
         this.matches = data;
       });
   }
 
-  connect(student: any) {
-    // Call backend to record a connection (you’ll need a POST /connections endpoint)
-    console.log('Connect with', student);
-    this.removeStudentCard(student);
+  likeStudent(student: any) {
+    this.studentCoursesService.sendMatchDecision(this.currentUserId, student.student_id, true).subscribe();
+    this.nextStudent();
   }
 
-  skip(student: any) {
-    console.log('Skipped', student);
-    this.removeStudentCard(student);
+  skipStudent(student: any) {
+    this.studentCoursesService.sendMatchDecision(this.currentUserId, student.student_id, false).subscribe();
+    this.nextStudent();
   }
 
-  removeStudentCard(student: any) {
-    this.matches = this.matches.filter(s => s.student_id !== student.student_id);
+  nextStudent() {
+    this.currentIndex++; //allows to traverse to next student in the list matches which
+                        //returned from the backend
   }
+
 }
