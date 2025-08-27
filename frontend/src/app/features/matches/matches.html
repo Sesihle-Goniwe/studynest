@@ -1,16 +1,19 @@
-<div class="matches-container" *ngIf="matches.length > 0; else noMatches">
-  <div class="student-card" *ngFor="let student of matches">
-    <h3>{{student.students.user_id}}</h3>
-    <p>University: {{student.students.university}}</p>
-    <p>Year: {{student.students.year}}</p>
-    <p>Common courses:
-      <span *ngFor="let course of student.courses">{{course.course_code}} </span>
-    </p>
-    <button (click)="connect(student)">Connect</button>
-    <button (click)="skip(student)">Skip</button>
-  </div>
-</div>
+@if (matches.length > 0 && currentIndex < matches.length) {
+  <div class="card">
+    <h3>{{ matches[currentIndex].students.user_id }}</h3>
+    <p>University: {{ matches[currentIndex].students.university }}</p>
+    <p>Year: {{ matches[currentIndex].students.year }}</p>
 
-<ng-template #noMatches>
-  <p>No matches found. Try adding more courses!</p>
-</ng-template>
+    <h4>Courses:</h4>
+    <ul>
+      @for (course of matches[currentIndex].courses; track course.course_code) {
+        <li>{{ course.course_code }}</li>
+      }
+    </ul>
+
+    <button (click)="likeStudent(matches[currentIndex])" class="like-btn">✅ Match</button>
+    <button (click)="skipStudent(matches[currentIndex])" class="skip-btn">❌ Skip</button>
+  </div>
+} @else {
+  <p>No more matches found 🎉</p>
+}
