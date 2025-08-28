@@ -25,13 +25,26 @@ export class StudentCoursesService {
     // Step 2: Find students with overlapping courses
     const { data: matchingStudents, error: matchError } = await supabase
       .from('student_courses')
-      .select('student_id, courses!inner(id, course_code), students!inner(user_id, university, year)')
+      .select('student_id, courses(id, course_code), students(user_id, university, year)')
       .in('course_id', courseIds)// Find students with matching courses
       //.neq('student_id', currentUserId); // exclude current user
 
     if (matchError) throw matchError;
 
-    return matchingStudents;
+  // Step 3: Group by student_id and collect common courses
+  const grouped = matchingStudents.reduce((acc, row) => {
+    const sid = row.student_id;
+    if (!acc[sid]) {
+      acc[sid] = {
+        students: row.students,
+        courses: []
+      };
+    }
+    acc[sid].courses.push(row.courses);
+    return acc;
+  }, {});
+
+  return Object.values(grouped);
   }
 
 async addStudentCourses(studentId: string, courses: { course_code: string, course_name: string }[]) {
