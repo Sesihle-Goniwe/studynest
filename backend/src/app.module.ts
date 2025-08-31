@@ -22,6 +22,7 @@ import { ProgressModule } from './progress/progress.module';
     GroupsModule,
     FilesModule,
     MailerModule,
+    ProgressModule,
     MulterModule.register({
       dest: './uploads', // Optional: specify a destination for temporary files
     }),
