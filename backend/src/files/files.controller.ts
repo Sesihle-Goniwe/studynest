@@ -1,7 +1,7 @@
 /* --- 
   BACKEND: src/files/files.controller.ts
 --- */
-import { Controller, Post, UploadedFile, UseInterceptors, Body } from '@nestjs/common';
+import { Controller, Post, UploadedFile, UseInterceptors, Body, Get, Param, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
 import type { Express } from 'express';
@@ -20,4 +20,11 @@ export class FilesController {
     // 3. Pass both to the service
     return this.filesService.upload(file, userId);
   }
+  @Get(':fileId/url')
+  // 3. Get the userId from a @Query() parameter instead of @Request()
+  async getFileUrl(@Param('fileId') fileId: string, @Query('userId') userId: string) {
+    return this.filesService.getSignedUrl(fileId, userId);
+  }
 }
+
+

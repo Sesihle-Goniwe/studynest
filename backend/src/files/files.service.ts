@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import type {Express} from 'express';
 
@@ -16,8 +16,9 @@ export class FilesService {
     const supabase = this.supabaseService.getClient();
     const bucket = 'study-notes';
     // Organize files in storage by user ID for better management
+    
     const filePath = `public/${userId}/${Date.now()}-${file.originalname}`;
-
+     console.log('--- UPLOADING TO PATH:', filePath);
     // 1. Upload the file to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from(bucket)
@@ -29,7 +30,9 @@ export class FilesService {
       console.error('!!! STORAGE UPLOAD FAILED:', uploadError);
       throw new InternalServerErrorException('Failed to upload file to storage.', uploadError.message);
     }
-
+    console.log('--- PATH RETURNED FROM SUPABASE UPLOAD:', uploadData.path);
+    
+    console.log('--- SAVING METADATA WITH PATH:', uploadData.path);
     // 2. Insert metadata into the Supabase database
     const { data: dbData, error: dbError } = await supabase
       .from('study_notes')
@@ -56,4 +59,33 @@ export class FilesService {
       data: dbData,
     };
   }
+  async getSignedUrl(fileId: string, userId: string) {
+    const supabase = this.supabaseService.getClient();
+    // 1. Verify the user owns the file
+    console.log('--- GETTING SIGNED URL FOR fileId:', fileId, 'AND userId:', userId);
+    const { data: fileData, error: fileError } = await supabase
+      .from('study_notes')
+      .select('file_path')
+      .eq('id', fileId)
+      .eq('user_id', userId)
+      .single();
+
+    if (fileError || !fileData) {
+      console.error('!!! DATABASE LOOKUP FAILED:', fileError);
+      throw new NotFoundException('File not found or access denied.');
+    }
+
+     console.log('--- FOUND FILE IN DB. ATTEMPTING TO SIGN PATH:', fileData.file_path);
+    // 2. Generate a signed URL that expires in 1 hour (3600 seconds)
+    const { data, error } = await supabase.storage
+      .from('study-notes')
+      .createSignedUrl(fileData.file_path, 3600);
+
+    if (error) {
+      console.error('!!! SUPABASE STORAGE ERROR:', error);
+      throw new InternalServerErrorException('Could not generate file URL.', error.message);
+    }
+
+    return data;
+}
 }
