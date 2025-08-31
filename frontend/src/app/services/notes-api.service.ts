@@ -10,8 +10,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class NotesApiService {
-  private backendUrl = 'http://localhost:3000/files';
-  //private backendUrl = 'https://studynester.onrender.com/files';
+  //private backendUrl = 'http://localhost:3000/files';
+  private backendUrl = 'https://studynester.onrender.com/files';
 
   constructor(private http: HttpClient) { }
 

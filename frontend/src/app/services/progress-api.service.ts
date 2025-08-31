@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ProgressApiService {
-  private apiUrl = 'http://localhost:3000/progress';
-  //private apiUrl = 'https://studynester.onrender.com/files';
+  //private apiUrl = 'http://localhost:3000/progress';
+  private apiUrl = 'https://studynester.onrender.com/files';
 
   constructor(private http: HttpClient) { }
 
