@@ -6,18 +6,30 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { StudentsModule } from './students/students.module';
 import { FilesModule } from './files/files.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { NotificationsModule } from './notifications/notifications.module';
+import { GroupsModule } from './groups/groups.module';
+import { MailerModule } from './mailer/mailer.module';
+import { SessionsModule } from './sessions/sessions.module';
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     SupabaseModule, 
     StudentsModule, 
+    NotificationsModule,
+    SessionsModule,
+    GroupsModule,
     FilesModule,
+    MailerModule,
     MulterModule.register({
       dest: './uploads', // Optional: specify a destination for temporary files
     }),
+    MailerModule,
+    SessionsModule,
+    //GroupsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService ],
 })
 export class AppModule {}

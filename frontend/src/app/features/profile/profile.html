@@ -1,4 +1,3 @@
-
 <div class="profile-container">
   <!-- Top Section -->
   <div class="profile-header">
@@ -7,41 +6,39 @@
       alt="Profile Picture"
       class="profile-pic"
       (click)="OnImageClick()"
-      />
-      
+    />
+
     <input
-    type="file"
-    accept="image/*"
-    #fileInput
-    style="display: none"
-    (change)="onFileSelected($event)"
+      type="file"
+      accept="image/*"
+      #fileInput
+      style="display: none"
+      (change)="onFileSelected($event)"
     />
 
-    />
-<div class="profile-info">
-  <!-- Display name always visible -->
-  <h2>{{ displayName || 'Student Name' }}</h2>
+    <div class="profile-info">
+      <!-- Display name always visible -->
+      <h2>{{ displayName || 'Student Name' }}</h2>
 
-  <!-- Only render the rest when students is loaded -->
-  <div *ngIf="students">
-    <p class="university">{{ students.university || 'University Name' }}</p>
-    <p class="year">Year {{ students.year || 'N/A' }}</p>
-    <p class="course">Course: {{ students.course || 'N/A' }}</p>
-  </div>
+      <!-- Only render the rest when students is loaded -->
+      <div *ngIf="students; else loadingBlock">
+        <p class="university">{{ students.university || 'University Name' }}</p>
+        <p class="year">Year {{ students.year || 'N/A' }}</p>
+        <p class="course">Course: {{ students.course || 'N/A' }}</p>
+      </div>
 
-  <!-- Optional loading placeholder -->
-  <div *ngIf="!students">
-    Loading profile...
-  </div>
-</div>
-
+      <!-- Optional loading placeholder -->
+      <ng-template #loadingBlock>
+        <p>Loading profile...</p>
+      </ng-template>
+    </div>
 
     <button class="edit-btn" (click)="toggleEdit()">
       {{ isEditMode ? 'Cancel' : 'Edit Profile' }}
     </button>
   </div>
 
-  <!--Editable Section --> 
+  <!-- Editable Section --> 
   <div class="profile-body" *ngIf="isEditMode; else viewMode">
     <form (ngSubmit)="saveProfile()">
       <div class="form-group">
@@ -55,8 +52,8 @@
       </div>
 
       <div class="form-group">
-      <label>Year of Study</label>
-      <input type="number" [(ngModel)]="year" name="yearOfStudy" min="1" />
+        <label>Year of Study</label>
+        <input type="number" [(ngModel)]="year" name="yearOfStudy" min="1" />
       </div>
 
       <div class="form-group">
@@ -79,27 +76,17 @@
         </select>
       </div>
 
-      <button type="submit" (click)="saveProfile()" class="save-btn">Save Changes</button>
+      <button type="submit" class="save-btn">Save Changes</button>
     </form>
   </div>
 
   <!-- Readonly Section -->
   <ng-template #viewMode>
-    <div *ngIf="students">
+    <div class="profile-body" *ngIf="students">
       <p><strong>Email:</strong> {{ students.email }}</p>
-      <!--<p><strong>Course:</strong> {{ students.course }}</p>-->
+      <p><strong>Course:</strong> {{ course || 'Not specified' }}</p>
       <p><strong>Skills:</strong> {{ skills || 'Not specified' }}</p>
       <p><strong>Preference:</strong> {{ studyPreference || 'Not specified' }}</p>
     </div>
   </ng-template>
 </div>
-
-<!-- View mode (shown when not editing) -->
-<ng-template #viewMode>
-  <div class="profile-body" >
-    <p><strong>Email:</strong> {{ email }}</p>
-    <p><strong>Course:</strong> {{ course }}</p>
-    <p><strong>Skills:</strong> {{ skills }}</p>
-    <p><strong>Study Preference:</strong> {{ studyPreference }}</p>
-  </div>
-</ng-template>

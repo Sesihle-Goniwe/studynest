@@ -54,6 +54,7 @@ ngOnInit() {
 
   toggleEdit()
       {
+       
         this.isEditMode=!this.isEditMode;
       }
 

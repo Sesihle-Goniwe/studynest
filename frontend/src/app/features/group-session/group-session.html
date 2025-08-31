@@ -1,0 +1,43 @@
+<h2>Group Sessions</h2>
+
+<!-- Create Session Form -->
+<div class="create-session-form">
+  <h3>Create a New Session</h3>
+
+  <form (ngSubmit)="createSession()">
+    <input type="text" placeholder="Title" [(ngModel)]="newSession.title" name="title" required />
+    <textarea placeholder="Description" [(ngModel)]="newSession.description" name="description"></textarea>
+
+    <label>Start Time</label>
+    <input type="datetime-local" [(ngModel)]="newSession.start_time" name="start_time" required />
+
+    <label>End Time</label>
+    <input type="datetime-local" [(ngModel)]="newSession.end_time" name="end_time" required />
+
+    <input type="text" placeholder="Location" [(ngModel)]="newSession.location" name="location" />
+
+    <button type="submit">Create Session</button>
+  </form>
+</div>
+
+<hr />
+
+<!-- Existing Sessions -->
+<div class="sessions-list">
+  <h3>Sessions</h3>
+
+  @for(session of sessionsArr; track session.id) {
+    <div class="session-card">
+      <h4>{{ session.title }}</h4>
+      <p>{{ session.description }}</p>
+      <p><strong>When:</strong> {{ session.start_time }} → {{ session.end_time }}</p>
+      <p><strong>Where:</strong> {{ session.location }}</p>
+    </div>
+  }
+</div>
+
+<section>
+  <h3>Group Actions</h3>
+  <button (click)="leaveGroup()">Leave Group</button>
+  <button (click)="goBack()">Back to My Groups</button>
+</section>

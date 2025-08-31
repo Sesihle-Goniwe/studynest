@@ -42,4 +42,9 @@ export class DashboardComponent  {
   {
     this.router.navigate(['./progress']);
   }
+
+    goToNotification()
+  {
+    this.router.navigate(['/notifications'])
+  }
 }
