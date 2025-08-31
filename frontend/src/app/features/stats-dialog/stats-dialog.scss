@@ -1,0 +1,56 @@
+h2 {
+  margin-bottom: 0.5rem;
+}
+
+mat-dialog-content {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+ul {
+  margin: 0.5rem 0 1rem 1rem;
+}
+
+mat-dialog-actions {
+  margin-top: 1rem;
+}
+.stats-summary {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.chart-container {
+  position: relative;
+  height: 250px; // A good height for a dialog chart
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+h3 {
+  margin-top: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+ul {
+  padding-left: 20px;
+}
+// ... existing styles ...
+
+.charts-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; // Space between the charts
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.chart-container {
+  position: relative;
+  height: 250px;
+  width: 100%; // Each chart takes up half the space
+  margin-bottom: 1.5rem;
+}

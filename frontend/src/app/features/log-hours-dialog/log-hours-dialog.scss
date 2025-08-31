@@ -1,0 +1,30 @@
+.success-popup {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4CAF50; // Green
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  25% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  75% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; // Adds a small space between each form field
+}
+
+// Ensure the form fields take up the full width
+.full-width {
+  width: 100%;
+}
+
