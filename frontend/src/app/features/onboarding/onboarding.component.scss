@@ -1,74 +1,143 @@
+// Colors
+$charcoal: #1a1a1a;
+$dark-gray: #2d2d2d;
+$medium-gray: #404040;
+$light-gray: #6b6b6b;
+$white: #ffffff;
+$accent: #4a9eff;
+@use "sass:color";
+
 :host {
-  display: block;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #ffffff, #f5f5f5);
   display: flex;
+  min-height: 100vh;
   align-items: center;
   justify-content: center;
-  padding: 1rem; // Add some padding to prevent clipping on small screens
+  padding: 1rem;
+  background: linear-gradient(135deg, $charcoal, $dark-gray);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: $white;
 }
 
+// Card
 .onboarding-card {
   max-width: 500px;
   width: 100%;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  background: $dark-gray;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
   animation: fadeUp 0.6s ease-out;
-  margin: 1rem; // Add margin to ensure space around the card
-  position: relative; // Establish a stacking context
-  z-index: 1; // Ensure card stays above background
-}
+  margin: 1rem;
 
-mat-card-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #333;
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
+  mat-card-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
 
-mat-card-subtitle {
-  text-align: center;
-  color: #666;
-  margin-bottom: 1.5rem;
-}
+    mat-card-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: $white;
+    }
 
-.full-width {
-  width: 100%;
-  margin-bottom: 1.5rem; // Increase spacing between fields
-}
+    mat-card-subtitle {
+      color: $light-gray;
+      font-size: 0.95rem;
+    }
+  }
 
-mat-form-field {
-  width: 100%;
-  
-  // Fix for select dropdown positioning
-  .mat-select-panel {
-    position: absolute !important;
-    margin-top: 8px; // Add some space between the field and dropdown
-    z-index: 1000 !important; // Ensure dropdown appears above other elements
+  mat-card-content {
+    display: flex;
+    flex-direction: column;
   }
 }
 
-button[mat-raised-button] {
-  margin-top: 1rem;
+// Form fields
+mat-form-field {
+  width: 100%;
+  margin-bottom: 1.5rem;
+
+  .mat-form-field-outline {
+    stroke: $medium-gray;
+  }
+
+  .mat-select-value,
+  .mat-select-placeholder,
+  input {
+    color: $white !important;
+  }
+
+  mat-label {
+    color: $light-gray !important;
+  }
+
+  mat-error {
+    color: #ff6b6b;
+  }
 }
 
+// Button: Blue Oval
+button[mat-raised-button] {
+  background: $accent !important;
+  color: $white !important;
+  height: 52px;
+  border-radius: 999px; // oval
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-top: 1rem;
+  box-shadow: 0 6px 20px rgba($accent, 0.4);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: color.adjust($accent, $lightness: -8%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba($accent, 0.5);
+  }
+
+  mat-spinner {
+    margin: 0 auto;
+  }
+}
+
+// Animation
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-// Add this to ensure the overlay backdrop doesn't interfere
-.cdk-overlay-container {
-  position: fixed;
-  z-index: 1000;
-}
-
-// Optional: Add some responsive adjustments
+// Responsive
 @media (max-width: 600px) {
   .onboarding-card {
     padding: 1.5rem;
-    margin: 1rem;
   }
 }
+
+// Fix dropdown transparency
+::ng-deep .mat-select-panel {
+  background-color: #ffffff !important; /* solid white */
+  color: #000 !important;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 8px !important;
+  z-index: 2000 !important; /* make sure it's above dialogs */
+}
+
+::ng-deep .mat-option {
+  font-size: 14px;
+  padding: 10px 16px;
+  color: #000 !important;
+}
+
+::ng-deep .mat-option:hover {
+  background-color: #f5f5f5 !important;
+}
+
+::ng-deep .cdk-overlay-pane {
+  background: transparent !important; /* clean container */
+  z-index: 2000 !important;
+}
+
+::ng-deep .mat-select-panel-wrap {
+  background: #fff !important; /* ensures background isn’t see-through */
+}
+
+
+

@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { GroupService } from '../../services/group.service';
 import { AuthService } from '../auth/auth.service';
-import { PostgrestResponse } from '@supabase/supabase-js';
 import { StudyGroup } from '../../models/study-group.model';
+import { Router } from '@angular/router';
 
 interface GroupWithRole {
   group: StudyGroup;
@@ -23,100 +23,122 @@ export class StudygroupComponent implements OnInit {
   memberGroups: GroupWithRole[] = [];
   nonMemberGroups: StudyGroup[] = [];
   newGroupName: string = '';
-  newGroupDescription: string = ''; // <-- add this line
+  newGroupDescription: string = '';
+  isLoading = false;
+  errorMessage = '';
 
   constructor(
     private groupService: GroupService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadGroups();
   }
 
-  async loadGroups() {
+  loadGroups() {
     const user = this.authService.getCurrentUser();
     if (!user) return;
 
-    // 1. Fetch groups where user is a member
-    const { data: memberData, error: memberError } = await this.groupService.getMyGroups(user.id);
-    if (memberError) {
-      console.error('Error loading member groups:', memberError);
-      return;
-    }
+    this.isLoading = true;
+    this.errorMessage = '';
 
-    this.memberGroups =
-      memberData
-        ?.map((row: any) => {
-          const group = Array.isArray(row.study_groups)
-            ? row.study_groups[0]
-            : row.study_groups;
+    // 1. First, fetch the user's member groups with roles
+    this.groupService.getMyGroups(user.id).subscribe({
+      next: (memberData: any[]) => {
+        // Process member groups
+        this.memberGroups = memberData
+          .map((row: any) => {
+            const group = Array.isArray(row.study_groups)
+              ? row.study_groups[0]
+              : row.study_groups;
 
-          if (!group) return null;
+            if (!group) return null;
 
-          return { group, role: row.role } as GroupWithRole;
-        })
-        .filter((g: GroupWithRole | null): g is GroupWithRole => g !== null) ?? [];
+            return { group, role: row.role } as GroupWithRole;
+          })
+          .filter((g: GroupWithRole | null): g is GroupWithRole => g !== null);
 
-    // 2. Fetch all groups
-    const { data: allGroups, error: allError } = await this.groupService.getAllGroups();
-    if (allError) {
-      console.error('Error loading all groups:', allError);
-      return;
-    }
-
-    // 3. Filter to find non-member groups
-    const memberIds = this.memberGroups.map(m => m.group.id);
-    this.nonMemberGroups = allGroups?.filter(g => !memberIds.includes(g.id)) ?? [];
+        // 2. Then fetch all groups to find non-member groups
+        this.groupService.getAllGroups().subscribe({
+          next: (allGroups: StudyGroup[]) => {
+            const memberIds = this.memberGroups.map(m => m.group.id);
+            this.nonMemberGroups = allGroups.filter(g => !memberIds.includes(g.id));
+            this.isLoading = false;
+          },
+          error: (allError) => {
+            console.error('Error loading all groups:', allError);
+            this.isLoading = false;
+          }
+        });
+      },
+      error: (memberError) => {
+        console.error('Error loading member groups:', memberError);
+        this.isLoading = false;
+      }
+    });
   }
 
-  async createGroup() {
+  createGroup() {
     const user = this.authService.getCurrentUser();
-    if (!user) return alert('You must be signed in to create a group');
-    if (!this.newGroupName.trim()) return alert('Enter a group name');
+    const uid = user?.id;
+    if(uid) {
+      if (!this.newGroupName.trim()) return alert('Enter a group name');
 
-    const response: PostgrestResponse<StudyGroup> = await this.groupService.createGroup(
-      this.newGroupName,
-      'No description yet',
-      user.id
-    );
+      this.isLoading = true;
+      this.errorMessage = '';
 
-    const { data: groupData, error: createError } = response;
-
-    if (createError || !groupData || groupData.length === 0) {
-      console.error('Error creating group:', createError);
-      return;
+      this.groupService.createGroup(
+        this.newGroupName,
+        this.newGroupDescription || 'No description yet',
+        uid
+      ).subscribe({
+        next: (groupData: StudyGroup[]) => {  
+          if (groupData && groupData.length > 0) {
+            const groupId = groupData[0].id;
+            // Add creator as admin
+            this.groupService.joinGroup(groupId, uid, 'admin').subscribe({
+              next: () => {
+                this.newGroupName = '';
+                this.newGroupDescription = '';
+                this.loadGroups(); // Refresh the lists
+              },
+              error: () => {
+                console.error('Error adding creator to group:');
+                this.isLoading = false;
+              }
+            });
+          }
+        },
+        error: () => {
+          console.error('Error creating group:');
+          this.errorMessage = 'Failed to create group';
+          this.isLoading = false;
+        }
+      });
     }
-
-    const groupId = groupData[0].id;
-
-    // Add creator as admin
-    const joinResponse: PostgrestResponse<any> = await this.groupService.joinGroup(
-      groupId,
-      user.id,
-      'admin'
-    );
-
-    if (joinResponse.error) {
-      console.error('Error adding creator to group_members:', joinResponse.error);
-      return;
-    }
-
-    this.newGroupName = '';
-    this.loadGroups(); // Refresh the lists
   }
 
-  async joinGroup(groupId: string) {
+  joinGroup(group_id: string) {
     const user = this.authService.getCurrentUser();
-    if (!user) return alert('You must be signed in to join a group');
-
-    const response = await this.groupService.joinGroup(groupId, user.id, 'member');
-
-    if (response.error) {
-      console.error('Error joining group:', response.error);
-      return;
+    const uid = user?.id;
+    if (user) {
+      this.isLoading = true;
+      this.errorMessage = '';
+      this.groupService.joinGroup(group_id, user.id, 'member').subscribe({
+        next: () => {
+          this.loadGroups(); // This will refresh both lists
+        },
+        error: (error) => {
+          console.error('Error joining group:', error);
+          this.isLoading = false;
+        }
+      });
     }
-
-    this.loadGroups(); // Refresh after joining
+  }
+  viewGroup()
+  {
+     this.router.navigate(['/viewGroups'])
   }
 }

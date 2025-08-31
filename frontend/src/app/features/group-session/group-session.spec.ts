@@ -1,19 +1,18 @@
-/*
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Studygroup } from './studygroup';
+import { GroupSession } from './group-session';
 
-describe('Studygroup', () => {
-  let component: Studygroup;
-  let fixture: ComponentFixture<Studygroup>;
+describe('GroupSession', () => {
+  let component: GroupSession;
+  let fixture: ComponentFixture<GroupSession>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Studygroup]
+      imports: [GroupSession]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Studygroup);
+    fixture = TestBed.createComponent(GroupSession);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -22,5 +21,3 @@ describe('Studygroup', () => {
     expect(component).toBeTruthy();
   });
 });
-
-*/
