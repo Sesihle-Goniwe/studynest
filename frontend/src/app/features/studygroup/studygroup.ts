@@ -26,6 +26,11 @@ export class StudygroupComponent implements OnInit {
   newGroupDescription: string = '';
   isLoading = false;
   errorMessage = '';
+
+  //editing group
+  editingGroup: StudyGroup | null = null;  // store group being edited
+editName: string = '';
+editDescription: string = '';
   constructor(
     private groupService: GroupService,
     private authService: AuthService,
@@ -141,5 +146,61 @@ export class StudygroupComponent implements OnInit {
   viewGroup(groupId:string)
   {
      this.router.navigate(['/viewGroups',groupId])
+  }
+
+  deleteGroup()
+  {
+    const user = this.authService.getCurrentUser();
+    const uid = user?.id;
+    if(uid)
+    {
+      if (!confirm("Are you sure you want to delete this group?")) return;
+        this.isLoading=true;
+
+
+
+        this.groupService.deleteGroup(uid).subscribe({
+          next: ()=> {
+            this.loadGroups();
+          },
+          error: ()=>
+          {
+            console.log("failed deleting groups");
+          }
+        });
+    }
+  }
+
+  startEdit(group: StudyGroup)
+  {
+      this.editingGroup=group;
+      this.editName=group.name;
+      this.editDescription=group.description || "";
+  }
+
+  cancelEdit()
+  {
+    this.editingGroup=null;
+    this.editName="";
+    this.editDescription="";
+  }
+
+  saveEdit()
+  {
+    if(this.editingGroup?.id)
+    {
+        this.groupService.updateGroup(this.editingGroup.id, this.editName, this.editDescription).subscribe({
+        next: () => {
+          this.editingGroup = null;
+          this.editName = '';
+          this.editDescription = '';
+          this.loadGroups(); // refresh lists
+        },
+        error: () => {
+          console.error("Failed to update group:");
+          this.isLoading = false;
+        }
+      });
+    }
   }
 }
