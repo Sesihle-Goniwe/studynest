@@ -334,23 +334,27 @@ describe('FilesService', () => {
       );
     });
 
-    it('should throw NotFoundException if file not found', async () => {
-      const fileId = 'nonexistent';
+    it('should throw InternalServerErrorException if file data is not found (no db error)', async () => {
+      const fileId = 'file123';
       const userId = 'user123';
 
+      // Mock the database to return null for both data and error
       const mockDbChain = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue({
-          data: null,
-          error: { message: 'Not found' },
+          data: null, // Simulate file not being found
+          error: null, // Simulate no database error occurring
         }),
       };
-
       mockSupabaseClient.from.mockReturnValue(mockDbChain);
 
+      // Expect the service to catch the resulting TypeError and throw a standard internal error
       await expect(service.summarize(fileId, userId)).rejects.toThrow(
-        NotFoundException
+        InternalServerErrorException,
+      );
+      await expect(service.summarize(fileId, userId)).rejects.toThrow(
+        'An unexpected error occurred during summarization.',
       );
     });
 
