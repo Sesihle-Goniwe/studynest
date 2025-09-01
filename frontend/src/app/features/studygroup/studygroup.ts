@@ -6,7 +6,7 @@ import { GroupService } from '../../services/group.service';
 import { AuthService } from '../auth/auth.service';
 import { StudyGroup } from '../../models/study-group.model';
 import { Router } from '@angular/router';
-
+import { ActivatedRoute } from '@angular/router';
 interface GroupWithRole {
   group: StudyGroup;
   role: 'admin' | 'member';
@@ -26,15 +26,16 @@ export class StudygroupComponent implements OnInit {
   newGroupDescription: string = '';
   isLoading = false;
   errorMessage = '';
-
   constructor(
     private groupService: GroupService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.loadGroups();
+    const groupId = this.route.snapshot.paramMap.get('groupId');
   }
 
   loadGroups() {
@@ -137,8 +138,8 @@ export class StudygroupComponent implements OnInit {
       });
     }
   }
-  viewGroup()
+  viewGroup(groupId:string)
   {
-     this.router.navigate(['/viewGroups'])
+     this.router.navigate(['/viewGroups',groupId])
   }
 }

@@ -1,26 +1,106 @@
 import { Injectable } from '@nestjs/common';
-import { group } from 'console';
-import { title } from 'process';
 import { SupabaseService } from 'src/supabase/supabase.service'; 
+import { MailerService } from 'src/mailer/mailer.service';
+import { DateTime } from "luxon";
 @Injectable()
 export class SessionsService {
 
-    constructor (private readonly supabaseSer:SupabaseService){}
+    constructor (private readonly supabaseSer:SupabaseService,
+        private readonly mailerSer:MailerService
+    ){}
     async createSession(body:any)
     {
-        const {data,error} = await this.supabaseSer
-        .getClient()
-        .from('sessions')
-        .insert([{group_id: body.group_id, title: body.title,
-            scheduled_at: body.scheduledAt, created_by: body.createdBy
-        }])
-        .select();
+        
+    try {
+        // Normalize start and end to UTC
+        const startUtc = DateTime.fromISO(body.start_time, { zone: body.timezone || "utc" }).toUTC();
+        const endUtc = DateTime.fromISO(body.end_time, { zone: body.timezone || "utc" }).toUTC();
 
-        if(error)
-        {
-            console.log("failed to create sesioon");
+        // Validation checks
+        if (endUtc <= startUtc) {
+            throw new Error("End time must be after start time.");
         }
-        return data;
+
+        const diffMinutes = endUtc.diff(startUtc, "minutes").minutes;
+        if (diffMinutes > 60) {
+            throw new Error("Session cannot be longer than 1 hour.");
+        }
+
+        if (startUtc < DateTime.utc()) {
+            throw new Error("Start time must be in the future.");
+        }
+
+        // Insert into Supabase
+        const { data, error } = await this.supabaseSer
+            .getClient()
+            .from("sessions")
+            .insert([{
+                group_id: body.group_id,
+                title: body.title,
+                description: body.description,
+                created_by: body.created_by,
+                start_time: startUtc.toISO(),
+                end_time: endUtc.toISO(),
+                location: body.location,
+            }])
+            .select();
+
+        if (error) {
+            console.log("failed to create session", error.message, error.details);
+            return null;
+        }
+
+        const session = data?.[0];
+
+        // fetch members
+        const { data: members, error: memError } = await this.supabaseSer
+            .getClient()
+            .from("group_members")
+            .select("user_id")
+            .eq("group_id", body.group_id);
+
+        if (memError) {
+            console.log("failed to fetch members", memError.message);
+            return session;
+        }
+
+        // send notifications
+        for (const member of members) {
+            await this.supabaseSer
+                .getClient()
+                .from("notifications")
+                .insert([{
+                    user_id: member.user_id,
+                    title: `New Study Session: ${session.title}`,
+                    message: `A session is scheduled from ${session.start_time} to ${session.end_time} at ${session.location}`,
+                    read: false,
+                }]);
+
+            const { data: student, error: studentErr } = await this.supabaseSer
+                .getClient()
+                .from("students")
+                .select("email")
+                .eq("user_id", member.user_id)
+                .single();
+
+            if (!studentErr && student?.email) {
+                await this.mailerSer.sendMail(
+                    student.email,
+                    `New Study Session: ${session.title}`,
+                    `A session is scheduled at ${session.start_time} - ${session.end_time} at ${session.location}`,
+                    `<h3>${session.title}</h3>
+                     <p>${session.description}</p>
+                     <p><strong>When:</strong> ${session.start_time} - ${session.end_time}</p>
+                     <p><strong>Where:</strong> ${session.location}</p>`
+                );
+            }
+        }
+
+        return session;
+    } catch (err: any) {
+        console.error("Session creation failed:", err.message);
+        throw err; // so frontend can show a message
+    }
     }
 
     async getSessionByGroup(groupId:string)

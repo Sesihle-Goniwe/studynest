@@ -11,6 +11,7 @@ import { SessionsModule } from './sessions/sessions.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MailerModule } from './mailer/mailer.module';
 import { ProgressModule } from './progress/progress.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import { StudentCoursesModule } from './student_courses/student_courses.module';
 
 @Module({
@@ -22,12 +23,15 @@ import { StudentCoursesModule } from './student_courses/student_courses.module';
     SessionsModule,
     GroupsModule,
     FilesModule,
+    StudentCoursesModule,
     MailerModule,
     ProgressModule,
-    StudentCoursesModule,
+    ScheduleModule.forRoot(),
     MulterModule.register({
       dest: './uploads', // Optional: specify a destination for temporary files
     }),
+    MailerModule,
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [AppService ],
