@@ -2,46 +2,59 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, PostgrestResponse } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { StudyGroup } from '../models/study-group.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+interface GroupMembeR
+{
+  group_id: string;
+  role: 'admin' | 'member';
+  study_groups: StudyGroup | StudyGroup[];
+}
+
+interface GroupsWithRole
+{
+  group_id:string,
+  role: 'admin' | 'member';
+
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupService {
-  private supabase: SupabaseClient;
+  private baseUrl ='https://studynester.onrender.com/groups'; 
+// private baseUrl ='http://localhost:3000/groups'
+  constructor(private http: HttpClient){}
 
-  constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+ getAllGroups(): Observable<StudyGroup[]> 
+ {
+    return this.http.get<StudyGroup[]>(this.baseUrl);
   }
 
-  async createGroup(name: string, description: string, userId: string): Promise<PostgrestResponse<StudyGroup>> {
-    return this.supabase
-      .from('study_groups')
-      .insert([{ name, description, created_by: userId }])
-      .select();
+  getMyGroups(userId: string): Observable<any[]> 
+  {
+      return this.http.get<any[]>(`${this.baseUrl}/${userId}`);
   }
 
-  async getAllGroups(): Promise<PostgrestResponse<StudyGroup>> {
-    return this.supabase.from('study_groups').select('*');
-   }
 
-
-  async joinGroup(
-    groupId: string,
-    userId: string,
-    role: 'admin' | 'member' = 'member'
-  ): Promise<PostgrestResponse<{ id: string; group_id: string; user_id: string; role: string }>> {
-    return this.supabase
-      .from('group_members')
-      .insert([{ group_id: groupId, user_id: userId, role }])
-      .select();
+  createGroup(name: string, description: string, userId: string): Observable<StudyGroup[]> 
+  {
+    console.log("user loging front",userId);
+    return this.http.post<StudyGroup[]>(`${this.baseUrl}/create`, {
+      name,
+      description,
+      userId
+    });
   }
 
-  async getMyGroups(userId: string): Promise<
-    PostgrestResponse<{ group_id: string; role: 'admin' | 'member'; study_groups: StudyGroup[] }>
-  > {
-    return this.supabase
-      .from('group_members')
-      .select('group_id, role, study_groups(*)')
-      .eq('user_id', userId);
+    joinGroup(groupId: string, userId: string, role: 'admin' | 'member' = 'member'): Observable<any> {
+    return this.http.post(`${this.baseUrl}/join`, {
+      groupId,
+      userId,
+      role
+    });
   }
+  
+  
 }

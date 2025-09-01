@@ -45,10 +45,20 @@ export const routes: Routes = [
       path:'studygroup',
       loadComponent : ()=> import('./features/studygroup/studygroup').then(m => m.StudygroupComponent)
     },
-    
     {
-      path: 'matches',
-      loadComponent : ()=> import('./features/matches/matches').then(m => m.Matches)
+        path: 'progress',
+        loadComponent : () =>
+            import('./features/progress/progress').then(m=>m.ProgressTracker),
+    },
+     {
+        path: 'notifications',
+        loadComponent : () =>
+            import('./features/notifications/notifications').then(m=>m.NotificationsList),
+    },
+     {
+        path: 'viewGroups',
+        loadComponent : () =>
+            import('./features/group-session/group-session').then(m=>m.GroupSession),
     }
-    
+
 ];
