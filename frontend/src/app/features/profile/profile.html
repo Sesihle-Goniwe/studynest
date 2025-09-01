@@ -5,18 +5,40 @@
       [src]="profileImage || 'assets/default-avatar.png'"
       alt="Profile Picture"
       class="profile-pic"
+      (click)="OnImageClick()"
     />
+
+    <input
+      type="file"
+      accept="image/*"
+      #fileInput
+      style="display: none"
+      (change)="onFileSelected($event)"
+    />
+
     <div class="profile-info">
+      <!-- Display name always visible -->
       <h2>{{ displayName || 'Student Name' }}</h2>
-      <p class="university">{{ university || 'University Name' }}</p>
-      <p class="year">Year {{ yearOfStudy || 'N/A' }}</p>
+
+      <!-- Only render the rest when students is loaded -->
+      <div *ngIf="students; else loadingBlock">
+        <p class="university">{{ students.university || 'University Name' }}</p>
+        <p class="year">Year {{ students.year || 'N/A' }}</p>
+        <p class="course">Course: {{ students.course || 'N/A' }}</p>
+      </div>
+
+      <!-- Optional loading placeholder -->
+      <ng-template #loadingBlock>
+        <p>Loading profile...</p>
+      </ng-template>
     </div>
+
     <button class="edit-btn" (click)="toggleEdit()">
       {{ isEditMode ? 'Cancel' : 'Edit Profile' }}
     </button>
   </div>
 
-  <!-- Editable Section 
+  <!-- Editable Section --> 
   <div class="profile-body" *ngIf="isEditMode; else viewMode">
     <form (ngSubmit)="saveProfile()">
       <div class="form-group">
@@ -29,6 +51,10 @@
         <input type="text" [(ngModel)]="course" name="course" />
       </div>
 
+      <div class="form-group">
+        <label>Year of Study</label>
+        <input type="number" [(ngModel)]="year" name="yearOfStudy" min="1" />
+      </div>
 
       <div class="form-group">
         <label>Skills</label>
@@ -43,22 +69,22 @@
       <div class="form-group">
         <label>Study Preference</label>
         <select [(ngModel)]="studyPreference" name="studyPreference">
-          <option value="morning">Morning</option>
-          <option value="afternoon">Afternoon</option>
-          <option value="night">Night</option>
-          <option value="hybrid">Hybrid</option>
+          <option value="Morning">Morning</option>
+          <option value="Afternoon">Afternoon</option>
+          <option value="Night">Night</option>
+          <option value="Hybrid">Hybrid</option>
         </select>
       </div>
 
       <button type="submit" class="save-btn">Save Changes</button>
     </form>
   </div>
--->
+
   <!-- Readonly Section -->
   <ng-template #viewMode>
-    <div class="profile-view">
-      <p><strong>Email:</strong> {{ email }}</p>
-      <p><strong>Course:</strong> {{ course }}</p>
+    <div class="profile-body" *ngIf="students">
+      <p><strong>Email:</strong> {{ students.email }}</p>
+      <p><strong>Course:</strong> {{ course || 'Not specified' }}</p>
       <p><strong>Skills:</strong> {{ skills || 'Not specified' }}</p>
       <p><strong>Preference:</strong> {{ studyPreference || 'Not specified' }}</p>
     </div>

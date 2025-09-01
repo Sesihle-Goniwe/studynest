@@ -38,6 +38,15 @@ export class DashboardComponent  {
   {
     this.router.navigate(['/studygroup']);
   }
+  goToProgress()
+  {
+    this.router.navigate(['./progress']);
+  }
+
+    goToNotification()
+  {
+    this.router.navigate(['/notifications'])
+  }
 
   goToStudyPartner(){
     this.router.navigate(['/matches']);

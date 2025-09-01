@@ -1,85 +1,138 @@
-/* src/app/features/login/login.component.scss */
+// Colors from home.scss
+$charcoal: #1a1a1a;
+$dark-gray: #2d2d2d;
+$medium-gray: #404040;
+$light-gray: #6b6b6b;
+$white: #ffffff;
+$off-white: #f5f5f5;
+$accent: #4a9eff;
+
 :host {
-  display: block;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #ffffff, #f5f5f5);
   display: flex;
+  min-height: 100vh;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, $charcoal, $dark-gray);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: $white;
 }
 
 .login-card {
-  max-width: 400px;
+  max-width: 420px;
   width: 100%;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  background: $dark-gray;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
   animation: fadeUp 0.6s ease-out;
-}
 
-mat-card-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #333;
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
+  mat-card-header {
+    text-align: center;
+    margin-bottom: 1rem;
 
-mat-card-subtitle {
-  text-align: center;
-  color: #666;
-  margin-bottom: 1.5rem;
+    mat-card-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: $white;
+    }
+
+    mat-card-subtitle {
+      color: $light-gray;
+      font-size: 0.95rem;
+    }
+  }
+
+  mat-card-content {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .full-width {
   width: 100%;
   margin-bottom: 1rem;
-  height: 48px;
+  height: 50px;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+
+  img.provider-logo {
+    width: 18px;
+    height: 18px;
+  }
 }
 
+// Google button styled with accent contrast
 .google-btn {
-  background: #4285F4;
-  color: white;
+  background: $accent !important;
+  color: $white !important;
+  box-shadow: 0 4px 14px rgba($accent, 0.4);
+
+  &:hover {
+    background: darken($accent, 8%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($accent, 0.5);
+  }
 }
 
+// Microsoft button styled with charcoal contrast
 .microsoft-btn {
-  background: #2F2F2F;
-  color: white;
-}
+  background: $charcoal !important;
+  color: $white !important;
+  border: 1px solid $medium-gray;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 
-.provider-logo {
-  width: 15px;
-  height: 15px;
-  margin-right: 10px;
+  &:hover {
+    background: lighten($charcoal, 5%) !important;
+    transform: translateY(-2px);
+    border-color: $white;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  }
 }
 
 .divider {
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 16px 0;
-  color: rgba(0, 0, 0, 0.54);
-  
+  margin: 1.5rem 0;
+  color: $light-gray;
+  font-size: 0.85rem;
+
   &::before, &::after {
     content: "";
     flex: 1;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid $medium-gray;
   }
-  
+
   &::before {
-    margin-right: 16px;
+    margin-right: 1rem;
   }
-  
+
   &::after {
-    margin-left: 16px;
+    margin-left: 1rem;
   }
 }
 
 mat-card-actions {
   display: flex;
   justify-content: center;
+  margin-top: 1rem;
+
+  button {
+    color: $accent;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
+// Animations
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }

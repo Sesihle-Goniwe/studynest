@@ -1,52 +1,117 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component,ElementRef,OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
+import { HttpClient } from '@angular/common/http';
 import { Students, _Student } from '../../services/students';
 @Component({
   selector: 'app-profile',
-  imports: [FormsModule],
+  standalone :true,
+  imports: [FormsModule,CommonModule],
   templateUrl: './profile.html',
   styleUrl: './profile.scss'
 })
-export class Profile {
+export class Profile implements OnInit {
 
     profileImage : string | null = null;
     displayName : string | null = null;
     email : string | null=null;
     course  : string | null = null;
     university : string | null = null;
-    yearOfStudy : null | undefined;
-    isEditMode : null | undefined;
-    bio : null | undefined;
+    year : null | undefined;
+    isEditMode : boolean =false;
     skills :  null | undefined;
-    studyPreference : string = "undefined";
-    ID: string | null = null;
+    studyPreference : string = "Not specified";
+    students : _Student | null=null;
+   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
 
-    constructor (private authser: AuthService){}
+    constructor (private authser: AuthService, private studentService : Students,private http:HttpClient){}
    
-  ngOnInit()
+ngOnInit() {
+  this.isEditMode=false;
+  const user = this.authser.getCurrentUser();
+  this.displayName = this.authser.getUserDisplayName();
+  const uid = user?.id;
+  if(uid)
   {
-    const user = this.authser.getCurrentUser();
-    this.displayName = this.authser.getUserDisplayName();
-    /*
-    if(user)
-    {
-        this.ID=user.id;
-        const profile = await this.stu.getStudentProfile(this.ID);
-        this.university=profile.university;
-        this.course=profile.course;
-        this.yearOfStudy=profile.year_of_study;
-    }
-    */
+    this.studentService.getStudentByUid(uid).subscribe({ next: (data: any) => 
+      {
+      this.students = data;
 
+      //preload
+
+        this.course = data.course;
+        this.skills = data.skills || null; // default to null if empty
+        this.studyPreference = data.studyPreference || "Not specified";
+        this.year = data.year || null;
+        this.profileImage = data.profileImage || null;
+      
+      },
+  });
     
   }
-      toggleEdit()
+}
+
+  toggleEdit()
       {
-        
+       
+        this.isEditMode=!this.isEditMode;
       }
 
-      saveProfile()
-      {}
+       saveProfile()
+      {
+          const user = this.authser.getCurrentUser();
+          const uid = user?.id;
+          if(uid)
+          {
+              const updateDto = {
+                course: this.course,
+                skills:this.skills,
+                studyPreference:this.studyPreference,
+                year: this.year
+          
+              };
+             this.studentService.updatestudentbyUid(uid,updateDto)
+                    .subscribe(updated=>{
+                    this.isEditMode=false;
+              });
+        }
+      }
+
+    uploadPhoto(file: File) 
+    {
+    const formData = new FormData();
+    formData.append('profileImage', file);
+
+    const user = this.authser.getCurrentUser();
+    if (!user?.id) return;
+
+    this.studentService.updatestudentPhoto(user.id, formData).subscribe({
+      next: updated => {
+        this.profileImage = updated.profileImage; 
+      },
+      error: err => console.error('Failed to upload profile image', err)
+    });
+  }
+      
+      OnImageClick()
+      {
+          this.fileInput.nativeElement.click();
+      }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    // Preview the image immediately
+    const reader = new FileReader();
+    reader.onload = e => this.profileImage = e.target?.result as string;
+    reader.readAsDataURL(file);
+
+    // Immediately upload and save to DB
+    this.uploadPhoto(file);
+  }
 }
+
+
+

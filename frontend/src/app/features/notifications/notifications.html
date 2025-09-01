@@ -1,0 +1,11 @@
+<div class="notifications-header">
+  <h2>Notifications</h2>
+  <button class="clear-btn" (click)="clearNotifications()">Clear All</button>
+</div>
+
+<div *ngFor="let notif of notifications"
+     (click)="openNotification(notif)"
+     [class.unread]="!notif.read"
+     class="notification-item">
+  {{ "You have a new message" }}
+</div>
