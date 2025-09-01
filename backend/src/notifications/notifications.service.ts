@@ -3,7 +3,7 @@ import { MailerService } from 'src/mailer/mailer.service';
 import { SupabaseService } from 'src/supabase/supabase.service';
 @Injectable()
 export class NotificationsService {
-    constructor(private readonly supabaseSer:SupabaseService
+    constructor(public readonly supabaseSer:SupabaseService
         , private readonly mailer:MailerService
     ){}
 
@@ -62,8 +62,6 @@ export class NotificationsService {
           return data;
     }
 }
-
-    
 
    // Get notification by user
 

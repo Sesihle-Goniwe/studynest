@@ -26,7 +26,7 @@
         <span class="role">({{ item.role }})</span>
         <p>{{ item.group.description || 'No description yet' }}</p>
 
-         <button (click)="viewGroup()">View Group</button>
+         <button (click)="viewGroup(item.group.id)">View Group</button>
       </li>
     </ul>
   </div>
