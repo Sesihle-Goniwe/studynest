@@ -155,6 +155,7 @@ body {
 // Your specific styles, now applied within the flex layout
 .stats-footer {
   display: flex;
+  padding-top: 4.6rem;
   flex-direction: column;  // Stack stats vertically within their own card
   gap: 1rem;               // Space between "Topics Completed" and "Hours Studied"
   background-color: #f5f5f5;
@@ -238,6 +239,7 @@ body {
 // A general style for all action buttons for consistency
 // A general style for all action buttons for consistency
 // Add .view-btn to this list
+.summarize-btn,
 .view-btn,
 .log-hours-btn,
 .complete-btn,
@@ -247,18 +249,26 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  width: 80px; // This gives them a consistent width
+  width: 90px; // This gives them a consistent width
   text-align: center;
   transition: background-color 0.2s; // Added a transition for hover effects
 }
 
 // Your specific button colors
-.view-btn {
-  background-color: #1976d2; // Your blue color
+.summarize-btn {
+  background-color: #9c27b0; // Your blue color
   color: white;
 
   &:hover {
-    background-color: #125a9c;
+    background-color: #832194;
+  }
+}
+.view-btn {
+  background-color: #3976df; // Your blue color
+  color: white;
+
+  &:hover {
+    background-color: #2f64bf;
   }
 }
 
@@ -286,5 +296,61 @@ body {
 
   &:hover {
     background-color: #e03838;
+  }
+}
+.rankings-section {
+  flex-grow: 2;
+  width: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs-container {
+  display: flex;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 1rem;
+}
+
+.tab {
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #666;
+  border-bottom: 2px solid transparent;
+
+  &.active {
+    color: #1976d2;
+    border-bottom-color: #1976d2;
+    font-weight: 600;
+  }
+}
+
+.chart-container {
+  position: relative;
+  height: 350px;
+  flex-grow: 1; // Allows the chart container to fill the available space
+}
+.completed-tops{
+  display : flex;
+  flex-direction: row;
+  gap : 1rem;
+}
+.clickable-topic {
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #1976d2;
+    // Your requested overline effect
+    text-decoration: overline;
+    text-decoration-color: #1976d2;
+    text-decoration-thickness: 2px;
   }
 }
