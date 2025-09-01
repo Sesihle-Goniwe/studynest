@@ -136,5 +136,25 @@ async updateStatus(id: string, status: string) {
   
   return { message: `Topic with id ${id} deleted successfully.` };
 }
+async findUserGroups(userId: string) {
+    const { data, error } = await this.supabase
+      .from('group_members')
+      .select('group:study_groups(id, name)')
+      .eq('user_id', userId);
+
+    if (error) { throw new InternalServerErrorException('Failed to fetch user groups.'); }
+    // The data is nested, so we extract just the group objects
+    return data.map(item => item.group);
+  }
+
+  async getRankingsForGroup(groupId: string) {
+    const { data, error } = await this.supabase
+      .rpc('get_group_rankings', { group_id_param: groupId });
+      
+    if (error) { 
+      console.error('Supabase RPC Error:', error);
+      throw new InternalServerErrorException('Failed to fetch group rankings.'); }
+    return data;
+  }
   // We will expand this with more methods like logHours, updateStatus etc. later.
 }

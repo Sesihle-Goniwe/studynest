@@ -1,144 +1,429 @@
-// Variables
-$charcoal: #1a1a1a;
-$dark-gray: #2d2d2d;
-$medium-gray: #404040;
-$light-gray: #6b6b6b;
+// 🎨 Color Variables
+$charcoal: #121212;
+$dark-gray: #1e1e1e;
+$medium-gray: #2b2b2b;
+$light-gray: #7d7d7d;
 $white: #ffffff;
 $off-white: #f5f5f5;
 $accent: #4a9eff;
 $success: #4caf50;
 $warning: #ff9800;
+$danger: #ff6b6b;
 
+// 🚀 Dashboard Container
 .dashboard-container {
   display: flex;
   height: 100vh;
   background-color: $charcoal;
   color: $white;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-// Sidebar
+// 📌 Sidebar
 .sidebar {
-  width: 280px;
-  background-color: $dark-gray;
+  width: 260px;
+  background: linear-gradient(180deg, $dark-gray 0%, #111 100%);
   display: flex;
   flex-direction: column;
   padding: 2rem 0;
-  
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.6);
+
   .logo {
     padding: 0 2rem 2rem;
     border-bottom: 1px solid $medium-gray;
-    
+
     h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-size: 1.6rem;
+      font-weight: 700;
       margin: 0;
+      background: linear-gradient(90deg, $accent, lighten($accent, 15%));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   }
-  
+
   .nav-menu {
     flex: 1;
-    padding: 2rem 1rem;
-    
+    padding: 2rem 1rem; 
+
     .nav-item {
       width: 100%;
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 1rem;
-      margin-bottom: 0.5rem;
+      padding: 0.9rem 1rem;
+      margin-bottom: 0.6rem;
       background: none;
       border: none;
-      color: $white;
+      color: $light-gray;
       font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
-      border-radius: 0.5rem;
-      transition: all 0.2s ease;
-      
+      border-radius: 0.75rem;
+      transition: all 0.25s ease;
+      position: relative;
+
       .icon {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
+        stroke-width: 2.2;
       }
-      
+
       &:hover {
-        background-color: $medium-gray;
+        background: rgba(255, 255, 255, 0.05);
+        color: $white;
       }
-      
+
       &.active {
-        background-color: $accent;
-        
+        background: rgba($accent, 0.15);
+        color: $accent;
+        font-weight: 600;
+        box-shadow: inset 0 0 12px rgba($accent, 0.3);
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: -0.5rem;
+          width: 4px;
+          height: 70%;
+          background: $accent;
+          border-radius: 0 4px 4px 0;
+        }
+
         &:hover {
-          background-color: darken($accent, 10%);
+          background: rgba($accent, 0.25);
         }
       }
-      
+
       &.signout {
-        color: #ff6b6b;
-        
+        color: $danger;
+
         &:hover {
-          background-color: rgba(255, 107, 107, 0.1);
+          background: rgba($danger, 0.1);
+          color: lighten($danger, 5%);
         }
       }
     }
   }
-  
+
   .sidebar-footer {
-    padding: 0 1rem;
+    padding: 1.5rem 1rem 0;
     border-top: 1px solid $medium-gray;
-    padding-top: 2rem;
   }
 }
 
-// Main Content
+// 📖 Main Content
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding: 2rem 3rem;
-  
+  padding: 2.5rem 3.5rem;
+  background: linear-gradient(135deg, #181818, #101010);
+
   .content-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 3rem;
-    
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
     .welcome-section {
       h2 {
-        font-size: 2rem;
+        font-size: 2.2rem;
         margin: 0 0 0.5rem;
-        font-weight: 600;
+        font-weight: 700;
+        background: linear-gradient(90deg, $accent, lighten($accent, 15%));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
-      
+
       .subtitle {
         color: $light-gray;
         margin: 0;
         font-size: 1.1rem;
       }
     }
-    
+
     .primary-button {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background-color: $accent;
+      gap: 0.6rem;
+      background: $accent;
       color: $white;
       border: none;
-      padding: 1rem 2rem;
-      border-radius: 0.5rem;
+      padding: 0.9rem 1.8rem;
+      border-radius: 0.75rem;
       font-size: 1rem;
-            font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
-      
+      transition: all 0.25s ease;
+      box-shadow: 0px 4px 14px rgba($accent, 0.4);
+
       .icon {
         width: 20px;
         height: 20px;
       }
-      
+
       &:hover {
-        background-color: darken($accent, 10%);
+        background: lighten($accent, 5%);
         transform: translateY(-2px);
+        box-shadow: 0px 6px 18px rgba($accent, 0.5);
       }
     }
   }
+
+  // Notification Styles
+  .notification-container {
+    position: relative;
+    
+    .notification-button {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.6rem;
+      border-radius: 50%;
+      color: $light-gray;
+      transition: all 0.25s ease;
+      background: rgba(255, 255, 255, 0.05);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: $white;
+      }
+      
+      .icon {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: $danger;
+        color: $white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+    }
+    
+    .notification-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      width: 360px;
+      background: $dark-gray;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      margin-top: 1rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      
+      &.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      
+      .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid $medium-gray;
+        
+        h3 {
+          margin: 0;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+        
+        .mark-all-read {
+          background: none;
+          border: none;
+          color: $accent;
+          font-size: 0.85rem;
+          cursor: pointer;
+          padding: 0.25rem 0.5rem;
+          border-radius: 0.25rem;
+          
+          &:hover {
+            background: rgba($accent, 0.1);
+          }
+        }
+      }
+      
+      .notification-list {
+        max-height: 350px;
+        overflow-y: auto;
+        
+        .empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem;
+          color: $light-gray;
+          
+          svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+          }
+          
+          p {
+            margin: 0;
+            font-size: 0.9rem;
+          }
+        }
+        
+        .notification-item {
+          display: flex;
+          align-items: flex-start;
+          padding: 1rem 1.5rem;
+          border-bottom: 1px solid rgba($medium-gray, 0.5);
+          transition: background 0.2s ease;
+          
+          &:last-child {
+            border-bottom: none;
+          }
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.03);
+          }
+          
+          &.unread {
+            background: rgba($accent, 0.05);
+            
+            .notification-text {
+              font-weight: 500;
+              color: $white;
+            }
+          }
+          
+          .notification-icon {
+            margin-right: 1rem;
+            padding-top: 0.25rem;
+            
+            svg {
+              width: 18px;
+              height: 18px;
+              color: $accent;
+            }
+          }
+          
+          .notification-content {
+            flex: 1;
+            
+            .notification-text {
+              margin: 0 0 0.5rem;
+              font-size: 0.9rem;
+              line-height: 1.4;
+              color: $light-gray;
+            }
+            
+            .notification-time {
+              font-size: 0.75rem;
+              color: rgba($light-gray, 0.7);
+            }
+          }
+          
+          .notification-dismiss {
+            background: none;
+            border: none;
+            color: $light-gray;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            
+            &:hover {
+              background: rgba($danger, 0.1);
+              color: $danger;
+            }
+          }
+        }
+      }
+      
+      .notification-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid $medium-gray;
+        text-align: center;
+        
+        a {
+          color: $accent;
+          text-decoration: none;
+          font-size: 0.9rem;
+          cursor: pointer;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+
+  // Click outside to close notifications
+  .notification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    display: none;
+    
+    &.active {
+      display: block;
+    }
+  }
+
+  // Example cards for future content
+  .card {
+    background: $dark-gray;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    h3 {
+      margin: 0 0 1rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: $off-white;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: $light-gray;
+    }
+  }
 }
-  
