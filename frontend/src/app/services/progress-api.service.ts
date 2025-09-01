@@ -38,4 +38,11 @@ export class ProgressApiService {
     const url = `${this.apiUrl}/topics/${topicId}`;
     return this.http.delete(url);
   }
+   getUserGroups(userId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/user-groups?userId=${userId}`);
+  }
+
+  getGroupRankings(groupId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/rankings/${groupId}`);
+  }
 }
