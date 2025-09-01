@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class StudentCoursesService {
-  private apiUrl = 'http://localhost:3000/student-courses'; // Your NestJS backend
+  //private apiUrl = 'http://localhost:3000/student-courses'; // Your NestJS backend
+  private apiUrl = 'https://studynester.onrender.com/student-courses'; // Your NestJS backend
 
   constructor(private http: HttpClient) {}
 

@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { CallbackComponent } from './features/auth/callback.component';
 import {Home} from './features/home/home';
-import { Profile } from './features/profile/profile';
 
 
 export const routes: Routes = [
@@ -56,7 +55,7 @@ export const routes: Routes = [
             import('./features/notifications/notifications').then(m=>m.NotificationsList),
     },
      {
-        path: 'viewGroups',
+        path: 'viewGroups/:groupId',
         loadComponent : () =>
             import('./features/group-session/group-session').then(m=>m.GroupSession),
     },

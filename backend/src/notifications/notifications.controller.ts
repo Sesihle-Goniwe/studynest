@@ -26,5 +26,6 @@ export class NotificationsController {
     {
         return this.supabaseService.clearNotifications(userId);
     }
+    
 
 }
