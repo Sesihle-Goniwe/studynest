@@ -122,42 +122,30 @@ $danger: #ff6b6b;
   .content-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 3rem;
-    flex-wrap: wrap;
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
 
     .welcome-section {
-      flex: 1;
-      display:flex;
-      flex-direction: column;
-      align-items: flex-start;
-      margin-bottom: 1.5rem;
-
       h2 {
         font-size: 2.2rem;
-        margin: 0;
+        margin: 0 0 0.5rem;
         font-weight: 700;
         background: linear-gradient(90deg, $accent, lighten($accent, 15%));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 0.5rem;
       }
 
       .subtitle {
         color: $light-gray;
         margin: 0;
         font-size: 1.1rem;
-        //margin-bottom: 1rem;
-        line-height: 1.4; 
       }
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      margin-top: 0.5rem;
     }
 
     .primary-button {
