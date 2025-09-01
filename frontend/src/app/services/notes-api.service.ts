@@ -28,4 +28,11 @@ export class NotesApiService {
   // Add the userId as a query parameter
   return this.http.get<{ signedUrl: string }>(`${this.backendUrl}/${fileId}/url`, { params: { userId } });
 }
+getSummary(fileId: string, userId: string): Observable<{ summary: string }> {
+    return this.http.post<{ summary: string }>(
+      `${this.backendUrl}/${fileId}/summarize`,
+      { userId } // Pass userId in the body
+    );
+  }
+
 }

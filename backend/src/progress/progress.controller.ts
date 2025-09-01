@@ -47,5 +47,14 @@ export class ProgressController {
   remove(@Param('id') id: string) {
     return this.progressService.remove(id);
   }
+  @Get('user-groups')
+  findUserGroups(@Query('userId') userId: string) {
+    return this.progressService.findUserGroups(userId);
+  }
+
+  @Get('rankings/:groupId')
+  getRankings(@Param('groupId') groupId: string) {
+    return this.progressService.getRankingsForGroup(groupId);
+  }
 }
 
