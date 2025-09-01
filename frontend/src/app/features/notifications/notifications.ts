@@ -17,14 +17,22 @@ export class NotificationsList implements OnInit{
    ){}
 
     
-ngOnInit(): void {
-    this.notservice.getNotifications().subscribe({
-      next: (data) => (this.notifications = data),
-      error: (err) => console.error('Failed to load notifications', err)
-    });
+ngOnInit(): void 
+{
+    const user = this.authser.getCurrentUser();
+    const uid = user?.id;
+    if(uid)
+    {
+        this.notservice.getNotificationsByUser(uid).subscribe({
+        next: (data: _Notifications[]) => {
+        this.notifications = data;
+  },
+  error: (err) => console.error('Failed to fetch notifications', err)
+});
 
-    
   }
+  }
+
 
   openNotification(notif: _Notifications)
   {

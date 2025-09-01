@@ -84,5 +84,7 @@ export class GroupSession {
 
     }
     goBack()
-    {}
+    {
+      
+    }
 }

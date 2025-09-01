@@ -13,8 +13,8 @@ export interface _Notifications
   providedIn: 'root'
 })
 export class Notifications {
-  private baseUrl ='https://studynester.onrender.com/notifications'
-  //private baseUrl ='http://localhost:3000/notifications'
+  //private baseUrl ='https://studynester.onrender.com/notifications'
+  private baseUrl ='http://localhost:3000/notifications'
   constructor(private http:HttpClient){}
 
 
@@ -23,6 +23,10 @@ export class Notifications {
     return this.http.get<_Notifications[]>(this.baseUrl);
   }
 
+   getNotificationsByUser(uid:string) : Observable<any>
+  {
+    return this.http.get(`${this.baseUrl}/${uid}`);
+  }
   markAsRead(notificationId:string) : Observable<any>
   {
       return this.http.patch(`${this.baseUrl}/${notificationId}`, {
