@@ -37,6 +37,7 @@ $danger: #ff6b6b;
       font-size: 1.6rem;
       font-weight: 700;
       margin: 0;
+      padding-bottom: 0.9rem
       //background: linear-gradient(90deg, $accent, lighten($accent, 15%));
       background: linear-gradient(90deg, $accent, color.adjust($accent, $lightness: 15%));
       -webkit-background-clip: text;
