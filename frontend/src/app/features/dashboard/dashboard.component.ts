@@ -117,6 +117,10 @@ export class DashboardComponent implements OnInit {
   goToProgress() {
     this.router.navigate(['./progress']);
   }
+
+  goToStudyPartner(){
+    this.router.navigate(['/matches']);
+  }
   
   createSession() {
     console.log('Create session clicked');
