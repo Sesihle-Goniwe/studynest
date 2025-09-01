@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>AI Summary</h2>
+<mat-dialog-content>
+  @if (data.summary$ | async; as result) {
+    <markdown [data]="result.summary"></markdown>
+  } @else {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Generating summary, please wait...</p>
+    </div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

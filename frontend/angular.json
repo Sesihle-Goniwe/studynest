@@ -24,7 +24,12 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/assets"
+              "src/assets",
+              {
+                 "glob": "**/*",
+                  "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                  "output": "/assets/"
+              }
             ],
             "styles": [
               "src/styles.scss"
@@ -40,8 +45,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "12kB"
                 }
               ],
               "outputHashing": "all"

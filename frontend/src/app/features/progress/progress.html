@@ -1,6 +1,6 @@
 <nav class="main-nav">
   <button class="sidebar-toggle" (click)="sidebarOpen = !sidebarOpen" aria-label="Toggle sidebar"> ☰ </button>
-  <span class="app-title">Log Notes</span>
+  <span class="app-title">Track Progresss</span>
 </nav>
 
 <aside class="sidebar" [class.open]="sidebarOpen">
@@ -9,83 +9,196 @@
   </button>
   <h2>Sidebar</h2>
   <ul>
-    <li><a href="#">Dashboard</a></li>
-    <li><a href="#">Progress</a></li>
-    <li><a href="#">Settings</a></li>
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/profile">Profile</a></li>
+    <li><a href="/notifications">Notifications</a></li>
+    <li><a href="#">Exit</a></li>
   </ul>
 </aside>
 
 <main class="main-content">
-  <!-- The dropzone section no longer contains the footer -->
-  <section class="dropzone-container" 
-           tabindex="0" 
-           (click)="fileInput.click()" 
-           (keydown.enter)="fileInput.click()"
-           (dragover)="onDragOver($event)" 
-           (drop)="onDrop($event)" 
-           aria-label="Upload Study Notes">
-    <label for="fileUpload" class="dropzone-label">
-      <input #fileInput type="file" id="fileUpload" (change)="onFileSelected($event)" hidden />
-      <div class="dropzone-content">
-        <h2>Upload Study Notes</h2>
-        <p>
-          <strong>Drop your study notes here</strong> or 
-          <span class="upload-link">click to upload</span>
-        </p>
-        <!-- Display selected file name or upload status -->
-        @if(uploadStatus) {
-          <p class="status-message">{{ uploadStatus }}</p>
-        } @else if (selectedFile) {
-          <p>Selected: {{ selectedFile.name }}</p>
+  <section class="dropzone-mytopics">
+
+    <section class="dropzone-container" 
+            tabindex="0" 
+            (dragover)="onDragOver($event)" 
+            (drop)="onDrop($event)" 
+            aria-label="Upload Study Notes">
+      <label for="fileUpload" class="dropzone-label">
+        <input #fileInput type="file" id="fileUpload" (change)="onFileSelected($event)" hidden />
+        <div class="dropzone-content">
+          
+          @if (!selectedFile) {
+            <h2>Upload Study Notes</h2>
+            <p>
+              <strong>Drop your study topic here</strong> or 
+              <span class="upload-link" (click)="fileInput.click()">click to upload</span>
+            </p>
+          } @else {
+            <div class="file-ready-container">
+              <p class="selected-file-name">Ready to upload: <strong>{{ selectedFile.name }}</strong></p>
+              <!-- Button Group for Upload and Cancel -->
+              <div class="button-group">
+                <button class="upload-button" (click)="onUpload()">Upload</button>
+                <button class="cancel-button" (click)="cancelUpload()">Cancel</button>
+              </div>
+            </div>
+          }
+
+          @if(uploadStatus) {
+            <p class="status-message">{{ uploadStatus }}</p>
+          }
+        </div>
+      </label>
+    </section>
+    <section aria-labelledby="topics-container" class = "topics-cont">
+  <!-- "MY TOPICS" TABLE -->
+    <section aria-labelledby="topics-title" class="topics-section">
+      <h2 id="topics-title">My Topics</h2>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Topic Name</th>
+            <th scope="col">Status</th>
+            <th scope="col">Date Created</th>
+            <th scope="col">Actions</th> 
+          </tr>
+        </thead>
+        @if (activeTopics.length) {
+           <tbody>
+            @for (topic of activeTopics; track topic.id) {
+              <tr>
+                <td>
+                  <span class="clickable-topic" (click)="viewTopicPdf(topic)">
+                    {{ topic.name | removeExtension }}
+                  </span>
+                </td>
+                <td>{{ topic.status }}</td>
+                <td>{{ topic.created_at | date:'short' }}</td>
+                <td class="actions-cell">
+                  <div class="action-buttons-container">
+                    @if (topic.status !== 'Completed') {
+                      <button class="complete-btn" (click)="markAsComplete(topic)">
+                       Complete
+                      </button>
+                    }
+                    <button class="delete-btn" (click)="deleteTopic(topic)">
+                      Delete
+                    </button>
+                     <button class="action-btn summarize-btn" (click)="summarizeTopic(topic)">
+                      Summarize
+                    </button>
+                    <button class="log-hours-btn" (click)="openLogHoursDialog(topic)">
+                      Log
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody> 
+        } @else {
+          <tfoot>
+            <tr>
+              <td colspan="3">You haven't uploaded any topics yet.</td>
+            </tr>
+          </tfoot>
+        }
+        @if (showPdfViewer && pdfSrc) {
+        <div class="pdf-viewer-overlay" (click)="closePdfViewer()">
+          <div class="pdf-viewer-container" (click)="$event.stopPropagation()">
+            <button class="close-viewer-btn" (click)="closePdfViewer()">×</button>
+            <ngx-extended-pdf-viewer 
+            [src]="pdfSrc" 
+            useBrowserLocale="true" 
+            height="90vh">
+            </ngx-extended-pdf-viewer>
+          </div>
+        </div>
+      }
+      </table>
+    </section>
+    <section class = "completed-tops"> 
+      <section aria-labelledby="completed-topics-title" class="topics-section">
+      <h2 id="completed-topics-title">Completed Topics</h2>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Topic</th>
+            <th scope="col">Date Completed</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        @if (completedTopics.length) {
+          <tbody>
+            @for (topic of completedTopics; track topic.id) { <tr>
+                <td>{{ topic.name | removeExtension }}</td>
+                <td>{{ topic.date_completed | date:'short' }}</td>
+                <td class="actions-cell">
+                  <button 
+                    type="button" 
+                    class="view-btn"
+                    (click)="viewTopicPdf(topic)">
+                    View
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        } @else {
+          <tfoot>
+            <tr>
+              <td colspan="3">No topics completed yet.</td>
+            </tr>
+          </tfoot>
+        }
+      </table>
+    </section>
+
+      <footer class="stats-footer">
+        <div>
+          <strong>Topics Completed:</strong> {{ completedTopics.length }}
+        </div>
+        <div>
+          <strong>Hours Studied:</strong> {{ totalHoursStudied }}
+        </div>
+        <div class="stats-actions">
+          <button mat-button (click)="openLogHoursDialog()">Log Hours</button>
+          <button mat-raised-button color="primary" (click)="openStatsDialog()">View Details</button>
+        </div>
+      </footer>
+    </section>
+    
+    <!--end of topics container-->
+    </section>
+
+  </section>
+  <!--Dashboard-->
+  <section class="dashboard-container">
+  
+
+  @if(userGroups.length > 0) {
+    <section class="rankings-section">
+      <h2>Group Rankings</h2>
+      <div class="tabs-container">
+        @for(group of userGroups; track group.id) {
+          <button class="tab" 
+                  [class.active]="selectedGroup?.id === group.id"
+                  (click)="onGroupTabChange(group)">
+            {{ group.name }}
+          </button>
         }
       </div>
-    </label>
-  </section>
+      <div class="chart-container">
+        <canvas #rankingsChart></canvas>
+      </div>
+    </section>
+  }
 
-  <!-- The stats footer is now outside and below the dropzone -->
-  <footer class="stats-footer">
-    <div>
-      <strong>Topics Completed:</strong> {{ completedTopics.length }}
-    </div>
-    <div>
-      <strong>Hours Studied:</strong> {{ totalHoursStudied }}
-    </div>
-  </footer>
-
-  <!-- AI Result Section -->
   @if(aiExtractedText) {
     <section class="ai-result">
       <h2>AI Extracted Data</h2>
       <pre>{{ aiExtractedText }}</pre>
     </section>
   }
-
-  <!-- Completed Topics Table -->
-  <section aria-labelledby="completed-topics-title" class="topics-section">
-    <h2 id="completed-topics-title">Completed Topics</h2>
-    <table>
-      <thead>
-        <tr>
-          <th scope="col">Topic</th>
-          <th scope="col">Date Completed</th>
-        </tr>
-      </thead>
-      @if (completedTopics.length) {
-        <tbody>
-          @for (topic of completedTopics; track $index) {
-            <tr>
-              <td>{{ topic.name }}</td>
-              <td>{{ topic.dateCompleted | date:'short' }}</td>
-            </tr>
-          }
-        </tbody>
-      } @else {
-        <tfoot>
-          <tr>
-            <td colspan="2">No topics completed yet.</td>
-          </tr>
-        </tfoot>
-      }
-    </table>
-  </section>
+</section>
 </main>
