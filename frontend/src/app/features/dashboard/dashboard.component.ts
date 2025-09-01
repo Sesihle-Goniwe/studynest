@@ -16,7 +16,7 @@ interface Notification {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.scss']
 })
 export class DashboardComponent implements OnInit {
   displayName: string | null = null;
