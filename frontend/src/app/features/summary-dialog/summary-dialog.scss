@@ -1,0 +1,35 @@
+// frontend/src/app/summary-dialog/summary-dialog.component.scss
+:host {
+  // Styles for headings, lists, etc., inside the rendered markdown
+  markdown {
+    h1, h2, h3 {
+      margin-top: 1.2rem;
+      margin-bottom: 0.6rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.3rem;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  // Styles for the loading spinner
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    gap: 1rem;
+    color: #666;
+  }
+}

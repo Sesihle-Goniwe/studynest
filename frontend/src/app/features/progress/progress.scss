@@ -58,13 +58,14 @@ body {
 }
 
 .main-content {
-  margin-left: 0;
-  transition: margin-left 0.3s;
-  padding: 2rem 0;
+  // Use Flexbox to control the layout
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 90vh;
+  flex-direction: column; // Stack children vertically
+  align-items: center;    // Center them horizontally
+  justify-content: flex-start; // Center them vertically
+  min-height: 100vh;      // Make the container at least the full height of the screen
+  padding-top: 10px;      // Add padding to avoid overlapping with a fixed navbar
+  box-sizing: border-box;
 }
 
 .sidebar.open ~ .main-content {
@@ -81,11 +82,17 @@ body {
   align-items: center;
   gap: 0.5rem;
 }
-
+.dropzone-mytopics {
+  display: flex;           // Use Flexbox to create a row
+  gap: 1rem;               // Creates space between each section
+  width: 100%;
+  max-width: 1600px;       // Adjust max-width as needed for your design
+  align-items: stretch; // Aligns sections to the top if they have different heights
+  
+}
 .dropzone-container {
   width: 90vw;
   max-width: 700px;
-  min-height: 260px;
   background: #f0f0f0;
   border: 2px dashed #bbb;
   border-radius: 18px;
@@ -97,7 +104,7 @@ body {
   box-shadow: 0 4px 24px rgba(0,0,0,0.07);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
-  margin-top: 2rem;
+  margin-bottom: 2rem; 
 
   &:hover, &:focus-within {
     background: #e6e6e6;
@@ -124,23 +131,226 @@ body {
     }
   }
 
-  .stats-footer {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-    font-size: 1.1rem;
-    color: #333;
-    border-top: 1px solid #ddd;
-    padding-top: 1rem;
-  }
+} 
+
+.dashboard-container {
+  display: flex;           // Use Flexbox to create a row
+  gap: 2rem;               // Creates space between each section
+  width: 100%;
+  max-width: 1600px;       // Adjust max-width as needed for your design
+  margin-top: 2rem;
+  align-items: flex-start; // Aligns sections to the top if they have different heights
 }
+
+// Style each section within the container to act as a card
+.stats-footer,
+.topics-section,
+.ai-result {
+  flex: 1;                 // Allows each section to grow and share the space
+  min-width: 0;            // Prevents content from overflowing its container
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+// Your specific styles, now applied within the flex layout
+.stats-footer {
+  display: flex;
+  padding-top: 4.6rem;
+  flex-direction: column;  // Stack stats vertically within their own card
+  gap: 1rem;               // Space between "Topics Completed" and "Hours Studied"
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  font-size: 1.1rem;
+  color: #333;
+  align-items: center;
+}
+
+.topics-section {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+}
+
 .ai-result {
   background: #fffbe6;
   border: 1px solid #ffe58f;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-top: 2rem;
-  max-width: 700px;
   word-break: break-word;
+}
+// In progress.scss
+
+// Style for clickable table rows
+.clickable-row {
+  cursor: pointer;
+  &:hover {
+    background-color: #f0f0f0; // Or your theme's hover color
+  }
+}
+
+// Styles for the PDF Viewer Overlay
+.pdf-viewer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.pdf-viewer-container {
+  position: relative;
+  width: 90%;
+  max-width: 900px;
+  height: 90vh;
+}
+
+.close-viewer-btn {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 1.5rem;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 2001;
+}
+.topics-cont{
+  display : flex;
+  flex-direction : column;
+  gap : 0.5rem;
+  max-width: fit-content;
+}
+// Style for the container that holds all action buttons
+.action-buttons-container {
+  display: flex;
+  flex-direction: row; // This is the key property to stack them vertically
+  gap: 0.5rem; // Adds a nice space between each button
+  align-items: flex-start; // Aligns buttons to the left
+}
+
+// A general style for all action buttons for consistency
+// A general style for all action buttons for consistency
+// Add .view-btn to this list
+.summarize-btn,
+.view-btn,
+.log-hours-btn,
+.complete-btn,
+.delete-btn {
+  border: none;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  width: 90px; // This gives them a consistent width
+  text-align: center;
+  transition: background-color 0.2s; // Added a transition for hover effects
+}
+
+// Your specific button colors
+.summarize-btn {
+  background-color: #9c27b0; // Your blue color
+  color: white;
+
+  &:hover {
+    background-color: #832194;
+  }
+}
+.view-btn {
+  background-color: #3976df; // Your blue color
+  color: white;
+
+  &:hover {
+    background-color: #2f64bf;
+  }
+}
+
+.log-hours-btn {
+  background-color: #e0e0e0;
+  color: #333;
+
+  &:hover {
+    background-color: #bdbdbd;
+  }
+}
+
+.complete-btn {
+  background-color: #66ff66; // Your green color
+  color: black;
+
+  &:hover {
+    background-color: #4fe04f;
+  }
+}
+
+.delete-btn {
+  background-color: #ff4242; // Your red color
+  color: white;
+
+  &:hover {
+    background-color: #e03838;
+  }
+}
+.rankings-section {
+  flex-grow: 2;
+  width: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs-container {
+  display: flex;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 1rem;
+}
+
+.tab {
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #666;
+  border-bottom: 2px solid transparent;
+
+  &.active {
+    color: #1976d2;
+    border-bottom-color: #1976d2;
+    font-weight: 600;
+  }
+}
+
+.chart-container {
+  position: relative;
+  height: 350px;
+  flex-grow: 1; // Allows the chart container to fill the available space
+}
+.completed-tops{
+  display : flex;
+  flex-direction: row;
+  gap : 1rem;
+}
+.clickable-topic {
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #1976d2;
+    // Your requested overline effect
+    text-decoration: overline;
+    text-decoration-color: #1976d2;
+    text-decoration-thickness: 2px;
+  }
 }

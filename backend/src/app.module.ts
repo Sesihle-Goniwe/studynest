@@ -6,10 +6,13 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { StudentsModule } from './students/students.module';
 import { FilesModule } from './files/files.module';
 import { MulterModule } from '@nestjs/platform-express';
-import { NotificationsModule } from './notifications/notifications.module';
 import { GroupsModule } from './groups/groups.module';
-import { MailerModule } from './mailer/mailer.module';
 import { SessionsModule } from './sessions/sessions.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { MailerModule } from './mailer/mailer.module';
+import { ProgressModule } from './progress/progress.module';
+
+
 import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
@@ -22,6 +25,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     FilesModule,
 
     MailerModule,
+    ProgressModule,
     ScheduleModule.forRoot(),
     MulterModule.register({
       dest: './uploads', // Optional: specify a destination for temporary files
