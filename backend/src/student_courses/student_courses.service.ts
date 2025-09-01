@@ -27,7 +27,7 @@ export class StudentCoursesService {
       .from('student_courses')
       .select('student_id, courses(id, course_code), students(user_id, university, year)')
       .in('course_id', courseIds)// Find students with matching courses
-      .neq('student_id', currentUserId); // exclude current user
+      //.neq('student_id', currentUserId); // exclude current user
 
     if (matchError) throw matchError;
 
