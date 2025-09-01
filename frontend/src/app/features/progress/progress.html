@@ -10,8 +10,9 @@
   <h2>Sidebar</h2>
   <ul>
     <li><a href="/dashboard">Dashboard</a></li>
-    <li><a href="#">Progress</a></li>
-    <li><a href="#">Settings</a></li>
+    <li><a href="/profile">Profile</a></li>
+    <li><a href="/notifications">Notifications</a></li>
+    <li><a href="#">Exit</a></li>
   </ul>
 </aside>
 
@@ -67,7 +68,11 @@
            <tbody>
             @for (topic of activeTopics; track topic.id) {
               <tr>
-                <td>{{ topic.name | removeExtension }}</td>
+                <td>
+                  <span class="clickable-topic" (click)="viewTopicPdf(topic)">
+                    {{ topic.name | removeExtension }}
+                  </span>
+                </td>
                 <td>{{ topic.status }}</td>
                 <td>{{ topic.created_at | date:'short' }}</td>
                 <td class="actions-cell">
@@ -80,11 +85,8 @@
                     <button class="delete-btn" (click)="deleteTopic(topic)">
                       Delete
                     </button>
-                    <button 
-                      type="button" 
-                      class="view-btn"
-                      (click)="viewTopicPdf(topic)">
-                      View
+                     <button class="action-btn summarize-btn" (click)="summarizeTopic(topic)">
+                      Summarize
                     </button>
                     <button class="log-hours-btn" (click)="openLogHoursDialog(topic)">
                       Log
@@ -115,7 +117,8 @@
       }
       </table>
     </section>
-    <section aria-labelledby="completed-topics-title" class="topics-section">
+    <section class = "completed-tops"> 
+      <section aria-labelledby="completed-topics-title" class="topics-section">
       <h2 id="completed-topics-title">Completed Topics</h2>
       <table>
         <thead>
@@ -150,32 +153,52 @@
         }
       </table>
     </section>
+
+      <footer class="stats-footer">
+        <div>
+          <strong>Topics Completed:</strong> {{ completedTopics.length }}
+        </div>
+        <div>
+          <strong>Hours Studied:</strong> {{ totalHoursStudied }}
+        </div>
+        <div class="stats-actions">
+          <button mat-button (click)="openLogHoursDialog()">Log Hours</button>
+          <button mat-raised-button color="primary" (click)="openStatsDialog()">View Details</button>
+        </div>
+      </footer>
+    </section>
+    
     <!--end of topics container-->
     </section>
 
   </section>
   <!--Dashboard-->
   <section class="dashboard-container">
-    <!-- STATS FOOTER  -->
-    <footer class="stats-footer">
-      <div>
-        <strong>Topics Completed:</strong> {{ completedTopics.length }}
-      </div>
-      <div>
-        <strong>Hours Studied:</strong> {{ totalHoursStudied }}
-      </div>
-      <div class="stats-actions">
-        <button mat-button (click)="openLogHoursDialog()">Log Hours</button>
-        <button mat-raised-button color="primary" (click)="openStatsDialog()">View Details</button>
-      </div>
-    </footer>
+  
 
-    <!-- AI RESULT SECTION -->
-    @if(aiExtractedText) {
-      <section class="ai-result">
-        <h2>AI Extracted Data</h2>
-        <pre>{{ aiExtractedText }}</pre>
-      </section>
-    }
-  </section>
+  @if(userGroups.length > 0) {
+    <section class="rankings-section">
+      <h2>Group Rankings</h2>
+      <div class="tabs-container">
+        @for(group of userGroups; track group.id) {
+          <button class="tab" 
+                  [class.active]="selectedGroup?.id === group.id"
+                  (click)="onGroupTabChange(group)">
+            {{ group.name }}
+          </button>
+        }
+      </div>
+      <div class="chart-container">
+        <canvas #rankingsChart></canvas>
+      </div>
+    </section>
+  }
+
+  @if(aiExtractedText) {
+    <section class="ai-result">
+      <h2>AI Extracted Data</h2>
+      <pre>{{ aiExtractedText }}</pre>
+    </section>
+  }
+</section>
 </main>

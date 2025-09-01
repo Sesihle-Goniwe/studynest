@@ -12,6 +12,8 @@ import { StatsDialogComponent } from '../stats-dialog/stats-dialog';
 import { FormsModule } from '@angular/forms';
 import { RemoveExtensionPipe } from '../../pipes/remove-extension-pipe';
 import { LogHoursDialogComponent } from '../log-hours-dialog/log-hours-dialog';
+import { Chart } from 'chart.js';
+import { SummaryDialogComponent } from '../summary-dialog/summary-dialog';
 
 
 
@@ -35,8 +37,13 @@ export class ProgressTracker implements OnInit {
   pdfSrc: string | null = null; // 3. Property to hold the PDF URL
   showPdfViewer = false;
   studyLogs: any[] = []; // <-- holds the study logs
+  userGroups: any[] = [];
+  selectedGroup: any = null;
+  rankingData: any[] = [];
+  public rankingsChart: any;
 
-
+  
+  @ViewChild('rankingsChart') rankingsChartCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   // 2. Simplify the constructor
@@ -57,6 +64,7 @@ export class ProgressTracker implements OnInit {
     if (this.currentUser && this.currentUser.id) {
       this.loadTopics();
       this.loadStudyLogs(); // Load study logs on init
+      this.loadUserGroups();
     } else {
       console.error('No valid user found, cannot fetch topics.');
     }
@@ -269,6 +277,72 @@ openLogHoursDialog(topic?: any): void {
         error: (err) => console.error('Failed to delete topic:', err)
       });
     }
+  }
+  loadUserGroups(): void {
+    if (!this.currentUser?.id) return;
+    this.progressApiService.getUserGroups(this.currentUser.id).subscribe(groups => {
+      console.log('Fetched user groups from API:', groups);
+      this.userGroups = groups;
+      // If the user is in any groups, load the rankings for the first one by default
+      if (this.userGroups.length > 0) {
+        this.onGroupTabChange(this.userGroups[0]);
+      }
+    });
+  }
+
+  onGroupTabChange(group: any): void {
+    this.selectedGroup = group;
+    this.progressApiService.getGroupRankings(group.id).subscribe(data => {
+      this.rankingData = data;
+      this.createRankingsChart();
+    });
+  }
+
+  createRankingsChart(): void {
+    if (this.rankingsChart) {
+      this.rankingsChart.destroy();
+    }
+    
+    const labels = this.rankingData.map(d => d.email.split('@')[0]); // Use username from email
+    const data = this.rankingData.map(d => d.total_hours);
+
+    // Highlight the current user's bar
+    const backgroundColors = this.rankingData.map(d => 
+      d.user_id === this.currentUser.id ? 'rgba(75, 192, 192, 1)' : 'rgba(54, 162, 235, 0.6)'
+    );
+
+    this.rankingsChart = new Chart(this.rankingsChartCanvas.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Total Hours Studied',
+          data: data,
+          backgroundColor: backgroundColors,
+        }]
+      },
+      options: {
+        indexAxis: 'y', // This makes it a horizontal bar chart
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } }, // Hide legend for a cleaner look
+        scales: { x: { beginAtZero: true, title: { display: true, text: 'Hours' } } }
+      }
+    });
+  }
+  summarizeTopic(topic: any): void {
+    if (!topic.file_id || !this.currentUser?.id) {
+      alert('This topic has no file to summarize.');
+      return;
+    }
+    // Get the summary as an Observable
+    const summary$ = this.notesApiService.getSummary(topic.file_id, this.currentUser.id);
+
+    // Open the dialog and pass the Observable to it
+    this.dialog.open(SummaryDialogComponent, {
+      width: "1000px",
+      data: { summary$ }
+    });
   }
   
 }
