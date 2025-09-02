@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export interface GroupMessage {
   id?: string;
@@ -14,8 +15,8 @@ export interface GroupMessage {
   providedIn: 'root'
 })
 export class GroupChatsService {
-  private baseUrl = 'http://localhost:3000/chats'; // change to your backend URL
-  //private baseUrl ='https://studynester.onrender.com/chats'; 
+  //private baseUrl = 'http://localhost:3000/chats'; // change to your backend URL
+  private baseUrl ='https://studynester.onrender.com/chats'; 
 
   constructor(private http: HttpClient) {}
 
@@ -26,10 +27,15 @@ export class GroupChatsService {
     );
   }*/
 
-sendMessage(groupId: string, userId: string, message: string): Observable<{ success: boolean; message: GroupMessage }> {
+sendMessage(groupId: string, userId: string, message: string) {
   return this.http.post<{ success: boolean; message: GroupMessage }>(
     `${this.baseUrl}/send`,
-    { text: message, groupId, userId }   // ✅ correct keys
+    { text: message, groupId, userId }
+  ).pipe(
+    catchError(err => {
+      console.error('Error sending message:', err);
+      return throwError(() => err);
+    })
   );
 }
 
