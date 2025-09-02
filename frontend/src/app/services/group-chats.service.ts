@@ -15,8 +15,8 @@ export interface GroupMessage {
   providedIn: 'root'
 })
 export class GroupChatsService {
-  //private baseUrl = 'http://localhost:3000/chats'; // change to your backend URL
-  private baseUrl ='https://studynester.onrender.com/chats'; 
+  private baseUrl = 'http://localhost:3000/chats'; // change to your backend URL
+  //private baseUrl ='https://studynester.onrender.com/chats'; 
 
   constructor(private http: HttpClient) {}
 
