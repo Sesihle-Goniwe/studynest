@@ -59,6 +59,12 @@ export const routes: Routes = [
         path: 'viewGroups',
         loadComponent : () =>
             import('./features/group-session/group-session').then(m=>m.GroupSession),
+    },
+
+    {
+      path: 'groupChats/:groupId',
+      loadComponent : () =>
+        import('./features/group-chats/group-chats.component').then(m=>m.GroupChatsComponent)
     }
 
 ];

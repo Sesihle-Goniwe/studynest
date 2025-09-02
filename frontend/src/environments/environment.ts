@@ -15,4 +15,9 @@ export const environment = {
   apiBaseUrl:'https://studynester.onrender.com'
 };
 
+export const environment1 = {
+  production: true,
+  apiBaseUrl: 'https://studynester.onrender.com/chats'
+};
+
 

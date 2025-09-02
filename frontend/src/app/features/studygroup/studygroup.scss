@@ -105,6 +105,16 @@
         background: #023e8a;
       }
     }
+    .button-row {
+      display: flex;
+      gap: 0.5rem;   // space between buttons
+      margin-top: 0.5rem;
+
+      button {
+        align-self: auto; // override flex-start
+      }
+}
+
   }
 }
 

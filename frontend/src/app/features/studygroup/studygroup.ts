@@ -19,6 +19,7 @@ interface GroupWithRole {
   templateUrl: './studygroup.html',
   styleUrls: ['./studygroup.scss']
 })
+
 export class StudygroupComponent implements OnInit {
   memberGroups: GroupWithRole[] = [];
   nonMemberGroups: StudyGroup[] = [];
@@ -80,45 +81,45 @@ export class StudygroupComponent implements OnInit {
     });
   }
 
-  createGroup() {
-    const user = this.authService.getCurrentUser();
-    const uid = user?.id;
-    if(uid) {
-      if (!this.newGroupName.trim()) return alert('Enter a group name');
+  createGroup(form: any) {
+  const user = this.authService.getCurrentUser();
+  const uid = user?.id;
+  if (uid) {
+    if (!this.newGroupName.trim()) return alert('Enter a group name');
 
-      this.isLoading = true;
-      this.errorMessage = '';
+    this.isLoading = true;
+    this.errorMessage = '';
 
-      this.groupService.createGroup(
-        this.newGroupName,
-        this.newGroupDescription || 'No description yet',
-        uid
-      ).subscribe({
-        next: (groupData: StudyGroup[]) => {  
-          if (groupData && groupData.length > 0) {
-            const groupId = groupData[0].id;
-            // Add creator as admin
-            this.groupService.joinGroup(groupId, uid, 'admin').subscribe({
-              next: () => {
-                this.newGroupName = '';
-                this.newGroupDescription = '';
-                this.loadGroups(); // Refresh the lists
-              },
-              error: () => {
-                console.error('Error adding creator to group:');
-                this.isLoading = false;
-              }
-            });
-          }
-        },
-        error: () => {
-          console.error('Error creating group:');
-          this.errorMessage = 'Failed to create group';
-          this.isLoading = false;
+    this.groupService.createGroup(
+      this.newGroupName,
+      this.newGroupDescription || 'No description yet',
+      uid
+    ).subscribe({
+      next: (groupData: StudyGroup[]) => {  
+        if (groupData && groupData.length > 0) {
+          const groupId = groupData[0].id;
+          // Add creator as admin
+          this.groupService.joinGroup(groupId, uid, 'admin').subscribe({
+            next: () => {
+              form.reset();  // 👈 This clears the form fields
+              this.loadGroups();
+            },
+            error: () => {
+              console.error('Error adding creator to group:');
+              this.isLoading = false;
+            }
+          });
         }
-      });
-    }
+      },
+      error: () => {
+        console.error('Error creating group:');
+        this.errorMessage = 'Failed to create group';
+        this.isLoading = false;
+      }
+    });
   }
+}
+
 
   joinGroup(group_id: string) {
     const user = this.authService.getCurrentUser();
@@ -137,8 +138,13 @@ export class StudygroupComponent implements OnInit {
       });
     }
   }
-  viewGroup()
+  viewGroup(groupId : string)
   {
-     this.router.navigate(['/viewGroups'])
+     this.router.navigate(['/viewGroups', groupId])
+  }
+
+  viewGroupChat(groupId : string)
+  {
+     this.router.navigate(['/groupChats', groupId])
   }
 }

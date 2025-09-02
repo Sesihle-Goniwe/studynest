@@ -11,6 +11,7 @@ import { SessionsModule } from './sessions/sessions.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MailerModule } from './mailer/mailer.module';
 import { ProgressModule } from './progress/progress.module';
+import { ChatsModule } from './chats/chats.module';
 
 @Module({
   imports: [
@@ -23,9 +24,11 @@ import { ProgressModule } from './progress/progress.module';
     FilesModule,
     MailerModule,
     ProgressModule,
+     ChatsModule,
     MulterModule.register({
       dest: './uploads', // Optional: specify a destination for temporary files
-    }),
+    })
+   
   ],
   controllers: [AppController],
   providers: [AppService ],
