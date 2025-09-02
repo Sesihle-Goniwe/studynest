@@ -148,6 +148,11 @@ editDescription: string = '';
      this.router.navigate(['/viewGroups',groupId])
   }
 
+  viewGroupChat(groupId : string)
+  {
+     this.router.navigate(['/groupChats', groupId])
+  }
+
   deleteGroup()
   {
     const user = this.authService.getCurrentUser();

@@ -64,6 +64,11 @@ export const routes: Routes = [
       path: 'matches',
       loadComponent : ()=> import('./features/matches/matches').then(m => m.Matches)
     
+    },
+    {
+      path: 'groupChats/:groupId',
+      loadComponent : () =>
+        import('./features/group-chats/group-chats.component').then(m=>m.GroupChatsComponent)
     }
 
 ];
