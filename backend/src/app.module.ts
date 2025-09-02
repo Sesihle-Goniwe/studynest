@@ -12,7 +12,9 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { MailerModule } from './mailer/mailer.module';
 import { ProgressModule } from './progress/progress.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { HttpClientModule } from '@angular/common/http';
 import { StudentCoursesModule } from './student_courses/student_courses.module';
+import { ChatsModule } from './chats/chats.module';
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import { StudentCoursesModule } from './student_courses/student_courses.module';
     SessionsModule,
     GroupsModule,
     FilesModule,
+    HttpClientModule, // <-- this is required
     StudentCoursesModule,
     MailerModule,
     ProgressModule,
@@ -32,6 +35,7 @@ import { StudentCoursesModule } from './student_courses/student_courses.module';
     }),
     MailerModule,
     SessionsModule,
+    ChatsModule,
   ],
   controllers: [AppController],
   providers: [AppService ],
