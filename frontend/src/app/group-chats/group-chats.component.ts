@@ -2,8 +2,8 @@ import { Component, OnInit, AfterViewChecked, OnDestroy, ViewChild, ElementRef }
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
-import { GroupChatsService, GroupMessage } from '../../services/group-chats.service';
+import { AuthService } from '../features/auth/auth.service';
+import { GroupChatsService, GroupMessage } from '../services/group-chats.service';
 import { Subscription, interval } from 'rxjs';
 
 @Component({

@@ -64,7 +64,7 @@ export const routes: Routes = [
     {
       path: 'groupChats/:groupId',
       loadComponent : () =>
-        import('./features/group-chats/group-chats.component').then(m=>m.GroupChatsComponent)
+        import('./group-chats/group-chats.component').then(m=>m.GroupChatsComponent)
     }
 
 ];
