@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class StudentCoursesService {
-  //private apiUrl = 'http://localhost:3000/student-courses'; // Your NestJS backend
-  private apiUrl = 'https://studynester.onrender.com/student-courses'; // Your NestJS backend
+  private apiUrl = 'http://localhost:3000/student-courses'; // Your NestJS backend
+  //private apiUrl = 'https://studynester.onrender.com/student-courses'; // Your NestJS backend
 
   constructor(private http: HttpClient) {}
 
@@ -16,13 +16,13 @@ export class StudentCoursesService {
     return this.http.get(`${this.apiUrl}/matches/${userId}`);
   }
 
-  // Optional: Send match decision (yes/no)
-  sendMatchDecision(userId: string, targetId: string, isMatch: boolean): Observable<any> {
-    return this.http.post(`${this.apiUrl}/decision`, {
-      userId,
-      targetId,
-      match: isMatch
-    });
+  addCourse(course: { course_code: string; course_name: string }): Observable<any> {
+  return this.http.post(`${this.apiUrl}/add-course`, course);
   }
+
+addStudentCourse(studentId: string, course: { course_code: string, course_name: string }): Observable<any> {
+  return this.http.post(`${this.apiUrl}/add-student-courses`, { studentId, courses: [course] });
+}
+
 
 }

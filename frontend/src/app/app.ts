@@ -3,6 +3,8 @@ import { RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -10,7 +12,8 @@ import { CommonModule } from '@angular/common';
     CommonModule,
     RouterOutlet,
     MatToolbarModule,
-    MatButtonModule
+    MatButtonModule,
+    FormsModule
   ],
   template: `
     <router-outlet></router-outlet>
