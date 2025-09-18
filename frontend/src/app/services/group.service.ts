@@ -25,6 +25,7 @@ interface GroupsWithRole
 export class GroupService {
  baseUrl ='https://studynester.onrender.com/groups'; 
 //private baseUrl ='http://localhost:3000/groups'
+
   constructor(private http: HttpClient){}
 
  getAllGroups(): Observable<StudyGroup[]> 
