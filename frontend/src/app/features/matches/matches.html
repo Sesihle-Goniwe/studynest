@@ -17,3 +17,20 @@
 } @else {
   <p>No more matches found 🎉</p>
 }
+
+<div class="add-course">
+  <h3>Add a Course</h3>
+  <form (ngSubmit)="addCourse()">
+    <label>Course Code:</label>
+    <input type="text" [(ngModel)]="newCourse.course_code" name="course_code" required />
+
+    <label>Course Name:</label>
+    <input type="text" [(ngModel)]="newCourse.course_name" name="course_name" required />
+
+    <button type="submit">➕ Add Course</button>
+  </form>
+
+
+</div>
+
+

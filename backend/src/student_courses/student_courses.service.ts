@@ -27,7 +27,7 @@ export class StudentCoursesService {
       .from('student_courses')
       .select('student_id, courses(id, course_code), students(user_id, university, year)')
       .in('course_id', courseIds)// Find students with matching courses
-      //.neq('student_id', currentUserId); // exclude current user
+      .neq('student_id', currentUserId); // exclude current user
 
     if (matchError) throw matchError;
 
@@ -95,5 +95,40 @@ async addStudentCourses(studentId: string, courses: { course_code: string, cours
   if (error) throw error;
   return data;
 }
+
+
+async addCourse(course: { course_code: string, course_name: string }) {
+  if (!course.course_code || !course.course_name) {
+    throw new Error('course_code and course_name are required');
+  }
+
+  const supabase = this.supabaseService.getClient();
+
+  // Check if course already exists
+  const { data: existingCourse, error: checkError } = await supabase
+    .from('courses')
+    .select('id')
+    .eq('course_code', course.course_code)
+    .single();
+
+  if (checkError && checkError.code !== 'PGRST116') {
+    throw checkError;
+  }
+
+  if (existingCourse) {
+    throw new Error('Course already exists');
+  }
+
+  // Insert new course
+  const { data: newCourse, error: insertError } = await supabase
+    .from('courses')
+    .insert({ course_code: course.course_code, course_name: course.course_name })
+    .select('*')
+    .single();
+
+  if (insertError) throw insertError;
+  return newCourse;
+}
+
 
 }
