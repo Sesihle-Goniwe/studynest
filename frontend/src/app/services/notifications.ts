@@ -13,8 +13,8 @@ export interface _Notifications
   providedIn: 'root'
 })
 export class Notifications {
-  private baseUrl ='https://studynester.onrender.com/notifications'
-  //private baseUrl ='http://localhost:3000/notifications'
+  //private baseUrl ='https://studynester.onrender.com/notifications'
+  private baseUrl ='http://localhost:3000/notifications'
   constructor(private http:HttpClient){}
 
 

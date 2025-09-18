@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SupabaseService } from 'src/supabase/supabase.service'; 
 import { MailerService } from 'src/mailer/mailer.service';
 import { DateTime } from "luxon";
+import { start } from 'repl';
 @Injectable()
 export class SessionsService {
 
@@ -13,22 +14,8 @@ export class SessionsService {
         
     try {
         // Normalize start and end to UTC
-        const startUtc = DateTime.fromISO(body.start_time, { zone: body.timezone || "utc" }).toUTC();
-        const endUtc = DateTime.fromISO(body.end_time, { zone: body.timezone || "utc" }).toUTC();
-
-        // Validation checks
-        if (endUtc <= startUtc) {
-            throw new Error("End time must be after start time.");
-        }
-
-        const diffMinutes = endUtc.diff(startUtc, "minutes").minutes;
-        if (diffMinutes > 60) {
-            throw new Error("Session cannot be longer than 1 hour.");
-        }
-
-        if (startUtc < DateTime.utc()) {
-            throw new Error("Start time must be in the future.");
-        }
+        //const startUtc = DateTime.fromISO(body.start_time, { zone: "Africa/Johannesburg" }).toUTC();
+        //const endUtc = DateTime.fromISO(body.end_time, { zone: "Africa/Johannesburg"}).toUTC();
 
         // Insert into Supabase
         const { data, error } = await this.supabaseSer
@@ -39,8 +26,8 @@ export class SessionsService {
                 title: body.title,
                 description: body.description,
                 created_by: body.created_by,
-                start_time: startUtc.toISO(),
-                end_time: endUtc.toISO(),
+                start_time:body.start_time,
+                end_time:body.end_time,
                 location: body.location,
             }])
             .select();
@@ -65,6 +52,7 @@ export class SessionsService {
         }
 
         // send notifications
+        
         for (const member of members) {
             await this.supabaseSer
                 .getClient()
@@ -83,16 +71,27 @@ export class SessionsService {
                 .eq("user_id", member.user_id)
                 .single();
 
-            if (!studentErr && student?.email) {
+            if (!studentErr && student?.email) 
+                {
+                        const start = DateTime.fromJSDate(new Date(session.start_time), {zone: "uct"});
+                        const end   = DateTime.fromJSDate(new Date(session.end_time),{zone: "uct"});
+
+                        const dateFormatted = start.toFormat("dd-LL-yyyy");
+                        const startTimeFormatted = start.toFormat("HH:mm");
+                        const endTimeFormatted   = end.toFormat("HH:mm");
+
+
                 await this.mailerSer.sendMail(
                     student.email,
                     `New Study Session: ${session.title}`,
-                    `A session is scheduled at ${session.start_time} - ${session.end_time} at ${session.location}`,
+                    `A session is scheduled on ${dateFormatted} from ${startTimeFormatted} to ${endTimeFormatted} at ${session.location}`,
                     `<h3>${session.title}</h3>
-                     <p>${session.description}</p>
-                     <p><strong>When:</strong> ${session.start_time} - ${session.end_time}</p>
-                     <p><strong>Where:</strong> ${session.location}</p>`
-                );
+                    <p>${session.description}</p>
+                    <p><strong>Date:</strong> ${dateFormatted}</p>
+                    <p><strong>Time:</strong> ${startTimeFormatted} - ${endTimeFormatted}</p>
+                    <p><strong>Where:</strong> ${session.location}</p>
+                    <p>Communication from your Campus Study buddy<p>`
+                    );
             }
         }
 
