@@ -52,15 +52,12 @@ async sendMail(to: string, subject: string, text: string, html?: string) {
     const twoMinFromNow = nowLocal.plus({ hours: 1 }).toFormat("yyyy-MM-dd HH:mm:ss");
     const fiveMinFromNow = nowLocal.plus({ hours: 24 }).toFormat("yyyy-MM-dd HH:mm:ss");
 
-console.log("Query window 2min:", twoMinFromNow);
-console.log("Query window 5min:", fiveMinFromNow);
 
     const { data: sessions,error } = await this.supabaseSer
     .getClient()
     .from("sessions")
     .select("*")
-    .gte("start_time", nowLocal.plus({ minutes: 2 }).toFormat("yyyy-MM-dd HH:mm:ss"))
-    .lt("start_time", nowLocal.plus({ minutes: 3 }).toFormat("yyyy-MM-dd HH:mm:ss"));
+    .in('start_time', [twoMinFromNow, fiveMinFromNow]);
 
 
     if (error) {

@@ -49,6 +49,8 @@ export class GroupService {
     });
   }
 
+ 
+
     joinGroup(groupId: string, userId: string, role: 'admin' | 'member' = 'member'): Observable<any> {
     return this.http.post(`${this.baseUrl}/join`, {
       groupId,
