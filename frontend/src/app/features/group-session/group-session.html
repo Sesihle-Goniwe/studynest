@@ -40,8 +40,11 @@
 
 <section>
   <h3>Group Actions</h3>
-<button *ngIf="currentUserRole !== 'admin'" (click)="leaveGroup()">
+<button 
+  (click)="leaveGroup()" 
+  [disabled]="currentUserRole === 'admin'">
   Leave Group
 </button>
+
   <button (click)="goBack()">Back to My Groups</button>
 </section>
