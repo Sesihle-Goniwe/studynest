@@ -118,4 +118,54 @@ export class SessionsService {
         return data;
     }
 
+    async deleteSession(sessionId:string)
+    {
+        
+        const {error}= await this.supabaseSer
+        .getClient()
+        .from('sessions')
+        .delete()
+        .eq('id',sessionId)
+
+        if(error)
+
+            {
+                console.log("failed to delete session")
+                return;
+            }
+
+    }
+    async leaveGroup(group_id:string,userId:string)
+    {
+        const {error}= await this.supabaseSer
+        .getClient()
+        .from('group_members')
+        .delete()
+        .eq('group_id',group_id)
+        .eq('user_id',userId)
+
+        if(error)
+        {
+            console.log("Failed to be removed from group");
+        }
+    }
+
+    async getUserRole(groupId:string,userId:string)
+    {
+        const { data, error } = await this.supabaseSer
+        .getClient()
+        .from('group_members')
+        .select('role')
+        .eq('group_id', groupId)
+        .eq('user_id', userId)
+        .single();
+
+        if(error)
+        {
+            console.log("failed to get userRole");
+        }
+
+        return data;
+    }
+
 }
