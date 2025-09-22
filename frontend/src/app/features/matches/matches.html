@@ -1,19 +1,67 @@
-@if (matches.length > 0 && currentIndex < matches.length) {
-  <div class="card">
-    <h3>{{ matches[currentIndex].students.user_id }}</h3>
-    <p>University: {{ matches[currentIndex].students.university }}</p>
-    <p>Year: {{ matches[currentIndex].students.year }}</p>
+<!-- Add Courses Section -->
+<div class="add-course">
+  <h3>Add a Course</h3>
+  <form (ngSubmit)="addCourse()">
+    <label>Course Code:</label>
+    <input type="text" [(ngModel)]="newCourse.course_code" name="course_code" required />
 
-    <h4>Courses:</h4>
-    <ul>
-      @for (course of matches[currentIndex].courses; track course.course_code) {
-        <li>{{ course.course_code }}</li>
-      }
-    </ul>
+    <label>Course Name:</label>
+    <input type="text" [(ngModel)]="newCourse.course_name" name="course_name" required />
 
-    <button (click)="likeStudent(matches[currentIndex])" class="like-btn">✅ Match</button>
-    <button (click)="skipStudent(matches[currentIndex])" class="skip-btn">❌ Skip</button>
-  </div>
-} @else {
-  <p>No more matches found 🎉</p>
+    <button type="submit">➕ Add Course</button>
+  </form>
+
+  <h4>My Courses:</h4>
+  <ul>
+    <li *ngFor="let course of courses">{{ course.course_code }} - {{ course.course_name }}</li>
+  </ul>
+
+  <button (click)="findMatches()">
+    🔍 Find Matches
+  </button>
+</div>
+
+<!-- Matching Students Section -->
+@if (showMatches) {
+  @if (matches.length > 0 && currentIndex < matches.length) {
+    <div class="card">
+      <h3>{{ matches[currentIndex].students.user_id }}</h3>
+      <p>University: {{ matches[currentIndex].students.university }}</p>
+      <p>Year: {{ matches[currentIndex].students.year }}</p>
+
+      <h4>Courses:</h4>
+      <ul>
+        @for (course of matches[currentIndex].courses; track course.course_code) {
+          <li>{{ course.course_code }}</li>
+        }
+      </ul>
+
+      <button (click)="likeStudent(matches[currentIndex])" class="like-btn">✅ Match</button>
+      <button (click)="skipStudent(matches[currentIndex])" class="skip-btn">❌ Skip</button>
+    </div>
+  } @else {
+    <p>No more matches found 🎉</p>
+  }
 }
+
+<button (click)="loadMatchedPartners()">👥 See Matched Partners</button>
+
+<div class="matched-partners-container" *ngIf="matchedPartners.length > 0; else noPartners">
+  <h2>My Matched Partners</h2>
+  <div *ngFor="let partner of matchedPartners" class="partner-card">
+    <div class="partner-info">
+      <h3 class="partner-id">{{ partner.matched_user_id }}</h3>
+      <p class="partner-detail">University: {{ partner.students?.university }}</p>
+      <p class="partner-detail">Year: {{ partner.students?.year }}</p>
+    </div>
+    <div class="status-badge status-{{ partner.status }}">
+      {{ partner.status }}
+    </div>
+  </div>
+</div>
+
+<ng-template #noPartners>
+  <p>You don’t have any matched partners yet.</p>
+</ng-template>
+
+
