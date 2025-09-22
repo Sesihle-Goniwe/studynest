@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MailerService } from 'src/mailer/mailer.service';
+import { MailerService } from '../mailer/mailer.service';
 import { SupabaseService } from 'src/supabase/supabase.service';
 @Injectable()
 export class NotificationsService {
