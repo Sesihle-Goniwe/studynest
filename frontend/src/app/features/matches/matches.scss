@@ -27,3 +27,79 @@
   border-radius: 8px;
   cursor: pointer;
 }
+
+/* matches.scss */
+
+/* Main container for the matched partners section */
+.matched-partners-container {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f4f7f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for each individual partner card */
+.partner-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border-left: 5px solid #007bff; // A unique color to signify a match
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* Styling for the partner's info text */
+.partner-info {
+  flex-grow: 1;
+}
+
+.partner-id {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.5rem;
+}
+
+.partner-detail {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Styling for the status badge */
+.status-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+  text-align: center;
+  min-width: 80px;
+}
+
+/* Specific colors for different statuses */
+.status-liked {
+  background-color: #28a745; // Green for liked
+}
+
+.status-matched {
+  background-color: #007bff; // Blue for matched
+}
+
+.status-pending {
+  background-color: #ffc107; // Yellow for pending
+}
+
+.status-rejected {
+  background-color: #dc3545; // Red for rejected
+}

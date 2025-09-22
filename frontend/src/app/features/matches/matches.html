@@ -43,3 +43,25 @@
     <p>No more matches found 🎉</p>
   }
 }
+
+<button (click)="loadMatchedPartners()">👥 See Matched Partners</button>
+
+<div class="matched-partners-container" *ngIf="matchedPartners.length > 0; else noPartners">
+  <h2>My Matched Partners</h2>
+  <div *ngFor="let partner of matchedPartners" class="partner-card">
+    <div class="partner-info">
+      <h3 class="partner-id">{{ partner.matched_user_id }}</h3>
+      <p class="partner-detail">University: {{ partner.students?.university }}</p>
+      <p class="partner-detail">Year: {{ partner.students?.year }}</p>
+    </div>
+    <div class="status-badge status-{{ partner.status }}">
+      {{ partner.status }}
+    </div>
+  </div>
+</div>
+
+<ng-template #noPartners>
+  <p>You don’t have any matched partners yet.</p>
+</ng-template>
+
+
