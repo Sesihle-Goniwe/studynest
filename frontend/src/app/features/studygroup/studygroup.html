@@ -19,17 +19,47 @@
   </form>
 
   <h2>My Study Groups</h2>
-  <div *ngIf="memberGroups.length > 0; else noMemberGroups">
-    <ul>
-      <li *ngFor="let item of memberGroups" class="group-item">
+<div *ngIf="memberGroups.length > 0; else noMemberGroups">
+  <ul>
+    <li *ngFor="let item of memberGroups" class="group-item">
+      
+      <!-- If currently editing this group -->
+      <div *ngIf="editingGroup?.id === item.group.id; else viewMode">
+        <input 
+          type="text" 
+          [(ngModel)]="editName" 
+          placeholder="Edit group name"
+        />
+        <input 
+          type="text" 
+          [(ngModel)]="editDescription" 
+          placeholder="Edit description"
+        />
+        <button (click)="saveEdit()">Save</button>
+        <button (click)="cancelEdit()">Cancel</button>
+      </div>
+
+      <!-- Normal display mode -->
+      <ng-template #viewMode>
         <strong>{{ item.group.name }}</strong>
         <span class="role">({{ item.role }})</span>
         <p>{{ item.group.description || 'No description yet' }}</p>
 
-         <button (click)="viewGroup(item.group.id)">View Group</button>
-      </li>
-    </ul>
-  </div>
+        <button (click)="viewGroup(item.group.id)">View Group</button>
+        <button (click)="viewGroupChat(item.group.id)">Group Chat</button>
+
+        <!-- Admin-only actions -->
+        <button *ngIf="item.role === 'admin'" (click)="startEdit(item.group)">
+          Edit Group
+        </button>
+        <button *ngIf="item.role === 'admin'" (click)="deleteGroup()">
+          Delete Group
+        </button>
+      </ng-template>
+    </li>
+  </ul>
+</div>
+
   <ng-template #noMemberGroups>
     <p>You are not a member of any study groups yet.</p>
   </ng-template>

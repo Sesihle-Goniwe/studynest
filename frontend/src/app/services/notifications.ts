@@ -23,6 +23,10 @@ export class Notifications {
     return this.http.get<_Notifications[]>(this.baseUrl);
   }
 
+   getNotificationsByUser(uid:string) : Observable<any>
+  {
+    return this.http.get(`${this.baseUrl}/${uid}`);
+  }
   markAsRead(notificationId:string) : Observable<any>
   {
       return this.http.patch(`${this.baseUrl}/${notificationId}`, {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { SessionsService } from './sessions.service';
 @Controller('sessions')
 export class SessionsController {
@@ -15,5 +15,26 @@ export class SessionsController {
         async getSessionByGroup(@Param('groupId') groupId:string)
         {
             return this.sessionsSer.getSessionByGroup(groupId);
+        }
+
+         @Get(':groupId/:userId')
+        async getUserRole(@Param('groupId') groupId:string,@Param('userId') userId:string,)
+        {
+            return this.sessionsSer.getUserRole(groupId,userId);
+        }
+
+        @Delete(':sessionId')
+            async deleteSession(@Param('sessionId') sessionId:string)
+            {
+                return this.sessionsSer.deleteSession(sessionId);
+            }
+
+        @Delete(':groupId/:userId')
+        async leaveGroup(
+            @Param('groupId') groupId: string,
+            @Param('userId') userId: string,
+        )
+        {
+            return this.sessionsSer.leaveGroup(groupId,userId);
         }
 }

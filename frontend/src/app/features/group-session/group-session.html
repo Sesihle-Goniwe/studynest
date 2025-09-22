@@ -32,12 +32,19 @@
       <p>{{ session.description }}</p>
       <p><strong>When:</strong> {{ session.start_time }} → {{ session.end_time }}</p>
       <p><strong>Where:</strong> {{ session.location }}</p>
+
+      <button (click)="deleteSession(session.id)">Delete</button>
     </div>
   }
 </div>
 
 <section>
   <h3>Group Actions</h3>
-  <button (click)="leaveGroup()">Leave Group</button>
+<button 
+  (click)="leaveGroup()" 
+  [disabled]="currentUserRole === 'admin'">
+  Leave Group
+</button>
+
   <button (click)="goBack()">Back to My Groups</button>
 </section>

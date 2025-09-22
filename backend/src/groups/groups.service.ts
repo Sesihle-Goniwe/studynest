@@ -112,5 +112,39 @@ async getMyGroups(userId: string)
   }
 
 
+  async deleteGroup(userId:string)
+  {
+    const {data,error}= await this.supabaseSer
+    .getClient()
+    .from('study_groups')
+    .delete()
+    .eq('created_by',userId)
+
+    if(error)
+    {
+      console.log("Failed to delete group");
+    }
+
+    return data;
+  }
+
+
+  async updateGroup(groupId:string,name:string,description:string)
+  {
+    const {data,error} =await this.supabaseSer
+    .getClient()
+    .from('study_groups')
+    .update({
+      name:name,
+      description:description
+    })
+    .eq('id',groupId)
+
+    if(error)
+    {
+      console.log("Failed to update the group info",error.message);
+    }
+    return data;
+  }
 }
 

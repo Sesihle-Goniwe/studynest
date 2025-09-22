@@ -17,7 +17,7 @@ export interface _Session
 })
 export class Sessions {
   private baseUrl ='https://studynester.onrender.com/sessions';
-  //private baseUrl= "http://localhost:3000/sessions"
+ // private baseUrl= "http://localhost:3000/sessions"
 
   constructor (private http: HttpClient){}
 
@@ -30,4 +30,18 @@ export class Sessions {
 getSessionbyGroupID(groupId: string): Observable<_Session[]> {
   return this.http.get<_Session[]>(`${this.baseUrl}/${groupId}`);
 }
+
+ deleteSession(sessionId:string)
+  {
+      return this.http.delete(`${this.baseUrl}/${sessionId}`);
+  }
+  leaveGroup(groupId:string,uid:string): Observable<any>
+  {
+    return this.http.delete(`${this.baseUrl}/${groupId}/${uid}`);
+  }
+
+  getUserRole(groupId:string,userId:string): Observable<any>
+  {
+    return this.http.get(`${this.baseUrl}/${groupId}/${userId}`);
+  }
 }
