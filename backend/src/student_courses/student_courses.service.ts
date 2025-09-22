@@ -96,4 +96,106 @@ async addStudentCourses(studentId: string, courses: { course_code: string, cours
   return data;
 }
 
+
+async addCourse(course: { course_code: string, course_name: string }) {
+  if (!course.course_code || !course.course_name) {
+    throw new Error('course_code and course_name are required');
+  }
+
+  const supabase = this.supabaseService.getClient();
+
+  // Check if course already exists
+  const { data: existingCourse, error: checkError } = await supabase
+    .from('courses')
+    .select('id')
+    .eq('course_code', course.course_code)
+    .single();
+
+  if (checkError && checkError.code !== 'PGRST116') {
+    throw checkError;
+  }
+
+  if (existingCourse) {
+    throw new Error('Course already exists');
+  }
+
+  // Insert new course
+  const { data: newCourse, error: insertError } = await supabase
+    .from('courses')
+    .insert({ course_code: course.course_code, course_name: course.course_name })
+    .select('*')
+    .single();
+
+  if (insertError) throw insertError;
+  return newCourse;
+}
+
+//For getting matched students
+async addMatch(userId: string, matchedUserId: string) {
+  const supabase = this.supabaseService.getClient();
+
+  // Prevent self-matching
+  if (userId === matchedUserId) {
+    throw new Error("You cannot match with yourself.");
+  }
+
+  // Insert or update the match
+  const { data, error } = await supabase
+    .from('matched_students')
+    .upsert(
+      {
+        user_id: userId,
+        matched_user_id: matchedUserId,
+        status: 'liked',
+        updated_at: new Date()
+      },
+      { onConflict: 'user_id, matched_user_id' }
+    )
+    .select();
+
+  if (error) throw error;
+  return data;
+}
+
+async updateMatchStatus(userId: string, matchedUserId: string, status: 'pending' | 'liked' | 'matched' | 'rejected') {
+  const supabase = this.supabaseService.getClient();
+
+  const { data, error } = await supabase
+    .from('matched_students')
+    .update({ status, updated_at: new Date() })
+    .eq('user_id', userId)
+    .eq('matched_user_id', matchedUserId)
+    .select();
+
+  if (error) throw error;
+  return data;
+}
+
+async getMyMatches(userId: string) {
+  const supabase = this.supabaseService.getClient();
+
+   // Fetch matched students for this user
+  // This correctly fetches matches where the user initiated the 'like'
+  const { data, error } = await supabase
+    .from('matched_students')
+    .select(`
+      id,
+      status,
+      created_at,
+      matched_user_id,
+      students!matched_students_matched_user_id_fkey(user_id, university, year)
+    `)
+    .eq('user_id', userId);
+
+  if (error) throw error;
+
+  // Filter out any accidental matches where the user matched with themselves
+  const filteredData = data.filter(match => match.matched_user_id !== userId);
+
+  return filteredData;
+}
+
+
+
+
 }
