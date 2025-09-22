@@ -11,7 +11,7 @@
     <button type="submit">➕ Add Course</button>
   </form>
 
-  <h4>My Courses:</h4>
+
   <ul>
     <li *ngFor="let course of courses">{{ course.course_code }} - {{ course.course_name }}</li>
   </ul>
@@ -44,24 +44,48 @@
   }
 }
 
-<button (click)="loadMatchedPartners()">👥 See Matched Partners</button>
+<button (click)="loadMatchedPartners()">👥 See My Partners</button>
 
-<div class="matched-partners-container" *ngIf="matchedPartners.length > 0; else noPartners">
-  <h2>My Matched Partners</h2>
-  <div *ngFor="let partner of matchedPartners" class="partner-card">
-    <div class="partner-info">
-      <h3 class="partner-id">{{ partner.matched_user_id }}</h3>
-      <p class="partner-detail">University: {{ partner.students?.university }}</p>
-      <p class="partner-detail">Year: {{ partner.students?.year }}</p>
-    </div>
-    <div class="status-badge status-{{ partner.status }}">
-      {{ partner.status }}
-    </div>
+@if (likedPartners.length > 0) {
+  <h2>My Liked Partners</h2>
+  <div class="matched-partners-container">
+    @for (partner of likedPartners; track partner.id) {
+      <div class="partner-card">
+        <div class="partner-info">
+          <h3 class="partner-id">{{ partner.students?.user_id }}</h3>
+          <p class="partner-detail">University: {{ partner.students?.university }}</p>
+          <p class="partner-detail">Year: {{ partner.students?.year }}</p>
+        </div>
+        <div class="status-badge status-{{ partner.status }}">
+          {{ partner.status }}
+        </div>
+      </div>
+    }
   </div>
-</div>
+} @else {
+  <p>You haven't liked any partners yet.</p>
+}
 
-<ng-template #noPartners>
-  <p>You don’t have any matched partners yet.</p>
-</ng-template>
+<hr>
+
+@if (rejectedPartners.length > 0) {
+  <h2>My Rejected Partners</h2>
+  <div class="rejected-partners-container">
+    @for (partner of rejectedPartners; track partner.id) {
+      <div class="partner-card rejected-card">
+        <div class="partner-info">
+          <h3 class="partner-id">{{ partner.students?.user_id }}</h3>
+          <p class="partner-detail">University: {{ partner.students?.university }}</p>
+          <p class="partner-detail">Year: {{ partner.students?.year }}</p>
+        </div>
+        <div class="status-badge status-{{ partner.status }}">
+          {{ partner.status }}
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <p>You haven't rejected any partners yet.</p>
+}
 
 
