@@ -25,13 +25,14 @@
 @if (showMatches) {
   @if (matches.length > 0 && currentIndex < matches.length) {
     <div class="card">
-      <div class="profile-image-container">
+      <div class="profile-image-container" (click)="showFullScreenImage(matches[currentIndex].students.profileImage)">
         @if (matches[currentIndex].students.profileImage) {
           <img [src]="matches[currentIndex].students.profileImage" alt="Profile Picture" class="profile-picture">
         } @else {
           <div class="no-image-placeholder">No Image</div>
         }
       </div>
+
       <h3>{{ matches[currentIndex].students.user_id }}</h3>
       <p>University: {{ matches[currentIndex].students.university }}</p>
       <p>Year: {{ matches[currentIndex].students.year }}</p>
@@ -48,6 +49,12 @@
     </div>
   } @else {
     <p>No more matches found 🎉</p>
+  }
+
+  @if (isFullScreenImageVisible) {
+    <div class="full-screen-modal" (click)="hideFullScreenImage()">
+      <img [src]="fullScreenImageUrl" alt="Full screen profile picture" class="full-screen-image">
+    </div>
   }
 }
 
