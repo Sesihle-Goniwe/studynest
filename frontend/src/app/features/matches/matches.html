@@ -25,6 +25,13 @@
 @if (showMatches) {
   @if (matches.length > 0 && currentIndex < matches.length) {
     <div class="card">
+      <div class="profile-image-container">
+        @if (matches[currentIndex].students.profileImage) {
+          <img [src]="matches[currentIndex].students.profileImage" alt="Profile Picture" class="profile-picture">
+        } @else {
+          <div class="no-image-placeholder">No Image</div>
+        }
+      </div>
       <h3>{{ matches[currentIndex].students.user_id }}</h3>
       <p>University: {{ matches[currentIndex].students.university }}</p>
       <p>Year: {{ matches[currentIndex].students.year }}</p>
@@ -43,7 +50,6 @@
     <p>No more matches found 🎉</p>
   }
 }
-
 <button (click)="loadMatchedPartners()">👥 See Matched Partners</button>
 
 <div class="matched-partners-container" *ngIf="matchedPartners.length > 0; else noPartners">
