@@ -2,15 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { StudentCoursesService } from '../../services/student_courses.services';
 import { AuthService } from '../auth/auth.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule as C, CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-matches',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './matches.html',
   styleUrl: './matches.scss'
 })
 export class Matches implements OnInit {
   matches: any[] = [];
+  matchedPartners: any[] = [];
   currentIndex = 0;
 
   newCourse = { course_code: '', course_name: '' };
@@ -58,12 +60,68 @@ export class Matches implements OnInit {
       });
   }
 
+
+
+    findMatched() {
+      if (!this.currentUserId) {
+      alert('User not logged in!');
+      return;
+    }
+    
+    this.studentCoursesService.getMatches(this.currentUserId).subscribe({
+      next: (res) => {
+        this.matches = res;
+        this.currentIndex = 0;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
   likeStudent(student: any) {
-    this.currentIndex++;
+      if (!this.currentUserId) {
+      alert('User not logged in!');
+      return;
+    }
+
+    this.studentCoursesService.saveMatch(this.currentUserId, student.students.user_id).subscribe({
+      next: () => {
+        this.nextStudent();
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   skipStudent(student: any) {
+      if (!this.currentUserId) {
+      alert('User not logged in!');
+      return;
+    }
+
+    this.studentCoursesService.skipMatch(this.currentUserId, student.students.user_id).subscribe({
+      next: () => {
+        this.nextStudent();
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  nextStudent() {
     this.currentIndex++;
   }
+
+  loadMatchedPartners() {
+      if (!this.currentUserId) {
+      alert('User not logged in!');
+      return;
+    }
+
+    this.studentCoursesService.getMatchedPartners(this.currentUserId).subscribe({
+      next: (res) => {
+        this.matchedPartners = res;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
 }
 
