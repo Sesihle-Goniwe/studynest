@@ -1,0 +1,27 @@
+<div class="chat-container">
+  <!-- Header -->
+  <header class="chat-header">
+    <h2>StudyNest Group Chat</h2>
+  </header>
+
+  <!-- Messages -->
+  <div class="chat-messages" #chatMessages>
+    <div *ngFor="let msg of messages" class="message"
+         [ngClass]="{'own-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
+      <div class="message-info">
+        <span class="username">{{ msg.user_id || 'Anonymous' }}</span>
+        <span class="time">{{ msg.created_at | date:'shortTime' }}</span>
+      </div>
+      <div class="message-text">{{ msg.message }}</div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input">
+    <input type="text" [(ngModel)]="newMessage" placeholder="Type a message" />
+    <button (click)="sendMessage()">Send</button>
+
+  </div>
+
+  <p *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</p>
+</div>

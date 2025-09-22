@@ -13,6 +13,8 @@ import { CommonModule as C, CommonModule } from '@angular/common';
 export class Matches implements OnInit {
   matches: any[] = [];
   matchedPartners: any[] = [];
+  likedPartners: any[] = []; // New array for liked partners
+  rejectedPartners: any[] = []; // New array for rejected partners
   currentIndex = 0;
 
   newCourse = { course_code: '', course_name: '' };
@@ -110,7 +112,7 @@ export class Matches implements OnInit {
   }
 
   loadMatchedPartners() {
-      if (!this.currentUserId) {
+    if (!this.currentUserId) {
       alert('User not logged in!');
       return;
     }
@@ -118,10 +120,12 @@ export class Matches implements OnInit {
     this.studentCoursesService.getMatchedPartners(this.currentUserId).subscribe({
       next: (res) => {
         this.matchedPartners = res;
+        this.likedPartners = this.matchedPartners.filter(p => p.status === 'liked' || p.status === 'matched');
+        this.rejectedPartners = this.matchedPartners.filter(p => p.status === 'rejected');
       },
       error: (err) => console.error(err)
     });
   }
+  }
 
-}
 

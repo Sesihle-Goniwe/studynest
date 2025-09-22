@@ -23,8 +23,9 @@ interface GroupsWithRole
   providedIn: 'root'
 })
 export class GroupService {
-  private baseUrl ='https://studynester.onrender.com/groups'; 
+ baseUrl ='https://studynester.onrender.com/groups'; 
 //private baseUrl ='http://localhost:3000/groups'
+
   constructor(private http: HttpClient){}
 
  getAllGroups(): Observable<StudyGroup[]> 
@@ -48,6 +49,8 @@ export class GroupService {
     });
   }
 
+ 
+
     joinGroup(groupId: string, userId: string, role: 'admin' | 'member' = 'member'): Observable<any> {
     return this.http.post(`${this.baseUrl}/join`, {
       groupId,
@@ -56,5 +59,16 @@ export class GroupService {
     });
   }
   
-  
+  deleteGroup(userId:string)
+  {
+     return this.http.delete(`${this.baseUrl}/${userId}`);
+  }
+
+  updateGroup(groupId:string,name:string,description:string)
+  {
+      return this.http.patch(`${this.baseUrl}/${groupId}`, {
+        name: name,
+      description: description
+  });
+  }
 }

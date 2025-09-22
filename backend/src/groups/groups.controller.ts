@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto/create-group.dto';
 @Controller('groups')
@@ -34,5 +34,18 @@ export class GroupsController {
         {
             return this.supabaseSer.joinGroup(groupId,userId,role);
         }
-         
+
+    @Delete(':userId')
+    async deleteGroup(@Param('userId') userId:string)
+    {
+        return this.supabaseSer.deleteGroup(userId);
+    }
+
+   @Patch(':id')
+  async updateGroup(
+    @Param('id') id: string,
+    @Body() body: { name: string; description: string }
+  ) {
+    return this.supabaseSer.updateGroup(id, body.name, body.description);
+}
 }

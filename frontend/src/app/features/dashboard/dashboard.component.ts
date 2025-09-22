@@ -2,14 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
-
-interface Notification {
-  id: number;
-  type: 'session' | 'message' | 'system';
-  message: string;
-  time: Date;
-  read: boolean;
-}
+import {Notifications, _Notifications } from '../../services/notifications';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,40 +15,14 @@ export class DashboardComponent implements OnInit {
   displayName: string | null = null;
   userID: string | null = null;
   showNotifications = false;
-  unreadCount = 3; // Example count
+  unreadCount = 0; 
   
-  notifications: Notification[] = [
-    {
-      id: 1,
-      type: 'session',
-      message: 'Your study session "Advanced Calculus" starts in 30 minutes',
-      time: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
-      read: false
-    },
-    {
-      id: 2,
-      type: 'message',
-      message: 'Sarah sent you a message in the "Biology 101" group',
-      time: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-      read: false
-    },
-    {
-      id: 3,
-      type: 'system',
-      message: 'Your account has been successfully verified',
-      time: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-      read: true
-    },
-    {
-      id: 4,
-      type: 'session',
-      message: 'Reminder: "Chemistry Review" session tomorrow at 3 PM',
-      time: new Date(Date.now() - 1000 * 60 * 60 * 26), // 26 hours ago
-      read: true
-    }
-  ];
+  notifications: _Notifications[] = []
 
-  constructor(private authser: AuthService, private router: Router) {}
+
+  constructor(private authser: AuthService, private router: Router,
+    private notSer:Notifications
+  ) {}
 
   ngOnInit() {
     const user = this.authser.getCurrentUser();
@@ -65,8 +32,25 @@ export class DashboardComponent implements OnInit {
     }
     
     // Calculate unread count
-    this.unreadCount = this.notifications.filter(n => !n.read).length;
+    //this.unreadCount = this.notifications.filter(n => !n.read).length;
+    this.loadNotifications();
   }
+
+loadNotifications()
+{
+  const user = this.authser.getCurrentUser();
+    const uid = user?.id;
+    if(uid)
+    {
+      this.notSer.getNotificationsByUser(uid).subscribe({
+          next: (data) => {
+            this.notifications = data;
+            this.unreadCount = this.notifications.filter(n => !n.read).length;
+          },
+          error: (err) => console.error('Failed to load notifications', err)
+        });
+  }
+}
 
   // Toggle notifications dropdown
   toggleNotifications() {
@@ -80,16 +64,15 @@ export class DashboardComponent implements OnInit {
   }
 
   // Dismiss a single notification
+  /*
   dismissNotification(id: number) {
     this.notifications = this.notifications.filter(n => n.id !== id);
     this.unreadCount = this.notifications.filter(n => !n.read).length;
   }
+*/
 
-  // View all notifications (could navigate to a notifications page)
   viewAllNotifications() {
-    this.showNotifications = false;
-    // this.router.navigate(['/notifications']);
-    console.log('Navigate to all notifications page');
+    this.router.navigate(['/notifications']);
   }
 
   // Close notifications when clicking outside
