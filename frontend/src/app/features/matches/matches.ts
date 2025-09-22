@@ -126,6 +126,22 @@ export class Matches implements OnInit {
       error: (err) => console.error(err)
     });
   }
+
+    isFullScreenImageVisible: boolean = false;
+  fullScreenImageUrl: string | null = null;
+  
+  // ... existing constructor and other methods ...
+
+  showFullScreenImage(imageUrl: string) {
+    this.fullScreenImageUrl = imageUrl;
+    this.isFullScreenImageVisible = true;
+  }
+
+  hideFullScreenImage() {
+    this.isFullScreenImageVisible = false;
+    this.fullScreenImageUrl = null;
+  }
+
   }
 
 
