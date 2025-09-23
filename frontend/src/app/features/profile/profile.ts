@@ -13,6 +13,7 @@ import { Students, _Student } from '../../services/students';
 })
 export class Profile implements OnInit {
 
+    
     profileImage : string | null = null;
     displayName : string | null = null;
     email : string | null=null;
@@ -23,12 +24,13 @@ export class Profile implements OnInit {
     skills :  null | undefined;
     studyPreference : string = "Not specified";
     students : _Student | null=null;
-   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
+   @ViewChild('fileInput', { static: true }) fileInput!: ElementRef<HTMLInputElement>;
 
     constructor (private authser: AuthService, private studentService : Students,private http:HttpClient){}
    
-ngOnInit() {
-  this.isEditMode=false;
+ngOnInit() 
+{
+  //this.isEditMode=false;
   const user = this.authser.getCurrentUser();
   this.displayName = this.authser.getUserDisplayName();
   const uid = user?.id;
@@ -96,7 +98,9 @@ ngOnInit() {
       
       OnImageClick()
       {
-          this.fileInput.nativeElement.click();
+        
+    this.fileInput.nativeElement.click();
+
       }
 
   onFileSelected(event: any) {
