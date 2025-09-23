@@ -435,3 +435,76 @@ $danger: #ff6b6b;
     }
   }
 }
+
+
+// 🌟 Dashboard Hero Section
+.dashboard-hero {
+  text-align: center;
+  padding: 4rem 2rem;
+
+  .hero-title {
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      //background: linear-gradient(90deg, $accent, lighten($accent, 15%));
+      background: linear-gradient(90deg, $accent, color.adjust($accent, $lightness: 15%));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      padding-bottom: 0.9rem;
+      padding-top: 0.9rem;
+    }
+    p {
+      font-size: 1.1rem;
+      color: $light-gray;
+      margin-bottom: 3rem;
+    }
+  }
+
+  .fame-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+
+    .fame-card {
+      background: $dark-gray;
+      padding: 2rem;
+      border-radius: 1rem;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: float 6s ease-in-out infinite;
+
+      h3 {
+        margin: 0.8rem 0 0.5rem;
+        font-size: 1.3rem;
+        color: $white;
+      }
+
+      p {
+        color: $light-gray;
+        font-size: 0.9rem;
+      }
+
+      &:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 20px 50px rgba($accent, 0.5);
+      }
+
+      &.card-1 { animation-delay: 0s; }
+      &.card-2 { animation-delay: 2s; }
+      &.card-3 { animation-delay: 4s; }
+      &.card-4 { animation-delay: 6s; }
+    }
+  }
+}
+
+// 🌊 Floating Animation
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+

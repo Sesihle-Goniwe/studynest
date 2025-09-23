@@ -1,356 +1,772 @@
+// 🎨 Color Variables (Matching Dashboard)
+$charcoal: #121212;
+$dark-gray: #1e1e1e;
+$medium-gray: #2b2b2b;
+$light-gray: #7d7d7d;
+$white: #ffffff;
+$off-white: #f5f5f5;
+$accent: #4a9eff;
+$success: #4caf50;
+$warning: #ff9800;
+$danger: #ff6b6b;
+@use "sass:color";
+
+// 🌟 Progress Tracker Styles
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #f7f7f7;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #181818, #101010);
+  color: $white;
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
+// 🚀 Navigation Bar
 .main-nav {
   display: flex;
   align-items: center;
-  background: #222;
-  color: #fff;
-  padding: 0.5rem 1.5rem;
+  background: linear-gradient(90deg, $dark-gray 0%, #111 100%);
+  color: $white;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid $medium-gray;
+
   .sidebar-toggle {
-    background: none;
+    background: rgba(255, 255, 255, 0.1);
     border: none;
-    color: #fff;
-    font-size: 2rem;
-    margin-right: 1rem;
+    color: $accent;
+    font-size: 1.8rem;
+    margin-right: 1.5rem;
     cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      background: rgba($accent, 0.2);
+      transform: rotate(90deg) scale(1.1);
+      box-shadow: 0 4px 12px rgba($accent, 0.4);
+    }
   }
+
   .app-title {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, $accent, color.adjust($accent, $lightness: 15%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.5px;
   }
 }
 
+// 📌 Sidebar
 .sidebar {
   position: fixed;
   top: 0;
-  left: -260px;
-  width: 190px;
+  left: -280px;
+  width: 280px;
   height: 100vh;
-  background: #333;
-  color: #fff;
-  padding: 2rem 1rem;
-  transition: left 0.3s;
+  background: linear-gradient(180deg, $dark-gray 0%, #111 100%);
+  color: $white;
+  padding: 2rem 0;
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
+  box-shadow: 8px 0 30px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+
   &.open {
     left: 0;
   }
-  h2 {
-    margin-top: 0;
+
+  .sidebar-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: $light-gray;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba($danger, 0.2);
+      color: $danger;
+      transform: rotate(90deg);
+    }
   }
+
+  h2 {
+    padding: 0 2rem 1.5rem;
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: $accent;
+    border-bottom: 1px solid $medium-gray;
+  }
+
   ul {
     list-style: none;
-    padding: 0;
+    padding: 1rem 0;
+    margin: 0;
+    flex: 1;
+
     li {
-      margin: 1rem 0;
+      margin: 0;
+
       a {
-        color: #fff;
+        display: flex;
+        align-items: center;
+        padding: 1rem 2rem;
+        color: $light-gray;
         text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+
         &:hover {
-          text-decoration: underline;
+          background: rgba(255, 255, 255, 0.05);
+          color: $white;
+          border-left-color: $accent;
+          padding-left: 2.5rem;
+        }
+
+        &.active {
+          background: rgba($accent, 0.15);
+          color: $accent;
+          border-left-color: $accent;
+          font-weight: 600;
         }
       }
     }
   }
 }
 
+// 📖 Main Content
 .main-content {
-  // Use Flexbox to control the layout
-  display: flex;
-  flex-direction: column; // Stack children vertically
-  align-items: center;    // Center them horizontally
-  justify-content: flex-start; // Center them vertically
-  min-height: 100vh;      // Make the container at least the full height of the screen
-  padding-top: 10px;      // Add padding to avoid overlapping with a fixed navbar
-  box-sizing: border-box;
-}
+  min-height: 100vh;
+  padding: 2rem;
+  margin-left: 0;
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-.sidebar.open ~ .main-content {
-  margin-left: 220px;
-}
-.sidebar-close {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.2rem;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.dropzone-mytopics {
-  display: flex;           // Use Flexbox to create a row
-  gap: 1rem;               // Creates space between each section
-  width: 100%;
-  max-width: 1600px;       // Adjust max-width as needed for your design
-  align-items: stretch; // Aligns sections to the top if they have different heights
-  
-}
-.dropzone-container {
-  width: 90vw;
-  max-width: 700px;
-  background: #f0f0f0;
-  border: 2px dashed #bbb;
-  border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2.5rem 2rem 1.5rem 2rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  margin-bottom: 2rem; 
-
-  &:hover, &:focus-within {
-    background: #e6e6e6;
-    border-color: #888;
+  .sidebar.open ~ & {
+    margin-left: 280px;
   }
+}
 
-  .dropzone-label {
+// 🎯 Dropzone & Topics Container
+.dropzone-mytopics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// 💾 Dropzone Styles
+.dropzone-container {
+  background: linear-gradient(135deg, $dark-gray, color.adjust($dark-gray, $lightness: -5%));
+  border: 2px dashed $medium-gray;
+  border-radius: 1rem;
+  padding: 2.5rem;
+  text-align: center;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
     width: 100%;
     height: 100%;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    background: linear-gradient(90deg, transparent, rgba($accent, 0.1), transparent);
+    transition: left 0.6s ease;
   }
 
-  .dropzone-content {
-    text-align: center;
-    color: #444;
-    .upload-link {
-      color: #1976d2;
-      text-decoration: underline;
-      cursor: pointer;
+  &:hover {
+    border-color: $accent;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+
+    &::before {
+      left: 100%;
     }
   }
 
-} 
+  .dropzone-label {
+    cursor: pointer;
+    display: block;
+  }
 
-.dashboard-container {
-  display: flex;           // Use Flexbox to create a row
-  gap: 2rem;               // Creates space between each section
-  width: 100%;
-  max-width: 1600px;       // Adjust max-width as needed for your design
-  margin-top: 2rem;
-  align-items: flex-start; // Aligns sections to the top if they have different heights
-}
+  .dropzone-content {
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: $off-white;
+    }
 
-// Style each section within the container to act as a card
-.stats-footer,
-.topics-section,
-.ai-result {
-  flex: 1;                 // Allows each section to grow and share the space
-  min-width: 0;            // Prevents content from overflowing its container
-  border-radius: 8px;
-  padding: 1.5rem;
-}
+    p {
+      color: $light-gray;
+      margin-bottom: 1rem;
+    }
 
-// Your specific styles, now applied within the flex layout
-.stats-footer {
-  display: flex;
-  padding-top: 4.6rem;
-  flex-direction: column;  // Stack stats vertically within their own card
-  gap: 1rem;               // Space between "Topics Completed" and "Hours Studied"
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  font-size: 1.1rem;
-  color: #333;
-  align-items: center;
-}
+    .upload-link {
+      color: $accent;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: color 0.3s ease;
 
-.topics-section {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-}
+      &:hover {
+        color: color.adjust($accent, $lightness: 15%);
+      }
+    }
+  }
 
-.ai-result {
-  background: #fffbe6;
-  border: 1px solid #ffe58f;
-  word-break: break-word;
-}
-// In progress.scss
+  .file-ready-container {
+    .selected-file-name {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      color: $off-white;
 
-// Style for clickable table rows
-.clickable-row {
-  cursor: pointer;
-  &:hover {
-    background-color: #f0f0f0; // Or your theme's hover color
+      strong {
+        color: $accent;
+      }
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+
+      .upload-button, .cancel-button {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .upload-button {
+        background: $accent;
+        color: $white;
+        box-shadow: 0 4px 12px rgba($accent, 0.4);
+
+        &:hover {
+          background: color.adjust($accent, $lightness: 5%);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 18px rgba($accent, 0.5);
+        }
+      }
+
+      .cancel-button {
+        background: rgba($danger, 0.2);
+        color: $danger;
+        border: 1px solid $danger;
+
+        &:hover {
+          background: $danger;
+          color: $white;
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+
+  .status-message {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+
+    &.success {
+      background: rgba($success, 0.1);
+      color: $success;
+      border: 1px solid $success;
+    }
+
+    &.error {
+      background: rgba($danger, 0.1);
+      color: $danger;
+      border: 1px solid $danger;
+    }
   }
 }
 
-// Styles for the PDF Viewer Overlay
+// 📊 Topics Sections
+.topics-cont {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.topics-section {
+  background: $dark-gray;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: $off-white;
+    border-bottom: 2px solid $medium-gray;
+    padding-bottom: 0.5rem;
+  }
+}
+
+// 🎪 Table Styles
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: $charcoal;
+  border-radius: 0.75rem;
+  overflow: hidden;
+
+  thead {
+    background: linear-gradient(90deg, $medium-gray, color.adjust($medium-gray, $lightness: -5%));
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: $off-white;
+      border-bottom: 2px solid $accent;
+    }
+  }
+
+  tbody {
+    tr {
+      transition: all 0.3s ease;
+      border-bottom: 1px solid $medium-gray;
+
+      &:hover {
+        background: rgba($accent, 0.05);
+        transform: scale(1.01);
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      td {
+        padding: 1rem;
+        color: $light-gray;
+
+        .clickable-topic {
+          color: $accent;
+          cursor: pointer;
+          font-weight: 500;
+          transition: color 0.3s ease;
+
+          &:hover {
+            color: color.adjust($accent, $lightness: 15%);
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+
+  tfoot {
+    td {
+      padding: 1.5rem;
+      text-align: center;
+      color: $light-gray;
+      font-style: italic;
+    }
+  }
+}
+
+// 🎮 Action Buttons
+.actions-cell {
+  .action-buttons-container {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 80px;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .complete-btn {
+      background: rgba($success, 0.2);
+      color: $success;
+      border: 1px solid $success;
+
+      &:hover {
+        background: $success;
+        color: $white;
+      }
+    }
+
+    .delete-btn {
+      background: rgba($danger, 0.2);
+      color: $danger;
+      border: 1px solid $danger;
+
+      &:hover {
+        background: $danger;
+        color: $white;
+      }
+    }
+
+    .summarize-btn {
+      background: rgba($accent, 0.2);
+      color: $accent;
+      border: 1px solid $accent;
+
+      &:hover {
+        background: $accent;
+        color: $white;
+      }
+    }
+
+    .log-hours-btn {
+      background: rgba($warning, 0.2);
+      color: $warning;
+      border: 1px solid $warning;
+
+      &:hover {
+        background: $warning;
+        color: $charcoal;
+      }
+    }
+
+    .view-btn {
+      background: rgba($accent, 0.2);
+      color: $accent;
+      border: 1px solid $accent;
+
+      &:hover {
+        background: $accent;
+        color: $white;
+      }
+    }
+  }
+}
+
+// 📈 Stats Footer
+.stats-footer {
+  background: linear-gradient(135deg, $dark-gray, color.adjust($dark-gray, $lightness: -5%));
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+  > div {
+    font-size: 1.1rem;
+    color: $off-white;
+
+    strong {
+      color: $accent;
+    }
+  }
+
+  .stats-actions {
+    display: flex;
+    gap: 1rem;
+
+    button {
+      padding: 0.7rem 1.2rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:first-child {
+        background: rgba($accent, 0.2);
+        color: $accent;
+        border: 1px solid $accent;
+
+        &:hover {
+          background: $accent;
+          color: $white;
+          transform: translateY(-2px);
+        }
+      }
+
+      &:last-child {
+        background: $accent;
+        color: $white;
+        box-shadow: 0 4px 12px rgba($accent, 0.4);
+
+        &:hover {
+          background: color.adjust($accent, $lightness: 5%);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 18px rgba($accent, 0.5);
+        }
+      }
+    }
+  }
+}
+
+// 🏆 Rankings Section
+.rankings-section {
+  background: $dark-gray;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $accent, color.adjust($accent, $lightness: 15%));
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: $off-white;
+  }
+
+  .tabs-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+
+    .tab {
+      padding: 0.8rem 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      border-radius: 0.75rem;
+      color: $light-gray;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &.active {
+        background: rgba($accent, 0.2);
+        color: $accent;
+        box-shadow: 0 4px 12px rgba($accent, 0.3);
+      }
+
+      &:hover {
+        background: rgba($accent, 0.15);
+        color: $accent;
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  .chart-container {
+    position: relative;
+    height: 400px;
+    background: $charcoal;
+    border-radius: 0.75rem;
+    padding: 1rem;
+  }
+}
+
+// 🤖 AI Result Section
+.ai-result {
+  background: linear-gradient(135deg, rgba($accent, 0.1), rgba($accent, 0.05));
+  border: 1px solid rgba($accent, 0.3);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: $accent;
+  }
+
+  pre {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    color: $off-white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    border: 1px solid $medium-gray;
+  }
+}
+
+// 📚 PDF Viewer Overlay
 .pdf-viewer-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.9);
   z-index: 2000;
-}
-
-.pdf-viewer-container {
-  position: relative;
-  width: 90%;
-  max-width: 900px;
-  height: 90vh;
-}
-
-.close-viewer-btn {
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  font-size: 1.5rem;
-  line-height: 30px;
-  text-align: center;
-  cursor: pointer;
-  z-index: 2001;
-}
-.topics-cont{
-  display : flex;
-  flex-direction : column;
-  gap : 0.5rem;
-  max-width: fit-content;
-}
-// Style for the container that holds all action buttons
-.action-buttons-container {
   display: flex;
-  flex-direction: row; // This is the key property to stack them vertically
-  gap: 0.5rem; // Adds a nice space between each button
-  align-items: flex-start; // Aligns buttons to the left
+  align-items: center;
+  justify-content: center;
+
+  .pdf-viewer-container {
+    position: relative;
+    width: 90%;
+    height: 90%;
+    background: $charcoal;
+    border-radius: 1rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+
+    .close-viewer-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba($danger, 0.2);
+      border: none;
+      color: $danger;
+      font-size: 2rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 2001;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: $danger;
+        color: $white;
+        transform: rotate(90deg);
+      }
+    }
+  }
 }
 
-// A general style for all action buttons for consistency
-// A general style for all action buttons for consistency
-// Add .view-btn to this list
-.summarize-btn,
-.view-btn,
-.log-hours-btn,
-.complete-btn,
-.delete-btn {
-  border: none;
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  width: 90px; // This gives them a consistent width
-  text-align: center;
-  transition: background-color 0.2s; // Added a transition for hover effects
+// ✨ Animations
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-// Your specific button colors
-.summarize-btn {
-  background-color: #9c27b0; // Your blue color
-  color: white;
+// 📱 Responsive Design
+@media (max-width: 768px) {
+  .main-nav {
+    padding: 1rem;
+
+    .app-title {
+      font-size: 1.4rem;
+    }
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .dropzone-mytopics {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .stats-footer {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .actions-cell .action-buttons-container {
+    justify-content: center;
+  }
+
+  table {
+    font-size: 0.9rem;
+
+    th, td {
+      padding: 0.7rem;
+    }
+  }
+
+  .rankings-section {
+    padding: 1.5rem;
+
+    .tabs-container {
+      justify-content: center;
+    }
+  }
+}
+
+// 🌈 Scrollbar Styling
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $dark-gray;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $medium-gray;
+  border-radius: 4px;
 
   &:hover {
-    background-color: #832194;
-  }
-}
-.view-btn {
-  background-color: #3976df; // Your blue color
-  color: white;
-
-  &:hover {
-    background-color: #2f64bf;
+    background: $light-gray;
   }
 }
 
-.log-hours-btn {
-  background-color: #e0e0e0;
-  color: #333;
-
-  &:hover {
-    background-color: #bdbdbd;
-  }
+// 🎯 Utility Classes
+.fade-in {
+  animation: slideIn 0.6s ease-out;
 }
 
-.complete-btn {
-  background-color: #66ff66; // Your green color
-  color: black;
-
-  &:hover {
-    background-color: #4fe04f;
-  }
+.glow {
+  box-shadow: 0 0 20px rgba($accent, 0.3);
 }
 
-.delete-btn {
-  background-color: #ff4242; // Your red color
-  color: white;
-
-  &:hover {
-    background-color: #e03838;
-  }
-}
-.rankings-section {
-  flex-grow: 2;
-  width: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.tabs-container {
-  display: flex;
-  border-bottom: 2px solid #eee;
-  margin-bottom: 1rem;
-}
-
-.tab {
-  padding: 0.75rem 1.25rem;
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-size: 1rem;
-  color: #666;
-  border-bottom: 2px solid transparent;
-
-  &.active {
-    color: #1976d2;
-    border-bottom-color: #1976d2;
-    font-weight: 600;
-  }
-}
-
-.chart-container {
-  position: relative;
-  height: 350px;
-  flex-grow: 1; // Allows the chart container to fill the available space
-}
-.completed-tops{
-  display : flex;
-  flex-direction: row;
-  gap : 1rem;
-}
-.clickable-topic {
-  cursor: pointer;
-  font-weight: 500;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #1976d2;
-    // Your requested overline effect
-    text-decoration: overline;
-    text-decoration-color: #1976d2;
-    text-decoration-thickness: 2px;
-  }
+.text-gradient {
+  background: linear-gradient(90deg, $accent, color.adjust($accent, $lightness: 15%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
