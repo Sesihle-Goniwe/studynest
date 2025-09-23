@@ -24,8 +24,15 @@ export class DashboardComponent implements OnInit {
     private notSer:Notifications
   ) {}
 
-  ngOnInit() {
+  ngOnInit() 
+  {
     const user = this.authser.getCurrentUser();
+    if (user && !sessionStorage.getItem('dashboardRefreshed')) {
+    sessionStorage.setItem('dashboardRefreshed', 'true');
+    location.reload(); 
+    location.reload(); 
+    return; 
+  }
     if (user) {
       this.userID = user.id;
       this.displayName = this.authser.getUserDisplayName();
