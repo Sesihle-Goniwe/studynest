@@ -1,81 +1,218 @@
+// 🎨 Dark Theme Variables (same as dashboard)
+$charcoal: #121212;
+$dark-gray: #1e1e1e;
+$medium-gray: #2b2b2b;
+$light-gray: #7d7d7d;
+$white: #ffffff;
+$off-white: #f5f5f5;
+$accent: #4a9eff;
+$success: #4caf50;
+$danger: #ff6b6b;
+$warning: #ffc107;
+@use "sass:color";
+
+// 🔹 Root container
+.matches-page {
+  padding: 2rem;
+  background: $charcoal;
+  color: $off-white;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+
+  h2, h3 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    //background: linear-gradient(90deg, $accent, lighten($accent, 10%));
+    background: linear-gradient(90deg, $accent, color.adjust($accent, $lightness: 10%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+// 🔹 Add course section
+.add-course {
+  background: $dark-gray;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: 2rem;
+
+  h3 {
+    margin-bottom: 1rem;
+  }
+
+  label {
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+    font-weight: 600;
+    color: $off-white;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.7rem;
+    border-radius: 0.6rem;
+    border: 1px solid $medium-gray;
+    background: $medium-gray;
+    color: $white;
+    margin-bottom: 1rem;
+
+    &:focus {
+      border-color: $accent;
+      box-shadow: 0 0 6px rgba($accent, 0.5);
+      outline: none;
+    }
+  }
+
+  button {
+    background: $accent;
+    color: $white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    &:hover {
+      //background: lighten($accent, 8%);
+      background: color.adjust($accent, $lightness: 8%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba($accent, 0.4);
+    }
+  }
+
+  ul {
+    margin-top: 1rem;
+    list-style: none;
+    padding: 0;
+
+    li {
+      background: $medium-gray;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+      color: $off-white;
+    }
+  }
+}
+
+// 🔹 Match swipe card
 .card {
-  border: 1px solid #ddd;
-  border-radius: 16px;
-  padding: 20px;
-  max-width: 400px;
-  margin: auto;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 450px;
+  margin: 2rem auto;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  background: $dark-gray;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.6s ease;
+
+  h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.6rem;
+  }
+
+  p {
+    margin: 0.2rem 0;
+    color: $light-gray;
+  }
+
+  ul {
+    margin-top: 1rem;
+    text-align: left;
+
+    li {
+      padding: 0.3rem 0;
+      color: $off-white;
+    }
+  }
+}
+
+// 🔹 Like & Skip buttons
+.like-btn, .skip-btn {
+  padding: 0.8rem 1.4rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0.5rem;
+  transition: all 0.3s ease;
+  font-size: 1rem;
 }
 
 .like-btn {
-  background: #4caf50;
-  color: white;
-  padding: 10px 16px;
-  margin: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  background: $success;
+  color: $white;
+  box-shadow: 0 4px 12px rgba($success, 0.4);
+
+  &:hover {
+    //background: lighten($success, 5%);
+    background: color.adjust($success, $lightness: 5%);
+    transform: scale(1.05);
+  }
 }
 
 .skip-btn {
-  background: #f44336;
-  color: white;
-  padding: 10px 16px;
-  margin: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  background: $danger;
+  color: $white;
+  box-shadow: 0 4px 12px rgba($danger, 0.4);
+
+  &:hover {
+    //background: lighten($danger, 5%);
+    background: color.adjust($danger, $lightness: 5%);
+    transform: scale(1.05);
+  }
 }
 
-/* matches.scss */
-
-/* Main container for the matched partners section */
-.matched-partners-container {
+// 🔹 Partner sections
+.matched-partners-container,
+.rejected-partners-container {
   margin-top: 2rem;
   padding: 1.5rem;
-  background-color: #f4f7f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: $dark-gray;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* Styling for each individual partner card */
+// Partner card
 .partner-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
-  border-left: 5px solid #007bff; // A unique color to signify a match
-  border-radius: 8px;
-  padding: 1.2rem;
+  background-color: $medium-gray;
+  border-left: 5px solid $accent;
+  border-radius: 0.8rem;
+  padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
     transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba($accent, 0.4);
   }
 }
 
-/* Styling for the partner's info text */
 .partner-info {
   flex-grow: 1;
+
+  .partner-id {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $off-white;
+    margin: 0 0 0.4rem;
+  }
+
+  .partner-detail {
+    font-size: 0.9rem;
+    color: $light-gray;
+    margin: 0.2rem 0;
+  }
 }
 
-.partner-id {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 0.5rem;
-}
-
-.partner-detail {
-  font-size: 0.9rem;
-  color: #666;
-  margin: 0;
-}
-
-/* Styling for the status badge */
+// 🔹 Status badge
 .status-badge {
   padding: 0.4rem 0.8rem;
   border-radius: 20px;
@@ -85,30 +222,43 @@
   color: #fff;
   text-align: center;
   min-width: 80px;
+  animation: pulse 2s infinite;
 }
 
-/* Specific colors for different statuses */
 .status-liked {
-  background-color: #28a745; // Green for liked
+  background-color: $success;
 }
 
 .status-matched {
-  background-color: #007bff; // Blue for matched
+  background-color: $accent;
 }
 
 .status-pending {
-  background-color: #ffc107; // Yellow for pending
+  background-color: $warning;
+  color: $charcoal;
 }
 
 .status-rejected {
-  background-color: #dc3545; // Red for rejected
+  background-color: $danger;
 }
 
-
-/* New style for rejected partners */
+// 🔹 Rejected partners special style
 .rejected-card {
-  border-left: 5px solid #dc3545; /* Red border to signify rejection */
-  opacity: 0.7; /* Make them slightly transparent */
+  border-left: 5px solid $danger;
+  opacity: 0.7;
+  filter: grayscale(30%);
+}
+
+// 🔹 Animations
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
 }
 
 /* matches.scss */
