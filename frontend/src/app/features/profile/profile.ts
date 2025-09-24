@@ -9,7 +9,7 @@ import { Students, _Student } from '../../services/students';
   standalone :true,
   imports: [FormsModule,CommonModule],
   templateUrl: './profile.html',
-  styleUrl: './profile.scss'
+    styleUrls: ['./profile.scss'] 
 })
 export class Profile implements OnInit {
 

@@ -7,9 +7,10 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-group-session',
+    standalone: true,
   imports: [CommonModule,FormsModule,RouterModule],
   templateUrl: './group-session.html',
-  styleUrl: './group-session.scss'
+  styleUrls: ['./group-session.scss']
 })
 export class GroupSession {
     sessionsArr: _Session[]= [];
