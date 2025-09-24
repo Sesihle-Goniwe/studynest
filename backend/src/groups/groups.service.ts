@@ -84,7 +84,7 @@ constructor(private supabaseSer:SupabaseService,
         if(member.user_id !== userId)
         {
           await this.notification.createNotification(
-            member.user_id, `A new member has joined your group: ${groupName}`,
+            member.user_id, groupName,
           );
         }
       }

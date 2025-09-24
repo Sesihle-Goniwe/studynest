@@ -24,10 +24,44 @@ export class MailerService {
                     }
                 }
             )
-        }
+        }   
+
+joinGroupEmailTemplate(groupName: string) {
+  const subject = `A new member on StudyNest 🎉`;
+
+  const text = `
+Hello,
+
+A new member has joined your group "${groupName}" on StudyNest.
+
+
+Happy studying!  
+— The StudyNest Team
+  `;
+
+  const html = `
+  <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <h2 style="color: #4CAF50;">New group Member! 🎉</h2>
+    <p>A new Member has joined the group 
+    <strong>"${groupName}"</strong> on <b>StudyNest</b>.</p>
+    
+
+    <p>We’re excited to see you collaborate and achieve your study goals together 🚀</p>
+  </div>
+  `;
+
+  return { subject, text, html };
+}
+
+async sendJoinGroupMail(to: string, groupName: string) {
+  const { subject, text, html } = this.joinGroupEmailTemplate(groupName);
+
+  return this.sendMail(to, subject, text, html);
+}
+
 
 async sendMail(to: string, subject: string, text: string, html?: string) {
-  
+
     try 
     {
         const info = await this.transporter.sendMail({
@@ -45,6 +79,7 @@ async sendMail(to: string, subject: string, text: string, html?: string) {
     throw error;
   }
 }
+
 @Cron('*/1 * * * *')
   async sendReminders() 
   {

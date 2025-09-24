@@ -53,11 +53,14 @@ export class NotificationsService {
             console.log("error finding email");
         }
           else {
+            await this.mailer.sendJoinGroupMail(user.email,message)
+            /*
             await this.mailer.sendMail(
                 user.email,
                 message,
                 `${message}`
             );
+            */
 
           return data;
     }
