@@ -3,6 +3,7 @@ import { of, Subject } from 'rxjs';
 import { Profile } from './profile';
 import { AuthService } from '../auth/auth.service';
 import { Students } from '../../services/students';
+import { HttpClientTestingModule } from '@angular/common/http/testing'; // ✅ add
 
 class MockAuthService {
   getCurrentUser() {
@@ -31,11 +32,9 @@ class MockStudentsService {
     setTimeout(() => this.getStudent$.next({ ...mockStudentRecord }), 0);
     return this.getStudent$.asObservable();
   }
-
   updatestudentbyUid(uid: string, dto: any) {
     return of({ ...mockStudentRecord, ...dto });
   }
-
   updatestudentPhoto(uid: string, form: FormData) {
     return of({ profileImage: 'http://example.com/new.png' });
   }
@@ -48,11 +47,14 @@ describe('Profile (standalone)', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Profile],
+      imports: [
+        Profile,
+        HttpClientTestingModule,                 // ✅ provide HttpClient
+      ],
       providers: [
         { provide: AuthService, useClass: MockAuthService },
-        { provide: Students, useClass: MockStudentsService }
-      ]
+        { provide: Students, useClass: MockStudentsService },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Profile);
@@ -61,8 +63,8 @@ describe('Profile (standalone)', () => {
   });
 
   it('should create', fakeAsync(() => {
-    fixture.detectChanges();       // triggers ngOnInit
-    tick();                        // flush async student load
+    fixture.detectChanges();
+    tick();
     fixture.detectChanges();
     expect(component).toBeTruthy();
   }));
@@ -74,15 +76,12 @@ describe('Profile (standalone)', () => {
 
     expect(component.students?.email).toBe('test@uni.ac.za');
     expect(component.displayName).toBe('Test Student');
-    
-    // Use non-null assertion or safe navigation
     expect(component.university!).toBe('Wits');
     expect(component.course!).toBe('BCom Finance');
     expect(component.year!).toBe(3);
     expect(component.skills!).toBe('Excel, R, Python');
     expect(component.studyPreference!).toBe('Night');
 
-    // DOM assertions (readonly view shows after data)
     const h2 = fixture.nativeElement.querySelector('h2');
     expect(h2.textContent).toContain('Test Student');
     const uni = fixture.nativeElement.querySelector('.university');
@@ -95,13 +94,13 @@ describe('Profile (standalone)', () => {
     fixture.detectChanges();
 
     const btn: HTMLButtonElement = fixture.nativeElement.querySelector('.edit-btn');
-    expect(component.isEditMode).toBeFalse();
+    expect(component.isEditMode).toBe(false);
     btn.click();
     fixture.detectChanges();
-    expect(component.isEditMode).toBeTrue();
+    expect(component.isEditMode).toBe(true);
     btn.click();
     fixture.detectChanges();
-    expect(component.isEditMode).toBeFalse();
+    expect(component.isEditMode).toBe(false);
   }));
 
   it('saves profile via service and exits edit mode', fakeAsync(() => {
@@ -113,14 +112,14 @@ describe('Profile (standalone)', () => {
     component.course = 'BCom Hons Finance';
     fixture.detectChanges();
 
-    const spy = spyOn(studentsSvc, 'updatestudentbyUid').and.callThrough();
+    const spy = jest.spyOn(studentsSvc, 'updatestudentbyUid');
 
     component.saveProfile();
     tick();
     fixture.detectChanges();
 
     expect(spy).toHaveBeenCalled();
-    expect(component.isEditMode).toBeFalse();
+    expect(component.isEditMode).toBe(false);
   }));
 
   it('uploads photo and updates preview', fakeAsync(() => {
@@ -128,9 +127,8 @@ describe('Profile (standalone)', () => {
     tick();
     fixture.detectChanges();
 
-    const uploadSpy = spyOn(studentsSvc, 'updatestudentPhoto').and.callThrough();
+    const uploadSpy = jest.spyOn(studentsSvc, 'updatestudentPhoto');
 
-    // Call uploadPhoto directly (FileReader is fiddly in JSDOM)
     const fakeFile = new File(['abc'], 'pic.png', { type: 'image/png' });
     component.uploadPhoto(fakeFile);
     tick();
