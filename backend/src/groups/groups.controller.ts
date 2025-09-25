@@ -1,51 +1,56 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { GroupsService } from './groups.service';
-import { CreateGroupDto } from './dto/create-group.dto/create-group.dto';
-@Controller('groups')
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from "@nestjs/common";
+import { GroupsService } from "./groups.service";
+import { CreateGroupDto } from "./dto/create-group.dto/create-group.dto";
+@Controller("groups")
 export class GroupsController {
+  constructor(private supabaseSer: GroupsService) {}
 
-    constructor (private supabaseSer: GroupsService){}
+  @Get()
+  async getAllGroups() {
+    return await this.supabaseSer.getAllGroup();
+  }
 
-    @Get()
-    
-    async getAllGroups()
-    {
-        return await this.supabaseSer.getAllGroup();
-    }
-    
-    @Get(':userId')
-    async getGroupsById(@Param('userId') userId:string)
-    {
-            return this.supabaseSer.getMyGroups(userId);
-    }
+  @Get(":userId")
+  async getGroupsById(@Param("userId") userId: string) {
+    return this.supabaseSer.getMyGroups(userId);
+  }
 
-        @Post('create')
-        async createGroup(@Body() createGroupDto: CreateGroupDto) {
-        return this.supabaseSer.createGroup(
-            createGroupDto.name,
-            createGroupDto.description,
-            createGroupDto.userId
-        );
-        }
+  @Post("create")
+  async createGroup(@Body() createGroupDto: CreateGroupDto) {
+    return this.supabaseSer.createGroup(
+      createGroupDto.name,
+      createGroupDto.description,
+      createGroupDto.userId,
+    );
+  }
 
-    @Post('join')
-    async joinGroup(@Body('groupId') groupId:string, @Body('userId') userId:string,
-                    @Body('role') role:'admin' | 'member'='member')
-        {
-            return this.supabaseSer.joinGroup(groupId,userId,role);
-        }
+  @Post("join")
+  async joinGroup(
+    @Body("groupId") groupId: string,
+    @Body("userId") userId: string,
+    @Body("role") role: "admin" | "member" = "member",
+  ) {
+    return this.supabaseSer.joinGroup(groupId, userId, role);
+  }
 
-    @Delete(':userId')
-    async deleteGroup(@Param('userId') userId:string)
-    {
-        return this.supabaseSer.deleteGroup(userId);
-    }
+  @Delete(":userId")
+  async deleteGroup(@Param("userId") userId: string) {
+    return this.supabaseSer.deleteGroup(userId);
+  }
 
-   @Patch(':id')
+  @Patch(":id")
   async updateGroup(
-    @Param('id') id: string,
-    @Body() body: { name: string; description: string }
+    @Param("id") id: string,
+    @Body() body: { name: string; description: string },
   ) {
     return this.supabaseSer.updateGroup(id, body.name, body.description);
-}
+  }
 }

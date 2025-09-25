@@ -41,6 +41,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
+    "@angular-builders/jest": "^20.0.0",
     "@angular/build": "^20.1.4",
     "@angular/cli": "^20.1.5",
     "@angular/compiler-cli": "^20.1.0",
@@ -60,6 +61,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "karma-safari-launcher": "^1.0.0",
     "process": "^0.11.10",
     "ts-jest": "^29.4.4",
     "typescript": "~5.8.2",
