@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { SessionsController } from './sessions.controller';
-import { SessionsService } from './sessions.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { SessionsController } from "./sessions.controller";
+import { SessionsService } from "./sessions.service";
 
-describe('SessionsController', () => {
+describe("SessionsController", () => {
   let controller: SessionsController;
   let service: SessionsService;
 
@@ -17,22 +17,20 @@ describe('SessionsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SessionsController],
-      providers: [
-        { provide: SessionsService, useValue: mockSessionsService },
-      ],
+      providers: [{ provide: SessionsService, useValue: mockSessionsService }],
     }).compile();
 
     controller = module.get<SessionsController>(SessionsController);
     service = module.get<SessionsService>(SessionsService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 
-  describe('createSession', () => {
-    it('should call SessionsService.createSession', async () => {
-      const dto = { title: 'Test Session' };
+  describe("createSession", () => {
+    it("should call SessionsService.createSession", async () => {
+      const dto = { title: "Test Session" };
       mockSessionsService.createSession.mockResolvedValue(dto);
 
       const result = await controller.createSession(dto);
@@ -41,10 +39,10 @@ describe('SessionsController', () => {
     });
   });
 
-  describe('getSessionByGroup', () => {
-    it('should call SessionsService.getSessionByGroup', async () => {
-      const groupId = 'group1';
-      const mockData = [{ id: 'session1' }];
+  describe("getSessionByGroup", () => {
+    it("should call SessionsService.getSessionByGroup", async () => {
+      const groupId = "group1";
+      const mockData = [{ id: "session1" }];
       mockSessionsService.getSessionByGroup.mockResolvedValue(mockData);
 
       const result = await controller.getSessionByGroup(groupId);
@@ -53,11 +51,11 @@ describe('SessionsController', () => {
     });
   });
 
-  describe('getUserRole', () => {
-    it('should call SessionsService.getUserRole', async () => {
-      const groupId = 'group1';
-      const userId = 'user1';
-      const mockRole = 'member';
+  describe("getUserRole", () => {
+    it("should call SessionsService.getUserRole", async () => {
+      const groupId = "group1";
+      const userId = "user1";
+      const mockRole = "member";
       mockSessionsService.getUserRole.mockResolvedValue(mockRole);
 
       const result = await controller.getUserRole(groupId, userId);
@@ -66,9 +64,9 @@ describe('SessionsController', () => {
     });
   });
 
-  describe('deleteSession', () => {
-    it('should call SessionsService.deleteSession', async () => {
-      const sessionId = 'session1';
+  describe("deleteSession", () => {
+    it("should call SessionsService.deleteSession", async () => {
+      const sessionId = "session1";
       mockSessionsService.deleteSession.mockResolvedValue(true);
 
       const result = await controller.deleteSession(sessionId);
@@ -77,10 +75,10 @@ describe('SessionsController', () => {
     });
   });
 
-  describe('leaveGroup', () => {
-    it('should call SessionsService.leaveGroup', async () => {
-      const groupId = 'group1';
-      const userId = 'user1';
+  describe("leaveGroup", () => {
+    it("should call SessionsService.leaveGroup", async () => {
+      const groupId = "group1";
+      const userId = "user1";
       mockSessionsService.leaveGroup.mockResolvedValue(true);
 
       const result = await controller.leaveGroup(groupId, userId);

@@ -2,10 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": ["jest", "node"],   // ✅ this is the key
+    "types": ["jest", "node"],
     "esModuleInterop": true,
     "allowJs": true
   },
-  "files": ["src/polyfills.ts"],
   "include": ["**/*.spec.ts", "**/*.d.ts"]
 }

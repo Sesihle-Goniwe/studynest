@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { NotificationsService } from './notifications.service';
-import { SupabaseService } from 'src/supabase/supabase.service';
-import { MailerService } from '../mailer/mailer.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { NotificationsService } from "./notifications.service";
+import { SupabaseService } from "src/supabase/supabase.service";
+import { MailerService } from "../mailer/mailer.service";
 
-describe('NotificationsService', () => {
+describe("NotificationsService", () => {
   let service: NotificationsService;
   let supabaseMock: any;
   let mailerMock: any;
@@ -17,11 +17,20 @@ describe('NotificationsService', () => {
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      order: jest.fn().mockResolvedValue({ data: [{ id: 1, message: 'Test notification' }], error: null }),
+      order: jest.fn().mockResolvedValue({
+        data: [{ id: 1, message: "Test notification" }],
+        error: null,
+      }),
       single: jest
         .fn()
-        .mockResolvedValueOnce({ data: { id: 1, user_id: 'user123', message: 'hello' }, error: null }) // insert notification
-        .mockResolvedValueOnce({ data: { email: 'test@example.com' }, error: null }) // get user email
+        .mockResolvedValueOnce({
+          data: { id: 1, user_id: "user123", message: "hello" },
+          error: null,
+        }) // insert notification
+        .mockResolvedValueOnce({
+          data: { email: "test@example.com" },
+          error: null,
+        }) // get user email
         .mockResolvedValue({ data: { id: 1, read: true }, error: null }), // mark as read
     };
 
@@ -45,46 +54,58 @@ describe('NotificationsService', () => {
     service = module.get<NotificationsService>(NotificationsService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe('getAllNotifications', () => {
-    it('should return notifications from supabase', async () => {
-      const mockData = [{ id: 1, message: 'Test notification' }];
+  describe("getAllNotifications", () => {
+    it("should return notifications from supabase", async () => {
+      const mockData = [{ id: 1, message: "Test notification" }];
       // override order mock for this test
-      supabaseMock.getClient().order.mockResolvedValue({ data: mockData, error: null });
+      supabaseMock
+        .getClient()
+        .order.mockResolvedValue({ data: mockData, error: null });
 
       const result = await service.getAllNotifications();
       expect(result).toEqual(mockData);
     });
   });
 
-  describe('createNotification', () => {
-    it('should insert notification and send email', async () => {
-      const result = await service.createNotification('user123', 'hello');
-      expect(result).toEqual({ id: 1, user_id: 'user123', message: 'hello' });
+  describe("createNotification", () => {
+    it("should insert notification and send email", async () => {
+      const result = await service.createNotification("user123", "hello");
+      expect(result).toEqual({ id: 1, user_id: "user123", message: "hello" });
       expect(mailerMock.sendMail).toHaveBeenCalledWith(
-        'test@example.com',
-        'hello',
-        'hello',
+        "test@example.com",
+        "hello",
+        "hello",
       );
     });
   });
 
- describe('markAsRead', () => 
-  { it('should update notification as read', 
-    async () => 
-      { const mockData = [{ id: '1', read: true }]; 
-    supabaseMock.getClient().from().update().eq().select.mockResolvedValue({ data: mockData, error: null, }); 
-    const result = await service.markAsRead('1'); expect(result).toEqual(mockData[0]); }); });
+  describe("markAsRead", () => {
+    it("should update notification as read", async () => {
+      const mockData = [{ id: "1", read: true }];
+      supabaseMock
+        .getClient()
+        .from()
+        .update()
+        .eq()
+        .select.mockResolvedValue({ data: mockData, error: null });
+      const result = await service.markAsRead("1");
+      expect(result).toEqual(mockData[0]);
+    });
+  });
 
-  describe('clearNotifications', () => 
-    { it('should delete notifications for a user', 
-      async () => 
-        { supabaseMock.getClient().from().delete().eq.mockResolvedValue({ data: [], error: null, }); 
-      const result = await service.clearNotifications('user123'); expect(result).toEqual([]); }); }); 
-
-
-  
+  describe("clearNotifications", () => {
+    it("should delete notifications for a user", async () => {
+      supabaseMock
+        .getClient()
+        .from()
+        .delete()
+        .eq.mockResolvedValue({ data: [], error: null });
+      const result = await service.clearNotifications("user123");
+      expect(result).toEqual([]);
+    });
+  });
 });
