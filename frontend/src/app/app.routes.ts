@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { CallbackComponent } from './features/auth/callback.component';
 import {Home} from './features/home/home';
+import {Profile} from './features/profile/profile';
 
 
 export const routes: Routes = [
@@ -69,6 +70,10 @@ export const routes: Routes = [
       path: 'groupChats/:groupId',
       loadComponent : () =>
         import('./features/group-chats/group-chats.component').then(m=>m.GroupChatsComponent)
-    }
+    },
+
+    { 
+      path: 'profile/:userId', component: Profile
+     },
 
 ];

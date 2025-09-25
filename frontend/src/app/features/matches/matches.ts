@@ -3,6 +3,7 @@ import { StudentCoursesService } from '../../services/student_courses.services';
 import { AuthService } from '../auth/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule as C, CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-matches',
@@ -23,7 +24,9 @@ export class Matches implements OnInit {
 
   currentUserId: string | null = null;
 
-  constructor(private studentCoursesService: StudentCoursesService, private authService: AuthService) {}
+  constructor(private studentCoursesService: StudentCoursesService,
+     private authService: AuthService,
+     private router: Router) {}
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
@@ -142,6 +145,27 @@ export class Matches implements OnInit {
     this.fullScreenImageUrl = null;
   }
 
+  getPartnerDisplayName(partner: any): string {
+  if (partner?.students?.email) {
+    // Take the part before "@"
+    return partner.students.email.split('@')[0];
+  }
+  return partner?.students?.user_id || 'Unknown';
   }
 
+  getPartnerName(partner: any): string {
+    const email = partner?.students?.email;
+    if (email) {
+      return email.split('@')[0]; // first part before "@"
+    }
+    // fallback to user_id if email is missing
+    return partner?.students?.user_id || 'Unknown';
+  }
+
+  viewProfile(userId: string) {
+    this.router.navigate(['/profile', userId]);
+
+
+  }
+}
 
