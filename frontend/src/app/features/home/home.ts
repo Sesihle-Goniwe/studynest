@@ -14,6 +14,9 @@ export class Home {
   {
     this.router.navigate(['/login']);
   }
+   goToAbout() {
+    this.router.navigate(['/about']);
+  }
 
   
 }

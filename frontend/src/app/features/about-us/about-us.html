@@ -1,0 +1,68 @@
+<nav class="home-nav">
+  <div class="nav-content">
+    <div class="logo">
+      <h1 (click)="goToHome()">Study Nest</h1>
+    </div>
+    <button class="login-button" (click)="goToLogin()">
+      Sign In
+    </button>
+  </div>
+</nav>
+
+<div class="about-container">
+  <header class="about-hero">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        We're building the future of
+        <span class="accent">collaborative learning</span>.
+      </h1>
+      <p class="hero-subtitle">
+        Study Nest was born from a simple idea: learning is better when we do it together. Discover our story and the mission that drives us forward.
+      </p>
+    </div>
+  </header>
+
+  <section class="mission-section">
+    <h2>Our Mission</h2>
+    <p>
+      Our mission is to empower students everywhere by creating an accessible, intuitive, and effective platform for collaborative study. We believe that by connecting learners, we can unlock academic potential and foster a global community of scholars who support and elevate one another.
+    </p>
+  </section>
+
+  <section class="team-section">
+    <h2>Meet the Team</h2>
+    <div class="team-grid">
+      <div class="team-member-card">
+        <img src="assets/avatars/man1.png" alt="Team Member 1" class="team-avatar">
+        <h3>Sesihle Goniwe</h3>
+        <p class="team-role">Fullstack Developer</p>
+      </div>
+      <div class="team-member-card">
+        <img src="assets/avatars/man2.png" alt="Team Member 2" class="team-avatar">
+        <h3>Doyen Simango</h3>
+        <p class="team-role">Fullstack Developer</p>
+      </div>
+      <div class="team-member-card">
+        <img src="assets/avatars/man4.png" alt="Team Member 3" class="team-avatar">
+        <h3>Mareme Mogoru</h3>
+        <p class="team-role">UI/UX Designer</p>
+      </div>
+      <div class="team-member-card">
+        <img src="assets/avatars/man5.png" alt="Team Member 3" class="team-avatar">
+        <h3>Wakhiwe Ndzimandze</h3>
+        <p class="team-role">Fullstack Developer</p>
+      </div>
+      <div class="team-member-card">
+        <img src="assets/avatars/man3.png" alt="Team Member 3" class="team-avatar">
+        <h3>Khuselo Sofohlo</h3>
+        <p class="team-role">Fullstack Developer</p>
+      </div>
+    </div>
+  </section>
+  
+  <section class="cta-section">
+      <h2>Ready to Join?</h2>
+      <p>Start your journey with thousands of other students today.</p>
+      <button class="primary-button" (click)="goToLogin()">Get Started</button>
+  </section>
+</div>
