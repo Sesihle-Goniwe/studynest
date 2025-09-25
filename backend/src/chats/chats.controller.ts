@@ -5,27 +5,18 @@ import { ChatsService } from './chats.service';
 export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
-  @Get('ping')
-  ping() {
-    return { ok: true, msg: 'chats controller live' };
-  }
-
   @Post('send')
-  async sendMessage(@Body() body: { text: string; groupId: string; userId: string }) {
-    const { text, groupId, userId } = body;
-    const result = await this.chatsService.sendMessage(text, groupId, userId);
-    if (!result.success) {
-      throw new Error('Failed to send message');
-    }
-    return result;
+  async sendMessage(
+    @Body('text') text: string,
+    @Body('groupId') groupId: string,
+    @Body('userId') userId: string
+  ) {
+    return this.chatsService.sendMessage(text, groupId, userId);
   }
 
   @Get('group/:groupId')
   async getGroupMessages(@Param('groupId') groupId: string) {
-    const result = await this.chatsService.getGroupMessages(groupId);
-    if (!result.success) {
-      throw new Error('Failed to load messages');
-    }
-    return result;
+    return this.chatsService.getGroupMessages(groupId);
   }
 }
+

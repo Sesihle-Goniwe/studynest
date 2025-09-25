@@ -59,39 +59,51 @@ getUserDisplayName () : string | null{
 }
 
   // Handle authentication state changes
-  private async handleAuthChange(user: User | null) {
+  private async handleAuthChange(user: User | null) 
+  {
     this.currentUser.next(user);
+     if (user) {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('currentUser');
+  }
     
     if (user) {
       // For new users, redirect to onboarding
       const isNewUser = await this.checkIsNewUser(user.id);
       if (isNewUser) {
         this.router.navigate(['/onboarding']);
-      } /*else {
-        // For existing users, check if onboarding is complete
-        const isOnboarded = await this.checkOnboardingStatus(user.id);
-        this.router.navigate([isOnboarded ? '/dashboard' : '/onboarding']);
-      }*/
+      } 
     }
   }
 
   private handleSignOut() {
     this.currentUser.next(null);
+    localStorage.removeItem('currentUser'); // ensure user cleared
     this.router.navigate(['/login']);
   }
 
-  private async loadInitialUser() {
-    this.isLoading.next(true);
-    try {
+private async loadInitialUser() {
+  this.isLoading.next(true);
+  try {
+    // Try to restore from localStorage first
+    const stored = localStorage.getItem('currentUser');
+    if (stored) {
+      this.currentUser.next(JSON.parse(stored));
+    } else {
+      // Fallback: get from Supabase session
       const { data: { user }, error } = await this.supabase.auth.getUser();
       if (error) throw error;
       this.currentUser.next(user);
-    } catch (error) {
-      console.error('Error loading initial user:', error);
-    } finally {
-      this.isLoading.next(false);
+      if (user) localStorage.setItem('currentUser', JSON.stringify(user));
     }
+  } catch (error) {
+    console.error('Error loading initial user:', error);
+  } finally {
+    this.isLoading.next(false);
   }
+}
+
 
   private async checkIsNewUser(userId: string): Promise<boolean> {
     if (!userId) return true;
