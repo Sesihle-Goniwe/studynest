@@ -7,8 +7,9 @@ import { AuthService } from '../auth/auth.service';
 @Component({
   selector: 'app-notifications',
   imports: [CommonModule],
+  standalone:true,
   templateUrl: './notifications.html',
-  styleUrl: './notifications.scss'
+  styleUrls: ['./notifications.scss']
 })
 export class NotificationsList implements OnInit{
   notifications: _Notifications[]=[];

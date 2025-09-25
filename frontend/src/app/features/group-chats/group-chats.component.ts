@@ -8,7 +8,7 @@ import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-group-chats',
-  imports: [CommonModule, FormsModule],   // <<--- make sure these are listed
+  imports: [CommonModule, FormsModule],
   templateUrl: './group-chats.component.html',
   styleUrls: ['./group-chats.component.scss']
 })
@@ -35,11 +35,9 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
     const user = this.authService.getCurrentUser();
     if (user) this.currentUserId = user.id;
 
-    
-
     if (this.groupId) {
       this.loadMessages();
-      this.startPolling(); // poll every 5 seconds
+      this.startPolling();
     }
   }
 
@@ -53,14 +51,12 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
 
   loadMessages(): void {
     if (!this.groupId) return;
-    console.log('Loading messages for group:', this.groupId);
 
     this.groupChatsService.getMessages(this.groupId).subscribe({
       next: res => {
         if (res.success) {
           this.messages = res.messages;
         } else {
-          console.error('Failed to load messages:', res);
           this.errorMessage = 'Error loading messages';
         }
       },
@@ -72,39 +68,26 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   sendMessage(): void {
- 
- 
+    if (!this.currentUserId) return alert('User not logged in');
+    if (!this.newMessage.trim()) return alert('Enter a message');
+    if (!this.groupId) return alert('No group selected');
 
-  if (!this.currentUserId) return alert('User not logged in');
-  if (!this.newMessage.trim()) return alert('Enter a message');
-  if (!this.groupId) return alert('No group selected');
-
-   console.log('Sending:', {
-  groupId: this.groupId,
-  userId: this.currentUserId,
-  message: this.newMessage
-});
-
-  this.groupChatsService.sendMessage(this.groupId!, this.currentUserId, this.newMessage)
-  .subscribe({
-    next: res => {
-      if (res.success && res.message) {
-        this.messages.push(res.message); // show immediately
-        this.newMessage = '';            // clear input
-        setTimeout(() => this.scrollToBottom(), 100);
-      } else {
-        this.errorMessage = 'Failed to send message';
-      }
-      this.isLoading = false;
-    },
-    error: err => {
-      this.errorMessage = 'Error sending message';
-      this.isLoading = false;
-    }
-  });
-
-}
-
+    this.groupChatsService.sendMessage(this.groupId!, this.currentUserId, this.newMessage)
+      .subscribe({
+        next: res => {
+          if (res.success && res.message) {
+            this.messages.push(res.message);
+            this.newMessage = '';
+            setTimeout(() => this.scrollToBottom(), 100);
+          } else {
+            this.errorMessage = 'Failed to send message';
+          }
+        },
+        error: err => {
+          this.errorMessage = 'Error sending message';
+        }
+      });
+  }
 
   scrollToBottom(): void {
     if (this.chatMessagesRef) {

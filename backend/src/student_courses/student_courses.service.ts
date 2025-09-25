@@ -49,7 +49,6 @@ export class StudentCoursesService {
     return acc;
   }, {});
 
-   console.log('Final grouped data:', Object.values(grouped));
 
   return Object.values(grouped);
   }

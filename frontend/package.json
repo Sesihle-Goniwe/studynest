@@ -1,19 +1,6 @@
 {
   "name": "campus-study-buddy",
   "version": "0.0.0",
-  "jest": {
-    "preset": "jest-preset-angular",
-    "setupFilesAfterEnv": [
-      "<rootDir>/setup-jest.ts"
-    ],
-    "testEnvironment": "jsdom",
-    "testMatch": [
-      "**/+(*.)+(spec).+(ts)"
-    ],
-    "transform": {
-      "^.+\\.(ts|js|html)$": "ts-jest"
-    }
-  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -56,18 +43,22 @@
     "@angular/build": "^20.1.4",
     "@angular/cli": "^20.1.5",
     "@angular/compiler-cli": "^20.1.0",
+    "@angular/platform-browser-dynamic": "^20.1.0",
     "@types/jasmine": "~5.1.0",
     "@types/jest": "^30.0.0",
+    "@types/node": "^24.5.2",
+    "buffer": "^6.0.3",
     "jasmine-core": "~5.8.0",
-    "jest": "^30.0.5",
+    "jest": "^30.1.3",
     "jest-environment-jsdom": "^30.0.5",
-    "jest-preset-angular": "^15.0.0",
+    "jest-preset-angular": "^15.0.1",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "ts-jest": "^29.4.1",
+    "process": "^0.11.10",
+    "ts-jest": "^29.4.4",
     "typescript": "~5.8.2"
   }
 }

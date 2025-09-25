@@ -14,7 +14,7 @@ import { RemoveExtensionPipe } from '../../pipes/remove-extension-pipe';
 import { LogHoursDialogComponent } from '../log-hours-dialog/log-hours-dialog';
 import { Chart } from 'chart.js';
 import { SummaryDialogComponent } from '../summary-dialog/summary-dialog';
-
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -52,7 +52,8 @@ export class ProgressTracker implements OnInit {
     private authService: AuthService,
     private progressApiService: ProgressApiService, // Angular injects it automatically now
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -344,5 +345,21 @@ openLogHoursDialog(topic?: any): void {
       data: { summary$ }
     });
   }
+
+  goToNotification()
+  {
+      this.router.navigate(['/notifications']);
+  }
+
+    goToProfile()
+  {
+      this.router.navigate(['/profile']);
+  }
+
+    goToDashboard()
+  {
+      this.router.navigate(['/dashboard']);
+  }
+
   
 }
