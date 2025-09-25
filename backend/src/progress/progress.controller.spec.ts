@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ProgressController } from './progress.controller';
-import { ProgressService } from './progress.service';
-import { CreateTopicDto } from './dto/create-topic.dto';
-import { CreateStudyLogDto } from './dto/create-study-log.dto';
-import { InternalServerErrorException } from '@nestjs/common';
+import { Test, TestingModule } from "@nestjs/testing";
+import { ProgressController } from "./progress.controller";
+import { ProgressService } from "./progress.service";
+import { CreateTopicDto } from "./dto/create-topic.dto";
+import { CreateStudyLogDto } from "./dto/create-study-log.dto";
+import { InternalServerErrorException } from "@nestjs/common";
 
-describe('ProgressController', () => {
+describe("ProgressController", () => {
   let controller: ProgressController;
   let service: ProgressService;
 
@@ -39,19 +39,19 @@ describe('ProgressController', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should create a topic', async () => {
+  describe("create", () => {
+    it("should create a topic", async () => {
       const createTopicDto: CreateTopicDto = {
-        name: 'Test Topic',
-        file_id: 'file123',
-        userId: 'user123',
+        name: "Test Topic",
+        file_id: "file123",
+        userId: "user123",
       };
-      const mockRequest = { user: { id: 'user123' } };
-      const expectedResult = { id: '1', ...createTopicDto };
+      const mockRequest = { user: { id: "user123" } };
+      const expectedResult = { id: "1", ...createTopicDto };
 
       mockProgressService.createTopic.mockResolvedValue(expectedResult);
 
@@ -61,46 +61,48 @@ describe('ProgressController', () => {
       expect(service.createTopic).toHaveBeenCalledWith(createTopicDto);
     });
 
-    it('should handle errors when creating topic', async () => {
+    it("should handle errors when creating topic", async () => {
       const createTopicDto: CreateTopicDto = {
-        name: 'Test Topic',
-        userId: 'user123',
+        name: "Test Topic",
+        userId: "user123",
       };
-      const mockRequest = { user: { id: 'user123' } };
+      const mockRequest = { user: { id: "user123" } };
 
       mockProgressService.createTopic.mockRejectedValue(
-        new InternalServerErrorException('Failed to create topic.')
+        new InternalServerErrorException("Failed to create topic."),
       );
 
-      await expect(controller.create(createTopicDto, mockRequest)).rejects.toThrow(
-        InternalServerErrorException
-      );
+      await expect(
+        controller.create(createTopicDto, mockRequest),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 
-  describe('findAll', () => {
-    it('should return all topics for a user', async () => {
-      const userId = 'user123';
+  describe("findAll", () => {
+    it("should return all topics for a user", async () => {
+      const userId = "user123";
       const expectedTopics = [
         {
-          id: '1',
-          name: 'Topic 1',
-          status: 'In Progress',
-          created_at: '2024-01-01',
+          id: "1",
+          name: "Topic 1",
+          status: "In Progress",
+          created_at: "2024-01-01",
           file_id: null,
           date_completed: null,
         },
         {
-          id: '2',
-          name: 'Topic 2',
-          status: 'Completed',
-          created_at: '2024-01-02',
-          file_id: 'file123',
-          date_completed: '2024-01-15',
+          id: "2",
+          name: "Topic 2",
+          status: "Completed",
+          created_at: "2024-01-02",
+          file_id: "file123",
+          date_completed: "2024-01-15",
         },
       ];
 
-      mockProgressService.findAllTopicsForUser.mockResolvedValue(expectedTopics);
+      mockProgressService.findAllTopicsForUser.mockResolvedValue(
+        expectedTopics,
+      );
 
       const result = await controller.findAll(userId);
 
@@ -109,15 +111,15 @@ describe('ProgressController', () => {
     });
   });
 
-  describe('addStudyLog', () => {
-    it('should add a study log', async () => {
+  describe("addStudyLog", () => {
+    it("should add a study log", async () => {
       const createStudyLogDto: CreateStudyLogDto = {
-        userId: 'user123',
-        topicId: 'topic123',
-        date: '2024-01-01',
+        userId: "user123",
+        topicId: "topic123",
+        date: "2024-01-01",
         hours: 2.5,
       };
-      const expectedResult = { id: '1', ...createStudyLogDto };
+      const expectedResult = { id: "1", ...createStudyLogDto };
 
       mockProgressService.addStudyLog.mockResolvedValue(expectedResult);
 
@@ -128,16 +130,16 @@ describe('ProgressController', () => {
     });
   });
 
-  describe('getStudyLogs', () => {
-    it('should get study logs for a user', async () => {
-      const userId = 'user123';
+  describe("getStudyLogs", () => {
+    it("should get study logs for a user", async () => {
+      const userId = "user123";
       const expectedLogs = [
         {
-          id: '1',
-          date: '2024-01-01',
+          id: "1",
+          date: "2024-01-01",
           hours: 2,
-          topic_id: 'topic1',
-          topic: { name: 'Topic 1' },
+          topic_id: "topic1",
+          topic: { name: "Topic 1" },
         },
       ];
 
@@ -149,16 +151,16 @@ describe('ProgressController', () => {
       expect(service.getStudyLogs).toHaveBeenCalledWith(userId, undefined);
     });
 
-    it('should get study logs for a specific topic', async () => {
-      const userId = 'user123';
-      const topicId = 'topic123';
+    it("should get study logs for a specific topic", async () => {
+      const userId = "user123";
+      const topicId = "topic123";
       const expectedLogs = [
         {
-          id: '1',
-          date: '2024-01-01',
+          id: "1",
+          date: "2024-01-01",
           hours: 2,
           topic_id: topicId,
-          topic: { name: 'Specific Topic' },
+          topic: { name: "Specific Topic" },
         },
       ];
 
@@ -171,11 +173,13 @@ describe('ProgressController', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update topic status', async () => {
-      const id = 'topic123';
-      const body = { status: 'Completed' };
-      const expectedResult = [{ id, status: 'Completed', date_completed: '2024-01-15' }];
+  describe("update", () => {
+    it("should update topic status", async () => {
+      const id = "topic123";
+      const body = { status: "Completed" };
+      const expectedResult = [
+        { id, status: "Completed", date_completed: "2024-01-15" },
+      ];
 
       mockProgressService.updateStatus.mockResolvedValue(expectedResult);
 
@@ -186,10 +190,12 @@ describe('ProgressController', () => {
     });
   });
 
-  describe('remove', () => {
-    it('should remove a topic', async () => {
-      const id = 'topic123';
-      const expectedResult = { message: `Topic with id ${id} deleted successfully.` };
+  describe("remove", () => {
+    it("should remove a topic", async () => {
+      const id = "topic123";
+      const expectedResult = {
+        message: `Topic with id ${id} deleted successfully.`,
+      };
 
       mockProgressService.remove.mockResolvedValue(expectedResult);
 
@@ -200,12 +206,12 @@ describe('ProgressController', () => {
     });
   });
 
-  describe('findUserGroups', () => {
-    it('should find user groups', async () => {
-      const userId = 'user123';
+  describe("findUserGroups", () => {
+    it("should find user groups", async () => {
+      const userId = "user123";
       const expectedGroups = [
-        { id: 'group1', name: 'Study Group 1' },
-        { id: 'group2', name: 'Study Group 2' },
+        { id: "group1", name: "Study Group 1" },
+        { id: "group2", name: "Study Group 2" },
       ];
 
       mockProgressService.findUserGroups.mockResolvedValue(expectedGroups);
@@ -217,15 +223,17 @@ describe('ProgressController', () => {
     });
   });
 
-  describe('getRankings', () => {
-    it('should get rankings for a group', async () => {
-      const groupId = 'group123';
+  describe("getRankings", () => {
+    it("should get rankings for a group", async () => {
+      const groupId = "group123";
       const expectedRankings = [
-        { user_id: 'user1', total_hours: 10, rank: 1 },
-        { user_id: 'user2', total_hours: 8, rank: 2 },
+        { user_id: "user1", total_hours: 10, rank: 1 },
+        { user_id: "user2", total_hours: 8, rank: 2 },
       ];
 
-      mockProgressService.getRankingsForGroup.mockResolvedValue(expectedRankings);
+      mockProgressService.getRankingsForGroup.mockResolvedValue(
+        expectedRankings,
+      );
 
       const result = await controller.getRankings(groupId);
 

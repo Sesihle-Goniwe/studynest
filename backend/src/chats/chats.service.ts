@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { SupabaseService } from '../supabase/supabase.service';
+import { Injectable } from "@nestjs/common";
+import { SupabaseService } from "../supabase/supabase.service";
 
 @Injectable()
 export class ChatsService {
@@ -11,14 +11,15 @@ export class ChatsService {
       return { success: false, message: null };
     }
 
-    const { data, error } = await this.supabaseSer.getClient()
-      .from('group_chats')
+    const { data, error } = await this.supabaseSer
+      .getClient()
+      .from("group_chats")
       .insert([{ message: text, group_id: groupId, user_id: userId }])
       .select()
       .single();
 
     if (error) {
-      console.error('Supabase insert error:', error);
+      console.error("Supabase insert error:", error);
       return { success: false, message: null, error };
     }
 
@@ -30,41 +31,44 @@ export class ChatsService {
     if (!groupId) return { success: false, messages: [] };
 
     // 1️⃣ Get messages
-    const { data: messages, error: messagesError } = await this.supabaseSer.getClient()
-      .from('group_chats')
-      .select('id, group_id, user_id, message, created_at')
-      .eq('group_id', groupId)
-      .order('created_at', { ascending: true });
+    const { data: messages, error: messagesError } = await this.supabaseSer
+      .getClient()
+      .from("group_chats")
+      .select("id, group_id, user_id, message, created_at")
+      .eq("group_id", groupId)
+      .order("created_at", { ascending: true });
 
     if (messagesError) {
-      console.error('Supabase fetch messages error:', messagesError);
+      console.error("Supabase fetch messages error:", messagesError);
       return { success: false, messages: [], error: messagesError };
     }
 
     // 2️⃣ Get all users for these messages
     const userIds = messages.map((msg: any) => msg.user_id).filter(Boolean);
-    const { data: users } = await this.supabaseSer.getClient()
-      .from('auth.users')
-      .select('id, email, raw_user_meta_data')
-      .in('id', userIds);
+    const { data: users } = await this.supabaseSer
+      .getClient()
+      .from("auth.users")
+      .select("id, email, raw_user_meta_data")
+      .in("id", userIds);
 
     // 3️⃣ Optionally get students table info
-    const { data: students } = await this.supabaseSer.getClient()
-      .from('students')
-      .select('user_id, full_name')
-      .in('user_id', userIds);
+    const { data: students } = await this.supabaseSer
+      .getClient()
+      .from("students")
+      .select("user_id, full_name")
+      .in("user_id", userIds);
 
     // 4️⃣ Map each message to include a displayName
     const messagesWithNames = messages.map((msg: any) => {
-      const user = users?.find(u => u.id === msg.user_id);
-      const student = students?.find(s => s.user_id === msg.user_id);
+      const user = users?.find((u) => u.id === msg.user_id);
+      const student = students?.find((s) => s.user_id === msg.user_id);
 
       const displayName =
         student?.full_name ||
         user?.raw_user_meta_data?.full_name ||
         user?.raw_user_meta_data?.name ||
         user?.email ||
-        'Anonymous';
+        "Anonymous";
 
       return { ...msg, displayName };
     });

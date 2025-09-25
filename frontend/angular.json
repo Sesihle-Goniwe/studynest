@@ -18,21 +18,21 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/assets",
               {
-                 "glob": "**/*",
-                  "input": "node_modules/ngx-extended-pdf-viewer/assets/",
-                  "output": "/assets/"
+                "glob": "**/*",
+                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                "output": "/assets/"
               }
             ],
             "styles": [
               "src/styles.scss"
+            ],
+            "polyfills": [
+              "zone.js"
             ]
           },
           "configurations": {
@@ -75,19 +75,17 @@
           "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular/build:karma",
+        "builder": "@angular-builders/jest:run",
+        "options": {
+          "tsConfig": "tsconfig.spec.json"
+        }
+      },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
             ]
           }
         }
@@ -95,6 +93,9 @@
     }
   },
   "cli": {
-    "analytics": "77aaf248-83ae-4d2d-9a90-6212858a6d91"
+    "analytics": "77aaf248-83ae-4d2d-9a90-6212858a6d91",
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   }
 }

@@ -1,0 +1,186 @@
+@use "sass:color";
+
+// Variables (Copied from your home page for consistency)
+$charcoal: #1a1a1a;
+$dark-gray: #2d2d2d;
+$medium-gray: #404040;
+$light-gray: #6b6b6b;
+$white: #ffffff;
+$accent: #4a9eff;
+
+// Base Container
+.about-container {
+  min-height: 100vh;
+  background-color: $charcoal;
+  color: $white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding-top: 8rem; // Space for the fixed nav
+}
+
+// Re-used Navbar Styles
+.home-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba($charcoal, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  padding: 1.5rem 0;
+
+  .nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between; // This puts items at opposite ends
+    align-items: center;
+
+    .logo h1 {
+      margin: 0;
+      color: $white;
+      font-size: 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+
+    }
+
+    .login-button {
+      background-color: $white;
+      color: $charcoal;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+}
+
+// Hero Section
+.about-hero {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  text-align: center;
+
+  .hero-title {
+    font-size: 3.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 1.5rem;
+    .accent {
+      color: $accent;
+    }
+  }
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: $light-gray;
+    line-height: 1.6;
+  }
+}
+
+// Mission Section
+.mission-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  background-color: $dark-gray;
+  border-radius: 1rem;
+  text-align: center;
+
+  h2 {
+    font-size: 2.5rem;
+    margin: 0 0 1.5rem;
+  }
+  p {
+    color: $light-gray;
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+}
+
+// Team Section
+.team-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 6rem 2rem;
+  text-align: center;
+
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .team-member-card {
+    background-color: $dark-gray;
+    padding: 2rem;
+    border-radius: 1rem;
+    transition: transform 0.3s ease;
+    &:hover {
+      transform: translateY(-10px);
+    }
+    .team-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1.5rem;
+      border: 3px solid $accent;
+    }
+    h3 {
+      font-size: 1.5rem;
+      margin: 0 0 0.5rem;
+    }
+    .team-role {
+      color: $accent;
+      margin: 0;
+    }
+  }
+}
+
+// CTA Section
+.cta-section {
+    padding: 6rem 2rem;
+    text-align: center;
+    background-color: $dark-gray;
+    
+    h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    p {
+        color: $light-gray;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .primary-button {
+      background-color: $accent;
+      color: $white;
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      &:hover {
+        background-color: color.adjust($accent, $lightness: -10%);
+        transform: translateY(-2px);
+      }
+    }
+}
