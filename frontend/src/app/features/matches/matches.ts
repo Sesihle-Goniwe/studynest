@@ -33,6 +33,8 @@ export class Matches implements OnInit {
     if (user?.id) {
       this.currentUserId = user.id;
     }
+
+    this.loadMatchedPartners();
   }
 
   addCourse() {
