@@ -1,21 +1,3 @@
-<nav class="main-nav">
-  <button class="sidebar-toggle" (click)="sidebarOpen = !sidebarOpen" aria-label="Toggle sidebar"> ☰ </button>
-  <span class="app-title">Track Progresss</span>
-</nav>
-
-<aside class="sidebar" [class.open]="sidebarOpen">
-  <button class="sidebar-close" (click)="sidebarOpen = false" aria-label="Close sidebar">
-    <img src="assets/icons/back48.png" alt="Back" width="20" height="20" />
-  </button>
-  <h2>Sidebar</h2>
-  <ul>
-    <li><a (click)="goToDashboard()">Dashboard</a></li>
-    <li><a (click)="goToProfile()">Profile</a></li> 
-    <li><a (click)="goToNotification()">Notifications</a></li>
-    <li><a href="#">Exit</a></li>
-  </ul>
-</aside>
-
 <main class="main-content">
   <section class="dropzone-mytopics">
 

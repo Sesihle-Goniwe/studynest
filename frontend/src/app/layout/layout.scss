@@ -1,0 +1,160 @@
+// 🎨 Color Variables
+$charcoal: #121212;
+$dark-gray: #1e1e1e;
+$medium-gray: #2b2b2b;
+$light-gray: #7d7d7d;
+$white: #ffffff;
+$off-white: #f5f5f5;
+$accent: #4a9eff;
+$success: #4caf50;
+$warning: #ff9800;
+$danger: #ff6b6b;
+@use "sass:color";
+
+// 🌟 Global Body Styles (Good practice to have)
+// If these are already in your global styles.scss, you can remove this block.
+:host {
+  display: block;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #181818, #101010);
+  color: $white;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+// 🚀 Navigation Bar
+.main-nav {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(90deg, $dark-gray 0%, #111 100%);
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid $medium-gray;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  height: 65px; // Set a fixed height for easier calculations
+
+  .sidebar-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: $accent; // <-- ACCENT COLOR USED HERE
+    font-size: 1.8rem;
+    margin-right: 1.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      background: rgba($accent, 0.2); // <-- ACCENT COLOR USED HERE
+      transform: rotate(90deg) scale(1.1);
+      box-shadow: 0 4px 12px rgba($accent, 0.4);
+    }
+  }
+
+  .app-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    // This creates the blue gradient text
+    background: linear-gradient(90deg, $accent, color.adjust($accent, $lightness: 15%)); // <-- ACCENT COLOR USED HERE
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.5px;
+  }
+}
+
+// 📌 Sidebar
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100vh;
+  background: linear-gradient(180deg, $dark-gray 0%, #111 100%);
+  padding-top: 20px; // Padding to clear the fixed nav
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1002;
+  box-shadow: 8px 0 30px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+
+  &.open {
+    left: 0;
+  }
+
+  .sidebar-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: $light-gray;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba($danger, 0.2);
+      color: $danger;
+      transform: rotate(90deg);
+    }
+  }
+
+  h2 {
+    padding: 0 2rem 1.5rem;
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: $accent;
+    border-bottom: 1px solid $medium-gray;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    li a {
+      display: block;
+      padding: 1rem 2rem;
+      color: $off-white;
+      text-decoration: none;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: $medium-gray;
+        border-left-color: $accent; // <-- ACCENT COLOR USED HERE
+      }
+
+      &.active { // For showing the current page
+        background-color: color.adjust($accent, $alpha: -0.8);
+        border-left-color: $accent; // <-- ACCENT COLOR USED HERE
+        font-weight: 600;
+        color: $white;
+      }
+    }
+  }
+}
+
+// 📄 Main Content Area
+.main-content {
+  padding-top: 85px; // A bit more than nav height
+  padding-left: 2rem;
+  padding-right: 2rem;
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.sidebar-open {
+    margin-left: 280px;
+  }
+}
