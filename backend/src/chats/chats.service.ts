@@ -24,41 +24,30 @@ export class ChatsService {
     return { success: true, message: data };
   }
 
-  async getGroupMessages(groupId: string) {
+ async getGroupMessages(groupId: string) {
   if (!groupId) return { success: false, messages: [] };
 
-  try {
-    const { data, error } = await this.supabaseSer.getClient()
-      .from('group_chats')
-      .select(`
-        id,
-        group_id,
-        user_id,
-        message,
-        created_at,
-        user: user_id (
-          email,
-          raw_user_meta_data
-        )
-      `)
-      .eq('group_id', groupId)
-      .order('created_at', { ascending: true });
+  const { data, error } = await this.supabaseSer.getClient()
+    .from('group_chats')
+    .select('*')
+    .eq('group_id', groupId)
+    .order('created_at', { ascending: true });
 
-    if (error) throw error;
-
-    const messagesWithName = data.map((msg: any) => ({
-      ...msg,
-      displayName:
-        msg.user?.raw_user_meta_data?.full_name ||
-        msg.user?.email ||
-        'Anonymous',
-    }));
-
-    return { success: true, messages: messagesWithName };
-  } catch (err) {
-    console.error('Error fetching group messages:', err);
-    return { success: false, messages: [], error: err };
+  if (error) {
+    console.error('Supabase select error:', error);
+    return { success: false, messages: [], error };
   }
+
+  // Map messages directly with userId and createdAt
+  const messages = data.map((msg: any) => ({
+    id: msg.id,
+    groupId: msg.group_id,
+    userId: msg.user_id,
+    message: msg.message,
+    createdAt: msg.created_at
+  }));
+
+  return { success: true, messages };
 }
 
 
