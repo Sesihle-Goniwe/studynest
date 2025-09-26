@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { Students, _Student } from '../../services/students';
+import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-profile',
   standalone :true,
@@ -26,33 +28,40 @@ export class Profile implements OnInit {
     students : _Student | null=null;
    @ViewChild('fileInput', { static: true }) fileInput!: ElementRef<HTMLInputElement>;
 
-    constructor (private authser: AuthService, private studentService : Students,private http:HttpClient){}
+    constructor (private authser: AuthService, private studentService : Students,private http:HttpClient, private route: ActivatedRoute){}
    
-ngOnInit() 
-{
-  //this.isEditMode=false;
+ngOnInit() {
+  const routeUserId = this.route.snapshot.paramMap.get('userId');
   const user = this.authser.getCurrentUser();
-  this.displayName = this.authser.getUserDisplayName();
-  const uid = user?.id;
-  if(uid)
-  {
-    this.studentService.getStudentByUid(uid).subscribe({ next: (data: any) => 
-      {
-      this.students = data;
 
-      //preload
-
+  if (routeUserId) {
+    // Fetch the partner's profile
+    this.studentService.getStudentByUid(routeUserId).subscribe({
+      next: (data: any) => {
+        this.students = data;
         this.course = data.course;
-        this.skills = data.skills || null; // default to null if empty
+        this.skills = data.skills || null;
         this.studyPreference = data.studyPreference || "Not specified";
         this.year = data.year || null;
         this.profileImage = data.profileImage || null;
-      
-      },
-  });
-    
+      }
+    });
+  } else if (user?.id) {
+    // Fetch logged-in user's own profile
+    this.displayName = this.authser.getUserDisplayName();
+    this.studentService.getStudentByUid(user.id).subscribe({
+      next: (data: any) => {
+        this.students = data;
+        this.course = data.course;
+        this.skills = data.skills || null;
+        this.studyPreference = data.studyPreference || "Not specified";
+        this.year = data.year || null;
+        this.profileImage = data.profileImage || null;
+      }
+    });
   }
 }
+
 
   toggleEdit()
       {

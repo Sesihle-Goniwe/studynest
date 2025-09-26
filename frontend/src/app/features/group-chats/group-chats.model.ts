@@ -1,8 +1,9 @@
 export interface GroupMessage {
-  id?: string;
-  group_id: string;
-  user_id: string | null;
+  id: string;
+  groupId: string;
+  userId: string | null;
   message: string;
-  created_at?: string;
-  displayName?: string;
+  createdAt: string;
+  displayName?: string; // username or "Anonymous"
 }
+

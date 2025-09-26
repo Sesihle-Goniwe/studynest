@@ -116,7 +116,7 @@ $warning: #ffc107;
 
   p {
     margin: 0.2rem 0;
-    color: $light-gray;
+    color: $off-white;
   }
 
   ul {
@@ -291,3 +291,29 @@ $warning: #ffc107;
   font-size: 0.9rem;
   text-align: center;
 }
+
+/* View Profile button */
+.partner-card button {
+  background-color: #eaf0eb; /* green */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.partner-card button:hover {
+  background-color: hsl(130, 18%, 93%); /* slightly darker green on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.partner-card button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
