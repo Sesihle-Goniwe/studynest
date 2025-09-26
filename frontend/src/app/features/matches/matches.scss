@@ -293,27 +293,61 @@ $warning: #ffc107;
 }
 
 /* View Profile button */
-.partner-card button {
-  background-color: #eaf0eb; /* green */
-  color: white;
+.view-profile-btn {
+  background-color: $accent;
+  color: $white;
   border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 500;
+  border-radius: 0.6rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 10px;
+  min-width: 120px; // This ensures all buttons have the same minimum width
+  text-align: center; // This centers the text inside the button
+
+  &:hover {
+    background: color.adjust($accent, $lightness: 8%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($accent, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+// 🔹 Full-Screen Image Modal Styles
+.full-screen-modal {
+  // --- The Overlay ---
+  position: fixed; /* This is the key: places it on top of all content */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent black background */
+  display: flex; /* Use flexbox to easily center the image */
+  justify-content: center;
+  align-items: center;
+  z-index: 1050; /* A high z-index ensures it's on top */
+  cursor: pointer; /* Indicates the overlay can be clicked to close */
+  animation: fadeIn 0.3s ease; /* Smooth fade-in effect */
+
+  // --- The Image Itself ---
+  .full-screen-image {
+    max-width: 90vw; /* Max width is 90% of the viewport width */
+    max-height: 90vh; /* Max height is 90% of the viewport height */
+    object-fit: contain; /* Ensures the image is never cropped or distorted */
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    cursor: default; /* Change cursor back to normal over the image */
+    animation: zoomIn 0.3s ease; /* Smooth zoom-in effect */
+  }
 }
 
-.partner-card button:hover {
-  background-color: hsl(130, 18%, 93%); /* slightly darker green on hover */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.partner-card button:active {
-  transform: translateY(0);
-  box-shadow: none;
+// 🔹 Animation for the zoom-in effect
+@keyframes zoomIn {
+  from { transform: scale(0.8); }
+  to { transform: scale(1); }
 }
 
