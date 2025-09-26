@@ -16,7 +16,8 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   messages: GroupMessage[] = [];
   newMessage: string = '';
   currentUserId: string = '';
-  groupId!: string | null;
+  groupId: string | null = null;
+  groupName: string | null = null;
   isLoading = false;
   errorMessage = '';
 
@@ -36,13 +37,20 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
 
   ngOnInit(): void {
     this.groupId = this.route.snapshot.paramMap.get('groupId');
+    this.groupName = this.route.snapshot.queryParamMap.get('name'); // 👈 get the name
+
+    if (!this.groupId) {
+      console.error('Group ID missing from route');
+      return;
+    } // <-- group name here
+    console.log('Group ID:', this.groupId, 'Group Name:', this.groupName);
     const user = this.authService.getCurrentUser();
     if (user) this.currentUserId = user.id;
 
-    if (this.groupId) {
+    
       this.loadMessages();
       this.startPolling();
-    }
+    
 
     // Forces Angular to re-evaluate *ngIf for editable buttons
     setInterval(() => {}, 1000);
@@ -57,15 +65,25 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   loadMessages(): void {
-    if (!this.groupId) return;
-    this.groupChatsService.getMessages(this.groupId).subscribe({
-      next: res => {
-        if (res.success) this.messages = res.messages;
-        else this.errorMessage = 'Error loading messages';
-      },
-      error: () => this.errorMessage = 'Error loading messages'
-    });
-  }
+  if (!this.groupId) return;
+  this.groupChatsService.getMessages(this.groupId).subscribe({
+    next: res => {
+      // If API returns {success, messages}
+      if ('success' in res && res.success) {
+        this.messages = res.messages;
+      }
+      // If API directly returns an array of messages
+      else if (Array.isArray(res)) {
+        this.messages = res;
+      } 
+      else {
+        this.errorMessage = 'Error loading messages';
+      }
+    },
+    error: () => this.errorMessage = 'Error loading messages'
+  });
+}
+
 
   sendMessage(): void {
     if (!this.currentUserId || !this.newMessage.trim() || !this.groupId) return;
