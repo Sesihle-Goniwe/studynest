@@ -7,8 +7,8 @@ import { _Student } from '../services/students';
   providedIn: 'root'
 })
 export class Dashboard {
-   //private baseUrl ='https://studynester.onrender.com/students';
-  private baseUrl ='http://localhost:3000/students'
+   private baseUrl ='https://studynester.onrender.com/students';
+  //private baseUrl ='http://localhost:3000/students'
   constructor(private http: HttpClient){}
 
 
