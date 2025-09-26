@@ -29,4 +29,16 @@ export class LayoutComponent {
     this.router.navigate(['/notifications']);
     this.sidebarOpen = false;
   }
+  goToMatches(): void {
+    this.router.navigate(['/matches']);
+    this.sidebarOpen = false;
+  }
+  goToProgress(): void {
+    this.router.navigate(['/progress']);
+    this.sidebarOpen = false;
+  }
+  goToStudyGroups(): void {
+    this.router.navigate(['/studygroup']);
+    this.sidebarOpen = false;
+  }
 }
