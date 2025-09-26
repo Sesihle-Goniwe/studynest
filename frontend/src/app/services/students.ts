@@ -19,8 +19,8 @@ export interface _Student {
   }
 )
 export class Students {
-  //private baseUrl ='https://studynester.onrender.com/students';
-    private baseUrl ='http://localhost:3000/students'
+  private baseUrl ='https://studynester.onrender.com/students';
+  //s  private baseUrl ='http://localhost:3000/students'
   constructor(private http: HttpClient){}
 
   getStudents()
