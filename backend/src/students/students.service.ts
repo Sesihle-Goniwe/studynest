@@ -33,7 +33,6 @@ export class StudentsService {
     } catch (error) {}
   }
 
-<<<<<<< HEAD
     async updateUserName(uid:string,userName:string)
     {
         const  {data, error} = await this.supabaseService
@@ -54,10 +53,6 @@ export class StudentsService {
   async updateStudentP(uid: string, updateDto:any)
   {
       const {data,error}  = await this.supabaseService
-=======
-  async updateStudentP(uid: string, updateDto: any) {
-    const { data, error } = await this.supabaseService
->>>>>>> 7b4881f9fd0fdea27798a51af31ab4df9e205efd
       .getClient()
       .from("students")
       .update(updateDto)
