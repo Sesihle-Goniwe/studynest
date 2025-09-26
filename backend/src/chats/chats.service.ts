@@ -1,78 +1,120 @@
-import { Injectable } from "@nestjs/common";
-import { SupabaseService } from "../supabase/supabase.service";
+import { Injectable, HttpException } from '@nestjs/common';
+ import { SupabaseService } from '../supabase/supabase.service';
+ 
+ @Injectable()
+ export class ChatsService {
+ constructor(private supabaseSer: SupabaseService) {}
+ 
+ async sendMessage(text: string, groupId: string, userId: string) {
+ if (!text || !groupId || !userId) {
+ return { success: false, message: null };
+ }
+ 
+ const { data, error } = await this.supabaseSer.getClient()
+ .from('group_chats')
+ .insert([{ message: text, group_id: groupId, user_id: userId }])
+ .select()
+ .single(); // ensure only one row returned
+ 
+ if (error) {
+ console.error('Supabase insert error:', error);
+ return { success: false, message: null, error };
+ }
+ 
+ return { success: true, message: data };
+ }
 
-@Injectable()
-export class ChatsService {
-  constructor(private readonly supabaseSer: SupabaseService) {}
-
-  /** Send a message to a group */
-  async sendMessage(text: string, groupId: string, userId: string) {
-    if (!text || !groupId || !userId) {
-      return { success: false, message: null };
-    }
-
-    const { data, error } = await this.supabaseSer
-      .getClient()
-      .from("group_chats")
-      .insert([{ message: text, group_id: groupId, user_id: userId }])
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Supabase insert error:", error);
-      return { success: false, message: null, error };
-    }
-
-    return { success: true, message: data };
-  }
-
-  /** Retrieve all messages for a group with user names */
-  async getGroupMessages(groupId: string) {
+ 
+ 
+async getGroupMessages(groupId: string) {
     if (!groupId) return { success: false, messages: [] };
 
-    // 1️⃣ Get messages
-    const { data: messages, error: messagesError } = await this.supabaseSer
-      .getClient()
-      .from("group_chats")
-      .select("id, group_id, user_id, message, created_at")
-      .eq("group_id", groupId)
-      .order("created_at", { ascending: true });
+    // Fetch messages along with user metadata
+    const { data, error } = await this.supabaseSer.getClient()
+      .from('group_chats')
+      .select(`
+        *,
+        user:user_id (
+          id,
+          raw_user_meta_data
+        )
+      `)
+      .eq('group_id', groupId)
+      .order('created_at', { ascending: true });
 
-    if (messagesError) {
-      console.error("Supabase fetch messages error:", messagesError);
-      return { success: false, messages: [], error: messagesError };
+    if (error) {
+      console.error('Supabase select error:', error);
+      return { success: false, messages: [], error };
     }
 
-    // 2️⃣ Get all users for these messages
-    const userIds = messages.map((msg: any) => msg.user_id).filter(Boolean);
-    const { data: users } = await this.supabaseSer
-      .getClient()
-      .from("auth.users")
-      .select("id, email, raw_user_meta_data")
-      .in("id", userIds);
+    // Map messages to include senderName for frontend
+    const messages = data.map((msg: any) => ({
+      id: msg.id,
+      groupId: msg.group_id,
+      userId: msg.user_id,
+      message: msg.message,
+      createdAt: msg.created_at,
+      senderName: msg.user?.raw_user_meta_data?.full_name 
+                  || msg.user?.raw_user_meta_data?.name 
+                  || 'Anonymous'
+    }));
 
-    // 3️⃣ Optionally get students table info
-    const { data: students } = await this.supabaseSer
-      .getClient()
-      .from("students")
-      .select("user_id, full_name")
-      .in("user_id", userIds);
-
-    // 4️⃣ Map each message to include a displayName
-    const messagesWithNames = messages.map((msg: any) => {
-      const user = users?.find((u) => u.id === msg.user_id);
-      const student = students?.find((s) => s.user_id === msg.user_id);
-
-      const displayName =
-        student?.full_name ||
-        user?.raw_user_meta_data?.full_name ||
-        user?.raw_user_meta_data?.name ||
-        user?.email ||
-        "Anonymous";
-
-      return { ...msg, displayName };
-    });
-
-    return { success: true, messages: messagesWithNames };
+    return { success: true, messages };
   }
+
+ async editMessage(messageId: string, userId: string, newText: string) {
+  if (!messageId || !userId || !newText) return { success: false };
+
+  // Check message exists and belongs to user
+  const { data: existing, error: fetchError } = await this.supabaseSer.getClient()
+    .from('group_chats')
+    .select('*')
+    .eq('id', messageId)
+    .single();
+
+  if (fetchError || !existing || existing.user_id !== userId) return { success: false };
+
+  // Check 5 minutes limit
+  const createdAt = new Date(existing.created_at).getTime();
+  if (Date.now() - createdAt > 5 * 60 * 1000) return { success: false };
+
+  const { data, error } = await this.supabaseSer.getClient()
+    .from('group_chats')
+    .update({ message: newText })
+    .eq('id', messageId)
+    .select()
+    .single();
+
+  if (error) return { success: false };
+
+  return { success: true, message: data };
 }
+
+
+async deleteMessage(messageId: string, userId: string) {
+  if (!messageId || !userId) return { success: false };
+
+  const { data: existing, error: fetchError } = await this.supabaseSer.getClient()
+    .from('group_chats')
+    .select('*')
+    .eq('id', messageId)
+    .single();
+
+  if (fetchError || !existing || existing.user_id !== userId) return { success: false };
+
+  // Check 5 minutes limit
+  const createdAt = new Date(existing.created_at).getTime();
+  if (Date.now() - createdAt > 5 * 60 * 1000) return { success: false };
+
+  const { error } = await this.supabaseSer.getClient()
+    .from('group_chats')
+    .delete()
+    .eq('id', messageId);
+
+  if (error) return { success: false };
+
+  return { success: true };
+}
+
+
+ }
