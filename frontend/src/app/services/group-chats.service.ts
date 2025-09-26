@@ -54,11 +54,11 @@ export class GroupChatsService {
     );
   }
 
-  getMessages(groupId: string): Observable<{ success: boolean; messages: GroupMessage[] }> {
-    return this.http.get<{ success: boolean; messages: GroupMessage[] }>(
-      `${this.baseUrl}/group/${groupId}`
-    );
-  }
+ getMessages(groupId: string): Observable<{ success: boolean; messages: GroupMessage[] }> {
+  return this.http.get<{ success: boolean; messages: GroupMessage[] }>(
+    `${this.baseUrl}/group/${groupId}`
+  );
+}
 
 editMessage(messageId: string, userId: string, newText: string) {
   return this.http.patch<{ success: boolean; message?: GroupMessage }>(
@@ -72,11 +72,6 @@ deleteMessage(messageId: string, userId: string) {
     `${this.baseUrl}/delete/${messageId}?userId=${userId}`
   );
 }
-
-/*deleteGroup(userId:string)
-  {
-     return this.http.delete(`${this.baseUrl}/${userId}`);
-  }*/
 
 
 

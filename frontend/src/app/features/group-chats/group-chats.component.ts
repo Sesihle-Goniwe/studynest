@@ -64,25 +64,26 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
     if (this.pollingSub) this.pollingSub.unsubscribe();
   }
 
-  loadMessages(): void {
-  if (!this.groupId) return;
-  this.groupChatsService.getMessages(this.groupId).subscribe({
-    next: res => {
-      // If API returns {success, messages}
-      if ('success' in res && res.success) {
-        this.messages = res.messages;
-      }
-      // If API directly returns an array of messages
-      else if (Array.isArray(res)) {
-        this.messages = res;
-      } 
-      else {
+loadMessages(): void {
+    if (!this.groupId) return;
+
+    console.log('Loading messages for group:', this.groupId);
+
+    this.groupChatsService.getMessages(this.groupId).subscribe({
+      next: res => {
+        if (res.success) {
+          this.messages = res.messages;
+        } else {
+          console.error('Failed to load messages:', res);
+          this.errorMessage = 'Error loading messages';
+        }
+      },
+      error: err => {
+        console.error('HTTP error loading messages:', err);
         this.errorMessage = 'Error loading messages';
       }
-    },
-    error: () => this.errorMessage = 'Error loading messages'
-  });
-}
+    });
+  }
 
 
   sendMessage(): void {
