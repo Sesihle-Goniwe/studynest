@@ -299,21 +299,30 @@ openLogHoursDialog(topic?: any): void {
     });
   }
 
+  // src/app/progress-tracker/progress.ts
+
   createRankingsChart(): void {
+    // 1. Add this check to make sure the canvas is ready
+    if (!this.rankingsChartCanvas) {
+      // If the canvas isn't available yet, just exit the function.
+      // The function will be called again when the user changes tabs.
+      return;
+    }
+
     if (this.rankingsChart) {
       this.rankingsChart.destroy();
     }
     
-    const labels = this.rankingData.map(d => d.email.split('@')[0]); // Use username from email
+    const labels = this.rankingData.map(d => d.email.split('@')[0]);
     const data = this.rankingData.map(d => d.total_hours);
 
-    // Highlight the current user's bar
     const backgroundColors = this.rankingData.map(d => 
       d.user_id === this.currentUser.id ? 'rgba(75, 192, 192, 1)' : 'rgba(54, 162, 235, 0.6)'
     );
 
     this.rankingsChart = new Chart(this.rankingsChartCanvas.nativeElement, {
       type: 'bar',
+      // ... rest of your chart configuration
       data: {
         labels: labels,
         datasets: [{
@@ -323,10 +332,10 @@ openLogHoursDialog(topic?: any): void {
         }]
       },
       options: {
-        indexAxis: 'y', // This makes it a horizontal bar chart
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } }, // Hide legend for a cleaner look
+        plugins: { legend: { display: false } },
         scales: { x: { beginAtZero: true, title: { display: true, text: 'Hours' } } }
       }
     });

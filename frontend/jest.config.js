@@ -4,6 +4,7 @@ module.exports = {
   setupFilesAfterEnv: [
     '<rootDir>/setup-jest.ts',   // ← only your setup file
   ],
+  collectCoverage: true,
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

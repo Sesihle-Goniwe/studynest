@@ -1,19 +1,40 @@
 <div class="chat-container">
-  <header class="chat-header">
-    <h2>StudyNest Group Chat</h2>
-  </header>
+  <!-- Header -->
+ <header class="chat-header">
+  <h2>{{ groupName || 'StudyNest Group Chat' }}</h2>
+</header>
 
+  <!-- Messages -->
   <div class="chat-messages" #chatMessages>
-    <div *ngFor="let msg of messages" class="message"
-         [ngClass]="{'own-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}">
+    <div class="message" 
+         *ngFor="let msg of messages"
+         [ngClass]="{'own-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}"
+         (contextmenu)="onMessageRightClick($event, msg)">
+
       <div class="message-info">
-        <span class="username">{{ msg.displayName }}</span>
+        <span class="username">{{ msg.user_id || 'Anonymous' }}</span>
         <span class="time">{{ msg.created_at | date:'shortTime' }}</span>
+
+        <!-- Ellipsis button for own messages -->
+        <span *ngIf="isEditable(msg)" class="message-options">
+          <button type="button" (click)="openOptionsMenu(msg, $event)">⋮</button>
+        </span>
       </div>
+
       <div class="message-text">{{ msg.message }}</div>
     </div>
   </div>
 
+  <!-- Options menu -->
+<div #optionsMenu *ngIf="selectedMessage" class="options-menu" 
+     [style.top.px]="menuY" [style.left.px]="menuX"
+     (click)="$event.stopPropagation()">
+  <button type="button" (click)="editMessage(selectedMessage)">Edit</button>
+  <button type="button" (click)="deleteMessage(selectedMessage)">Delete</button>
+  <button type="button" (click)="closeOptionsMenu()">Cancel</button>
+</div>
+
+  <!-- Input -->
   <div class="chat-input">
     <input type="text" [(ngModel)]="newMessage" placeholder="Type a message" />
     <button (click)="sendMessage()">Send</button>

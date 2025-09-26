@@ -1,11 +1,11 @@
-import { Module } from '@nestjs/common';
-import { ProgressService } from './progress.service';
-import { ProgressController } from './progress.controller';
-import { SupabaseModule } from '../supabase/supabase.module'; // <-- Import it
+import { Module } from "@nestjs/common";
+import { ProgressService } from "./progress.service";
+import { ProgressController } from "./progress.controller";
+import { SupabaseModule } from "../supabase/supabase.module"; // <-- Import it
 
 @Module({
   controllers: [ProgressController],
   providers: [ProgressService],
-  imports: [SupabaseModule]
+  imports: [SupabaseModule],
 })
 export class ProgressModule {}
