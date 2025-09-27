@@ -7,6 +7,12 @@ import { GroupChatsService, GroupMessage } from '../../services/group-chats.serv
 import { Students } from '../../services/students';
 import { Subscription, interval } from 'rxjs';
 
+// Extend GroupMessage to include fullName and profileUrl
+interface GroupMessageWithProfile extends GroupMessage {
+  fullName: string;
+  profileUrl: string;
+}
+
 @Component({
   selector: 'app-group-chats',
   imports: [CommonModule, FormsModule],
@@ -14,20 +20,22 @@ import { Subscription, interval } from 'rxjs';
   styleUrls: ['./group-chats.component.scss']
 })
 export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy {
-  messages: GroupMessage[] = [];
+  messages: GroupMessageWithProfile[] = [];
   newMessage: string = '';
   currentUserId: string = '';
   groupId: string | null = null;
   groupName: string | null = null;
   errorMessage = '';
+  showUploadMenu = false;
 
-  selectedMessage: GroupMessage | null = null;
+  selectedMessage: GroupMessageWithProfile | null = null;
   menuX = 0;
   menuY = 0;
 
   private pollingSub!: Subscription;
   @ViewChild('chatMessages') chatMessagesRef!: ElementRef;
   @ViewChild('optionsMenu') optionsMenuRef!: ElementRef;
+  @ViewChild('fileInput') fileInputRef!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -66,16 +74,25 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
     this.groupChatsService.getMessages(this.groupId).subscribe({
       next: async res => {
         if (res.success) {
-          // Resolve full names for each message
-          const messagesWithNames = await Promise.all(res.messages.map(async msg => {
-            try {
-              const student = await this.studentsService.getStudentByUid(msg.userId).toPromise();
-              return { ...msg, fullName: student?.full_name || 'Unknown' };
-            } catch {
-              return { ...msg, fullName: 'Unknown' };
-            }
-          }));
-          this.messages = messagesWithNames;
+          const messagesWithProfiles: GroupMessageWithProfile[] = await Promise.all(
+            res.messages.map(async msg => {
+              try {
+                const student = await this.studentsService.getStudentByUid(msg.userId).toPromise();
+                return {
+                  ...msg,
+                  fullName: student?.full_name || 'Unknown',
+                  profileUrl: student?.profileImage || 'assets/default-avatar.png'
+                } as GroupMessageWithProfile;
+              } catch {
+                return {
+                  ...msg,
+                  fullName: 'Unknown',
+                  profileUrl: 'assets/default-avatar.png'
+                } as GroupMessageWithProfile;
+              }
+            })
+          );
+          this.messages = messagesWithProfiles;
         } else {
           this.errorMessage = 'Error loading messages';
         }
@@ -91,7 +108,11 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
       .subscribe({
         next: res => {
           if (res.success && res.message) {
-            this.messages.push(res.message);
+            this.messages.push({
+              ...res.message,
+              fullName: 'You',
+              profileUrl: 'assets/default-avatar.png'
+            } as GroupMessageWithProfile);
             this.newMessage = '';
             setTimeout(() => this.scrollToBottom(), 100);
           } else this.errorMessage = 'Failed to send message';
@@ -100,7 +121,7 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
       });
   }
 
-  isEditable(msg: GroupMessage): boolean {
+  isEditable(msg: GroupMessageWithProfile): boolean {
     const createdAt = new Date(msg.createdAt).getTime();
     const now = Date.now();
     const fiveMinutes = 5 * 60 * 1000;
@@ -120,22 +141,22 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
     });
   }
 
- // Options menu
-openOptionsMenu(msg: GroupMessage, event: MouseEvent) {
-  event.stopPropagation();
-  this.selectedMessage = msg;
-  this.menuX = event.clientX;
-  this.menuY = event.clientY;
-}
+  // Options menu
+  openOptionsMenu(msg: GroupMessageWithProfile, event: MouseEvent) {
+    event.stopPropagation();
+    this.selectedMessage = msg;
+    this.menuX = event.clientX;
+    this.menuY = event.clientY;
+  }
 
-closeOptionsMenu() {
-  this.selectedMessage = null;
-}
+  closeOptionsMenu() {
+    this.selectedMessage = null;
+  }
 
-onMessageRightClick(event: MouseEvent, msg: GroupMessage) {
-  event.preventDefault();
-  this.openOptionsMenu(msg, event);
-}
+  onMessageRightClick(event: MouseEvent, msg: GroupMessageWithProfile) {
+    event.preventDefault();
+    this.openOptionsMenu(msg, event);
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
@@ -146,7 +167,7 @@ onMessageRightClick(event: MouseEvent, msg: GroupMessage) {
     }
   }
 
-  editMessage(msg: GroupMessage) {
+  editMessage(msg: GroupMessageWithProfile) {
     const newText = prompt('Edit your message:', msg.message);
     if (!newText || newText.trim() === msg.message) return;
 
@@ -155,7 +176,11 @@ onMessageRightClick(event: MouseEvent, msg: GroupMessage) {
         next: res => {
           if (res.success && res.message) {
             const index = this.messages.findIndex(m => m.id === msg.id);
-            if (index !== -1) this.messages[index] = res.message;
+            if (index !== -1) this.messages[index] = {
+              ...res.message,
+              fullName: msg.fullName,
+              profileUrl: msg.profileUrl
+            };
             this.closeOptionsMenu();
           } else alert('Failed to edit message');
         },
@@ -163,7 +188,7 @@ onMessageRightClick(event: MouseEvent, msg: GroupMessage) {
       });
   }
 
-  deleteMessage(msg: GroupMessage) {
+  deleteMessage(msg: GroupMessageWithProfile) {
     if (!confirm('Delete this message?')) return;
 
     const backup = [...this.messages];
@@ -183,4 +208,44 @@ onMessageRightClick(event: MouseEvent, msg: GroupMessage) {
         }
       });
   }
+
+  // Inside GroupChatsComponent class
+
+  onAvatarClick(msg: GroupMessageWithProfile) {
+    // Example: Open the user's profile in a new tab
+    if (msg.userId) {
+      // If you have a profile route, you can navigate like this:
+      // this.router.navigate(['/profile', msg.userId]);
+
+      // Or simply open in a new tab
+      //window.open(`/profile/${msg.userId}`, '_blank');
+    }
+  }
+
+  toggleUploadMenu() {
+    this.showUploadMenu = !this.showUploadMenu;
+  }
+
+  triggerFileInput(type: 'image' | 'document') {
+    // Here you can filter file types if needed
+    const fileInput: HTMLInputElement = this.fileInputRef.nativeElement;
+    if (type === 'image') {
+      fileInput.accept = 'image/*';
+    } else if (type === 'document') {
+      fileInput.accept = '.pdf,.doc,.docx,.txt';
+    }
+    fileInput.click();
+    this.showUploadMenu = false;
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    console.log('Selected file:', file);
+
+    // TODO: upload the file to your backend or storage
+  }
+
 }
