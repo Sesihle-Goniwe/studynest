@@ -1,21 +1,17 @@
 <div class="chat-container">
-  <!-- Header -->
- <header class="chat-header">
-  <h2>{{ groupName || 'StudyNest Group Chat' }}</h2>
-</header>
+  <header class="chat-header">
+    <h2>{{ groupName || 'StudyNest Group Chat' }}</h2>
+  </header>
 
-  <!-- Messages -->
   <div class="chat-messages" #chatMessages>
     <div class="message" 
          *ngFor="let msg of messages"
-         [ngClass]="{'own-message': msg.user_id === currentUserId, 'other-message': msg.user_id !== currentUserId}"
+         [ngClass]="{'own-message': msg.userId === currentUserId, 'other-message': msg.userId !== currentUserId}"
          (contextmenu)="onMessageRightClick($event, msg)">
-
+      
       <div class="message-info">
-        <span class="username">{{ msg.user_id || 'Anonymous' }}</span>
-        <span class="time">{{ msg.created_at | date:'shortTime' }}</span>
-
-        <!-- Ellipsis button for own messages -->
+        <span class="username">{{ msg.userId }}</span>
+        <span class="time">{{ msg.createdAt | date:'shortTime' }}</span>
         <span *ngIf="isEditable(msg)" class="message-options">
           <button type="button" (click)="openOptionsMenu(msg, $event)">⋮</button>
         </span>
@@ -25,16 +21,14 @@
     </div>
   </div>
 
-  <!-- Options menu -->
-<div #optionsMenu *ngIf="selectedMessage" class="options-menu" 
-     [style.top.px]="menuY" [style.left.px]="menuX"
-     (click)="$event.stopPropagation()">
-  <button type="button" (click)="editMessage(selectedMessage)">Edit</button>
-  <button type="button" (click)="deleteMessage(selectedMessage)">Delete</button>
-  <button type="button" (click)="closeOptionsMenu()">Cancel</button>
-</div>
+  <div #optionsMenu *ngIf="selectedMessage" class="options-menu" 
+       [style.top.px]="menuY" [style.left.px]="menuX"
+       (click)="$event.stopPropagation()">
+    <button type="button" (click)="editMessage(selectedMessage)">Edit</button>
+    <button type="button" (click)="deleteMessage(selectedMessage)">Delete</button>
+    <button type="button" (click)="closeOptionsMenu()">Cancel</button>
+  </div>
 
-  <!-- Input -->
   <div class="chat-input">
     <input type="text" [(ngModel)]="newMessage" placeholder="Type a message" />
     <button (click)="sendMessage()">Send</button>
