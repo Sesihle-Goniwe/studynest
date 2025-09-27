@@ -9,21 +9,29 @@
          *ngFor="let msg of messages"
          [ngClass]="msg.userId === currentUserId ? 'own-message' : 'other-message'"
          (contextmenu)="onMessageRightClick($event, msg)">
-      
-      <!-- Username shown only for other people's messages -->
-      <span *ngIf="msg.userId !== currentUserId" class="username">
-        {{ msg.fullName || 'Unknown' }}
-      </span>
 
-      <!-- The message bubble -->
-      <span class="message-text">
-        {{ msg.message }}
-      </span>
+      <!-- Avatar clickable -->
+      <div class="avatar" *ngIf="msg.userId !== currentUserId">
+        <img 
+          [src]="msg.profileUrl" 
+          alt="avatar" 
+          (click)="onAvatarClick(msg)">
+      </div>
 
-      <!-- Timestamp inside bubble -->
-      <span class="time">
-        {{ msg.createdAt | date:'shortTime' }}
-      </span>
+      <!-- Bubble -->
+      <div class="bubble">
+        <span *ngIf="msg.userId !== currentUserId" class="username">
+          {{ msg.fullName || 'Unknown' }}
+        </span>
+
+        <span class="message-text">
+          {{ msg.message }}
+        </span>
+
+        <span class="time">
+          {{ msg.createdAt | date:'shortTime' }}
+        </span>
+      </div>
     </div>
   </div>
 
@@ -36,12 +44,28 @@
     <button type="button" (click)="closeOptionsMenu()">Cancel</button>
   </div>
 
-  <!-- Input area -->
-  <div class="chat-input">
-    <input type="text" [(ngModel)]="newMessage" placeholder="Type a message" />
-    <button (click)="sendMessage()">Send</button>
-  </div>
+ <!-- Input -->
+<div class="chat-input">
+  <!-- Plus button for upload -->
+  <button type="button" class="upload-btn" (click)="toggleUploadMenu()">
+    +
+  </button>
 
-  <!-- Error Message -->
+  <!-- File input (hidden) -->
+  <input type="file" #fileInput style="display:none" (change)="onFileSelected($event)" />
+
+  <input type="text" [(ngModel)]="newMessage" placeholder="Type a message" />
+
+  <button (click)="sendMessage()">Send</button>
+
+  <!-- Upload options menu -->
+  <div *ngIf="showUploadMenu" class="upload-menu">
+    <button type="button" (click)="triggerFileInput('image')">Image</button>
+    <button type="button" (click)="triggerFileInput('document')">Document</button>
+  </div>
+</div>
+
+
+  <!-- Error -->
   <p *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</p>
 </div>
