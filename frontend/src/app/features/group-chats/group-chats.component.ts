@@ -18,7 +18,6 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   currentUserId: string = '';
   groupId: string | null = null;
   groupName: string | null = null;
-  isLoading = false;
   errorMessage = '';
 
   selectedMessage: GroupMessage | null = null;
@@ -37,23 +36,18 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
 
   ngOnInit(): void {
     this.groupId = this.route.snapshot.paramMap.get('groupId');
-    this.groupName = this.route.snapshot.queryParamMap.get('name'); // 👈 get the name
+    this.groupName = this.route.snapshot.queryParamMap.get('name');
 
     if (!this.groupId) {
       console.error('Group ID missing from route');
       return;
-    } // <-- group name here
-    console.log('Group ID:', this.groupId, 'Group Name:', this.groupName);
+    }
+
     const user = this.authService.getCurrentUser();
     if (user) this.currentUserId = user.id;
 
-    
-      this.loadMessages();
-      this.startPolling();
-    
-
-    // Forces Angular to re-evaluate *ngIf for editable buttons
-    setInterval(() => {}, 1000);
+    this.loadMessages();
+    this.startPolling();
   }
 
   ngAfterViewChecked(): void {
@@ -64,27 +58,20 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
     if (this.pollingSub) this.pollingSub.unsubscribe();
   }
 
-loadMessages(): void {
+  loadMessages(): void {
     if (!this.groupId) return;
-
-    console.log('Loading messages for group:', this.groupId);
 
     this.groupChatsService.getMessages(this.groupId).subscribe({
       next: res => {
         if (res.success) {
           this.messages = res.messages;
         } else {
-          console.error('Failed to load messages:', res);
           this.errorMessage = 'Error loading messages';
         }
       },
-      error: err => {
-        console.error('HTTP error loading messages:', err);
-        this.errorMessage = 'Error loading messages';
-      }
+      error: () => this.errorMessage = 'Error loading messages'
     });
   }
-
 
   sendMessage(): void {
     if (!this.currentUserId || !this.newMessage.trim() || !this.groupId) return;
@@ -103,11 +90,10 @@ loadMessages(): void {
   }
 
   isEditable(msg: GroupMessage): boolean {
-    if (!msg.created_at) return false;
-    const createdAt = new Date(msg.created_at).getTime();
+    const createdAt = new Date(msg.createdAt).getTime();
     const now = Date.now();
     const fiveMinutes = 5 * 60 * 1000;
-    return (now - createdAt) <= fiveMinutes && msg.user_id === this.currentUserId;
+    return (now - createdAt) <= fiveMinutes && msg.userId === this.currentUserId;
   }
 
   scrollToBottom(): void {
@@ -123,27 +109,26 @@ loadMessages(): void {
     });
   }
 
-  // Options menu
-  openOptionsMenu(msg: GroupMessage, event: MouseEvent) {
-    event.stopPropagation(); // stop the click that opens the menu
-    this.selectedMessage = msg;
-    this.menuX = event.clientX;
-    this.menuY = event.clientY;
-  }
+ // Options menu
+openOptionsMenu(msg: GroupMessage, event: MouseEvent) {
+  event.stopPropagation();
+  this.selectedMessage = msg;
+  this.menuX = event.clientX;
+  this.menuY = event.clientY;
+}
 
-  closeOptionsMenu() {
-    this.selectedMessage = null;
-  }
+closeOptionsMenu() {
+  this.selectedMessage = null;
+}
 
-  onMessageRightClick(event: MouseEvent, msg: GroupMessage) {
-    event.preventDefault(); // prevent default browser menu
-    this.openOptionsMenu(msg, event);
-  }
+onMessageRightClick(event: MouseEvent, msg: GroupMessage) {
+  event.preventDefault();
+  this.openOptionsMenu(msg, event);
+}
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     if (!this.selectedMessage) return;
-
     const menuEl = this.optionsMenuRef?.nativeElement;
     if (menuEl && !menuEl.contains(event.target)) {
       this.selectedMessage = null;
@@ -154,16 +139,14 @@ loadMessages(): void {
     const newText = prompt('Edit your message:', msg.message);
     if (!newText || newText.trim() === msg.message) return;
 
-    this.groupChatsService.editMessage(msg.id!, this.currentUserId, newText)
+    this.groupChatsService.editMessage(msg.id, this.currentUserId, newText)
       .subscribe({
         next: res => {
           if (res.success && res.message) {
             const index = this.messages.findIndex(m => m.id === msg.id);
             if (index !== -1) this.messages[index] = res.message;
             this.closeOptionsMenu();
-          } else {
-            alert('Failed to edit message');
-          }
+          } else alert('Failed to edit message');
         },
         error: () => alert('HTTP error editing message')
       });
@@ -172,18 +155,21 @@ loadMessages(): void {
   deleteMessage(msg: GroupMessage) {
     if (!confirm('Delete this message?')) return;
 
-    this.groupChatsService.deleteMessage(msg.id!, this.currentUserId)
+    const backup = [...this.messages];
+    this.messages = this.messages.filter(m => m.id !== msg.id);
+
+    this.groupChatsService.deleteMessage(msg.id, this.currentUserId)
       .subscribe({
         next: res => {
-          if (res.success) {
-            this.messages = this.messages.filter(m => m.id !== msg.id);
-            this.closeOptionsMenu();
-          } else {
+          if (!res.success) {
+            this.messages = backup;
             alert('Failed to delete message');
-          }
+          } else this.closeOptionsMenu();
         },
-        error: () => alert('HTTP error deleting message')
+        error: () => {
+          this.messages = backup;
+          alert('HTTP error deleting message');
+        }
       });
   }
-  
 }

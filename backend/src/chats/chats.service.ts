@@ -39,6 +39,13 @@ export class ChatsService {
   }
 
   // Map messages directly with userId and createdAt
+  /*const messages = data.map((msg: any) => ({
+    id: msg.id,
+    groupId: msg.group_id,
+    userId: msg.user_id,
+    message: msg.message,
+    createdAt: msg.created_at
+  }));*/
   const messages = data.map((msg: any) => ({
     id: msg.id,
     groupId: msg.group_id,
