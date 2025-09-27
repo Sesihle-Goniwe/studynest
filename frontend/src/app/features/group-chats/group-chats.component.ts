@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { GroupChatsService, GroupMessage } from '../../services/group-chats.service';
+import { Students } from '../../services/students';
 import { Subscription, interval } from 'rxjs';
 
 @Component({
@@ -31,7 +32,8 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
-    private groupChatsService: GroupChatsService
+    private groupChatsService: GroupChatsService,
+    private studentsService: Students
   ) {}
 
   ngOnInit(): void {
@@ -62,9 +64,18 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
     if (!this.groupId) return;
 
     this.groupChatsService.getMessages(this.groupId).subscribe({
-      next: res => {
+      next: async res => {
         if (res.success) {
-          this.messages = res.messages;
+          // Resolve full names for each message
+          const messagesWithNames = await Promise.all(res.messages.map(async msg => {
+            try {
+              const student = await this.studentsService.getStudentByUid(msg.userId).toPromise();
+              return { ...msg, fullName: student?.full_name || 'Unknown' };
+            } catch {
+              return { ...msg, fullName: 'Unknown' };
+            }
+          }));
+          this.messages = messagesWithNames;
         } else {
           this.errorMessage = 'Error loading messages';
         }

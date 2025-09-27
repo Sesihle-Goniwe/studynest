@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+
 export interface GroupMessage {
   id: string;
   groupId: string;
   userId: string;
   message: string;
   createdAt: string;
+  fullName?: string; // optional, will be resolved from Students service
 }
 
 @Injectable({

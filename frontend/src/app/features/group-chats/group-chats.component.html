@@ -3,24 +3,31 @@
     <h2>{{ groupName || 'StudyNest Group Chat' }}</h2>
   </header>
 
+  <!-- Messages -->
   <div class="chat-messages" #chatMessages>
     <div class="message" 
          *ngFor="let msg of messages"
-         [ngClass]="{'own-message': msg.userId === currentUserId, 'other-message': msg.userId !== currentUserId}"
+         [ngClass]="msg.userId === currentUserId ? 'own-message' : 'other-message'"
          (contextmenu)="onMessageRightClick($event, msg)">
       
-      <div class="message-info">
-        <span class="username">{{ msg.userId }}</span>
-        <span class="time">{{ msg.createdAt | date:'shortTime' }}</span>
-        <span *ngIf="isEditable(msg)" class="message-options">
-          <button type="button" (click)="openOptionsMenu(msg, $event)">⋮</button>
-        </span>
-      </div>
+      <!-- Username shown only for other people's messages -->
+      <span *ngIf="msg.userId !== currentUserId" class="username">
+        {{ msg.fullName || 'Unknown' }}
+      </span>
 
-      <div class="message-text">{{ msg.message }}</div>
+      <!-- The message bubble -->
+      <span class="message-text">
+        {{ msg.message }}
+      </span>
+
+      <!-- Timestamp inside bubble -->
+      <span class="time">
+        {{ msg.createdAt | date:'shortTime' }}
+      </span>
     </div>
   </div>
 
+  <!-- Options Menu -->
   <div #optionsMenu *ngIf="selectedMessage" class="options-menu" 
        [style.top.px]="menuY" [style.left.px]="menuX"
        (click)="$event.stopPropagation()">
@@ -29,10 +36,12 @@
     <button type="button" (click)="closeOptionsMenu()">Cancel</button>
   </div>
 
+  <!-- Input area -->
   <div class="chat-input">
     <input type="text" [(ngModel)]="newMessage" placeholder="Type a message" />
     <button (click)="sendMessage()">Send</button>
   </div>
 
+  <!-- Error Message -->
   <p *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</p>
 </div>
