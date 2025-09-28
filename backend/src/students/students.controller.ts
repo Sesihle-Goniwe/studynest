@@ -1,18 +1,10 @@
 // src/students/students.controller.ts
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Put,
-  UseInterceptors,
-  UploadedFile,
-} from "@nestjs/common";
-import { StudentsService } from "./students.service";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { UpdateStudentDto } from "./dto/update-student.dto";
-import type { Express } from "express";
-import { memoryStorage } from "multer";
+import { Body, Controller, Get,Param ,Put, UseInterceptors,UploadedFile, Patch} from '@nestjs/common';
+import { StudentsService } from './students.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateStudentDto } from './dto/update-student.dto';
+import type { Express } from 'express';
+import { memoryStorage } from 'multer';
 
 @Controller("students")
 export class StudentsController {
@@ -44,4 +36,11 @@ export class StudentsController {
     if (!file) throw new Error("No file uploaded");
     return this.studentsService.updateStudentWithImage(uid, {}, file);
   }
+
+  @Put(':uid')
+  async updateUserName(@Param('uid') uid: string, @Body() body: { full_name: string }) 
+  {
+    return this.studentsService.updateUserName(uid, body.full_name);
+  }
+
 }

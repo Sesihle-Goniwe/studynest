@@ -85,18 +85,7 @@
             </tr>
           </tfoot>
         }
-        @if (showPdfViewer && pdfSrc) {
-        <div class="pdf-viewer-overlay" (click)="closePdfViewer()">
-          <div class="pdf-viewer-container" (click)="$event.stopPropagation()">
-            <button class="close-viewer-btn" (click)="closePdfViewer()">×</button>
-            <ngx-extended-pdf-viewer 
-            [src]="pdfSrc" 
-            useBrowserLocale="true" 
-            height="90vh">
-            </ngx-extended-pdf-viewer>
-          </div>
-        </div>
-      }
+        
       </table>
     </section>
     <section class = "completed-tops"> 
@@ -183,4 +172,16 @@
     </section>
   }
 </section>
+@if (showPdfViewer && pdfSrc) {
+        <div class="pdf-viewer-overlay" (click)="closePdfViewer()">
+          <div class="pdf-viewer-container" (click)="$event.stopPropagation()">
+            <button class="close-viewer-btn" (click)="closePdfViewer()">×</button>
+            <ngx-extended-pdf-viewer 
+            [src]="pdfSrc" 
+            useBrowserLocale="true" 
+            height="90vh">
+            </ngx-extended-pdf-viewer>
+          </div>
+        </div>
+      }
 </main>

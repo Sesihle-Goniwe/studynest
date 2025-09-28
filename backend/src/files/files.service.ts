@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  ForbiddenException,
 } from "@nestjs/common";
 import { SupabaseService } from "../supabase/supabase.service";
 import type { Express } from "express";
@@ -81,44 +82,64 @@ export class FilesService {
       data: dbData,
     };
   }
-  async getSignedUrl(fileId: string, userId: string) {
+   async getSignedUrl(fileId: string, userId: string) {
     const supabase = this.supabaseService.getClient();
-    // 1. Verify the user owns the file
     console.log(
-      "--- GETTING SIGNED URL FOR fileId:",
-      fileId,
-      "AND userId:",
-      userId,
+      `--- SECURE URL REQUEST for fileId: ${fileId} by userId: ${userId} ---`,
     );
+
+    // 1. Find which group the file was posted in.
+    const { data: chatMessage, error: messageError } = await supabase
+      .from("group_chats")
+      .select("group_id")
+      .eq("file_id", fileId)
+      .single();
+
+    if (messageError || !chatMessage) {
+      console.error("!!! FILE NOT FOUND IN ANY CHAT:", messageError);
+      throw new NotFoundException(`File with ID ${fileId} not found in any chat.`);
+    }
+    const groupId = chatMessage.group_id;
+    console.log(`--- FILE BELONGS TO GROUP: ${groupId} ---`);
+
+    // 2. Check if the requesting user is a member of that group.
+    const { data: membership, error: membershipError } = await supabase
+      .from("group_members") // Your table for group members
+      .select("id")
+      .eq("group_id", groupId)
+      .eq("user_id", userId)
+      .single();
+
+    if (membershipError || !membership) {
+      console.error("!!! MEMBERSHIP CHECK FAILED:", membershipError);
+      throw new ForbiddenException("Access denied. User is not a member of the group.");
+    }
+    console.log(`--- USER ${userId} IS A MEMBER. ACCESS GRANTED. ---`);
+
+    // 3. Get the file path from the 'study_notes' table.
     const { data: fileData, error: fileError } = await supabase
       .from("study_notes")
       .select("file_path")
       .eq("id", fileId)
-      .eq("user_id", userId)
       .single();
 
     if (fileError || !fileData) {
-      console.error("!!! DATABASE LOOKUP FAILED:", fileError);
-      throw new NotFoundException("File not found or access denied.");
+      console.error("!!! FILE METADATA NOT FOUND:", fileError);
+      throw new NotFoundException(`File data for ID ${fileId} not found.`);
+    }
+    console.log(`--- GENERATING SIGNED URL FOR PATH: ${fileData.file_path} ---`);
+
+    // 4. Generate and return the signed URL.
+    const { data, error: urlError } = await supabase.storage
+      .from("study-notes") // Your Supabase bucket name
+      .createSignedUrl(fileData.file_path, 3600); // URL is valid for 1 hour
+
+    if (urlError) {
+      console.error("!!! SIGNED URL GENERATION FAILED:", urlError);
+      throw new InternalServerErrorException("Could not generate file URL.");
     }
 
-    console.log(
-      "--- FOUND FILE IN DB. ATTEMPTING TO SIGN PATH:",
-      fileData.file_path,
-    );
-    // 2. Generate a signed URL that expires in 1 hour (3600 seconds)
-    const { data, error } = await supabase.storage
-      .from("study-notes")
-      .createSignedUrl(fileData.file_path, 3600);
-
-    if (error) {
-      console.error("!!! SUPABASE STORAGE ERROR:", error);
-      throw new InternalServerErrorException(
-        "Could not generate file URL.",
-        error.message,
-      );
-    }
-
+    console.log("--- SIGNED URL GENERATED SUCCESSFULLY ---");
     return data;
   }
   async summarize(fileId: string, userId: string) {

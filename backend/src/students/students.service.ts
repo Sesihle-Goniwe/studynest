@@ -33,8 +33,26 @@ export class StudentsService {
     } catch (error) {}
   }
 
-  async updateStudentP(uid: string, updateDto: any) {
-    const { data, error } = await this.supabaseService
+    async updateUserName(uid:string,userName:string)
+    {
+        const  {data, error} = await this.supabaseService
+        .getClient()
+        .from('students')
+        .update({full_name : userName})
+        .eq('user_id',uid)
+        .select()
+
+        if(error)
+        {
+            console.log("Failed to update full name");
+        }
+
+        return data;
+    }
+
+  async updateStudentP(uid: string, updateDto:any)
+  {
+      const {data,error}  = await this.supabaseService
       .getClient()
       .from("students")
       .update(updateDto)

@@ -39,6 +39,39 @@ describe("StudentsService", () => {
     service = module.get<StudentsService>(StudentsService);
   });
 
+it("should update user name", async () => {
+  // Arrange
+  const uid = "123";
+  const newName = "John Updated";
+
+  supabaseMock
+    .getClient()
+    .from()
+    .update.mockReturnThis();
+  supabaseMock
+    .getClient()
+    .from()
+    .eq.mockReturnThis();
+  supabaseMock
+    .getClient()
+    .from()
+    .select.mockResolvedValue({
+      data: [{ user_id: uid, full_name: newName }],
+      error: null,
+    });
+
+  // Act
+  const result = await service.updateUserName(uid, newName);
+
+  // Assert
+  expect(result).toEqual([{ user_id: uid, full_name: newName }]);
+  expect(
+    supabaseMock.getClient().from().update,
+  ).toHaveBeenCalledWith({ full_name: newName });
+  expect(supabaseMock.getClient().from().eq).toHaveBeenCalledWith("user_id", uid);
+});
+
+
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
