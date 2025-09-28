@@ -24,12 +24,54 @@ export class ChatsService {
     return { success: true, message: data };
   }
 
+  //file message handler
+  async sendFileMessage(text: string, groupId: string, userId: string, fileId: string) {
+    if (!groupId || !userId || !fileId) {
+      return { success: false, message: null };
+    }
+
+    const { data, error } = await this.supabaseSer.getClient()
+      .from('group_chats')
+      .insert([{ 
+        message: text, 
+        group_id: groupId, 
+        user_id: userId,
+        message_type: 'file',
+        file_id: fileId
+      }])
+      .select(`
+        *,
+        study_notes:file_id (
+          id,
+          file_name,
+          file_size,
+          mime_type
+        )
+      `)
+      .single();
+
+    if (error) {
+      console.error('Supabase insert error:', error);
+      return { success: false, message: null, error };
+    }
+
+    return { success: true, message: data };
+  }
+
  async getGroupMessages(groupId: string) {
   if (!groupId) return { success: false, messages: [] };
 
   const { data, error } = await this.supabaseSer.getClient()
     .from('group_chats')
-    .select('*')
+    .select(`
+        *,
+        study_notes:file_id (
+          id,
+          file_name,
+          file_size,
+          mime_type
+        )
+      `) //join to get file details
     .eq('group_id', groupId)
     .order('created_at', { ascending: true });
 
@@ -51,7 +93,10 @@ export class ChatsService {
     groupId: msg.group_id,
     userId: msg.user_id,
     message: msg.message,
-    createdAt: msg.created_at
+    messageType: msg.message_type || 'text',
+    createdAt: msg.created_at,
+    fileId: msg.file_id,
+    fileData: msg.study_notes
   }));
 
   return { success: true, messages };
@@ -68,6 +113,8 @@ export class ChatsService {
       .single();
 
     if (fetchError || !existing || existing.user_id !== userId) return { success: false };
+     
+    if (existing.message_type === 'file') return { success: false }; //prevent editing of files
 
     const createdAt = new Date(existing.created_at).getTime();
     if (Date.now() - createdAt > 5 * 60 * 1000) return { success: false };

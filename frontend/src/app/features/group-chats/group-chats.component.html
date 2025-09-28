@@ -18,16 +18,38 @@
           (click)="onAvatarClick(msg)">
       </div>
 
-      <!-- Bubble -->
+      <!-- Message Bubble -->
       <div class="bubble">
         <span *ngIf="msg.userId !== currentUserId" class="username">
           {{ msg.fullName || 'Unknown' }}
         </span>
 
-        <span class="message-text">
+        <!-- Text Message -->
+        <div *ngIf="!isFileMessage(msg)" class="message-text">
           {{ msg.message }}
-        </span>
+        </div>
 
+        <!-- File Message -->
+        <div *ngIf="isFileMessage(msg)" class="file-message">
+          <div class="file-container">
+            <div class="file-info">
+              <span class="file-icon">{{ getFileIcon(msg.fileData?.mime_type || '') }}</span>
+              <div class="file-details">
+                <span class="file-name">{{ msg.fileData?.file_name || 'Unknown File' }}</span>
+                <div class="file-meta">
+                  <span class="file-size">{{ formatFileSize(msg.fileData?.file_size || 0) }}</span>
+                  <button class="view-btn" type="button" (click)="viewMessageFile(msg)">
+                    View Pdf
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Optional caption for file messages -->
+          <div *ngIf="msg.message && msg.message !== ('📎 ' + msg.fileData?.file_name)" class="file-caption">
+            {{ msg.message }}
+          </div>
+        </div>
         <span class="time">
           {{ msg.createdAt | date:'shortTime' }}
         </span>
@@ -35,36 +57,47 @@
     </div>
   </div>
 
+  <!-- PDF Viewer Modal -->
+  <div *ngIf="showPdfViewer && pdfSrc" class="pdf-viewer-overlay" (click)="closePdfViewer()">
+    <div class="pdf-viewer-container" (click)="$event.stopPropagation()">
+      <div class="pdf-header">
+        <h3>PDF Viewer</h3>
+        <button class="close-viewer-btn" (click)="closePdfViewer()">×</button>
+      </div>
+      <iframe [src]="pdfSrc" width="100%" height="calc(100% - 50px)" frameborder="0"></iframe>
+    </div>
+  </div>
+
   <!-- Options Menu -->
   <div #optionsMenu *ngIf="selectedMessage" class="options-menu" 
        [style.top.px]="menuY" [style.left.px]="menuX"
        (click)="$event.stopPropagation()">
-    <button type="button" (click)="editMessage(selectedMessage)">Edit</button>
+    <button *ngIf="isEditable(selectedMessage)" type="button" (click)="editMessage(selectedMessage)">Edit</button>
     <button type="button" (click)="deleteMessage(selectedMessage)">Delete</button>
     <button type="button" (click)="closeOptionsMenu()">Cancel</button>
   </div>
 
- <!-- Input -->
-<div class="chat-input">
-  <!-- Plus button for upload -->
-  <button type="button" class="upload-btn" (click)="toggleUploadMenu()">
-    +
-  </button>
+  <!-- Input Section -->
+  <div class="chat-input">
+    <!-- Plus button for upload -->
+    <button type="button" class="upload-btn" (click)="toggleUploadMenu()">
+      +
+    </button>
 
-  <!-- File input (hidden) -->
-  <input type="file" #fileInput style="display:none" (change)="onFileSelected($event)" />
+    <!-- File input (hidden) -->
+    <input type="file" #fileInput style="display:none" (change)="onFileSelected($event)" />
 
-  <input type="text" [(ngModel)]="newMessage" placeholder="Type a message" />
+    <input type="text" [(ngModel)]="newMessage" placeholder="Type a message" 
+           (keyup.enter)="sendMessage()" />
 
-  <button (click)="sendMessage()">Send</button>
+    <button (click)="sendMessage()">Send</button>
 
-  <!-- Upload options menu -->
-  <div *ngIf="showUploadMenu" class="upload-menu">
-    <button type="button" (click)="triggerFileInput('image')">Image</button>
-    <button type="button" (click)="triggerFileInput('document')">Document</button>
+    <!-- Upload options menu -->
+    <div *ngIf="showUploadMenu" class="upload-menu">
+      <button type="button" (click)="triggerFileInput('image')">Image</button>
+      <button type="button" (click)="triggerFileInput('document')">Document</button>
+    </div>
   </div>
-</div>
-
 
   <!-- Error -->
   <p *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</p>
