@@ -25,7 +25,7 @@ export class StudentCoursesService {
     // Step 2: Find students with overlapping courses
     const { data: matchingStudents, error: matchError } = await supabase
       .from('student_courses')
-      .select('student_id, courses(id, course_code), students(user_id, email, university, year, profileImage)')
+      .select('student_id, courses(id, course_code), students(user_id, email, full_name, university, year, profileImage)')
       .in('course_id', courseIds)// Find students with matching courses
       .neq('student_id', currentUserId); // exclude current user
 
@@ -202,7 +202,7 @@ export class StudentCoursesService {
       status,
       created_at,
       matched_user_id,
-      students!matched_students_matched_user_id_fkey(user_id, university, year, email)
+      students!matched_students_matched_user_id_fkey(user_id, full_name, university, year, email)
     `)
     .eq('user_id', userId);
 
