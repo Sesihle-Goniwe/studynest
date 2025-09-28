@@ -34,7 +34,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload HTML coverage as artifact (optional)
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage-html
           path: frontend/coverage
