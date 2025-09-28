@@ -33,7 +33,7 @@
         }
       </div>
 
-      <h3>{{ getPartnerDisplayName(matches[currentIndex]) }}</h3>
+      <h3>{{ matches[currentIndex].students.full_name }}</h3>
       <p>University: {{ matches[currentIndex].students.university }}</p>
       <p>Year: {{ matches[currentIndex].students.year }}</p>
 
@@ -66,7 +66,7 @@
     @for (partner of likedPartners; track partner.id) {
       <div class="partner-card">
         <div class="partner-info">
-          <h3 class="partner-id">{{ getPartnerName(partner) }}</h3>
+          <h3 class="partner-id">{{ partner.students?.full_name }}</h3>
           <p class="partner-detail">University: {{ partner.students?.university }}</p>
           <p class="partner-detail">Year: {{ partner.students?.year }}</p>
         </div>
@@ -91,7 +91,7 @@
     @for (partner of rejectedPartners; track partner.id) {
       <div class="partner-card rejected-card">
         <div class="partner-info">
-          <h3 class="partner-id">{{ getPartnerName(partner) }}</h3>
+          <h3 class="partner-id">{{ partner.students?.full_name }}</h3>
           <p class="partner-detail">University: {{ partner.students?.university }}</p>
           <p class="partner-detail">Year: {{ partner.students?.year }}</p>
         </div>

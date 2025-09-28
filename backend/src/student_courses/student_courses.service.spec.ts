@@ -235,4 +235,238 @@ describe("StudentCoursesService", () => {
     expect(rows).toHaveLength(1);
     expect(rows[0].matched_user_id).toBe("peer1");
   });
+}
+
+
+
+
+);
+
+describe('StudentCoursesService - Error Handling and Edge Cases', () => {
+  let service: StudentCoursesService;
+  let supabaseClient: any;
+  let tableMap: Record<string, any>;
+
+  beforeEach(async () => {
+    tableMap = {
+      student_courses: createQB(),
+      courses: createQB(),
+      matched_students: createQB(),
+    };
+
+    supabaseClient = {
+      from: jest.fn((name: string) => tableMap[name]),
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        StudentCoursesService,
+        {
+          provide: SupabaseService,
+          useValue: { getClient: () => supabaseClient },
+        },
+      ],
+    }).compile();
+
+    service = module.get(StudentCoursesService);
+  });
+
+  // Lines 33-34: Error in findMatchingStudents - courses query
+  it('findMatchingStudents: throws error when fetching user courses fails', async () => {
+    const coursesError = new Error('Database error');
+    tableMap.student_courses.eq.mockResolvedValueOnce({
+      data: null,
+      error: coursesError,
+    });
+
+    await expect(service.findMatchingStudents('u1')).rejects.toThrow('Database error');
+  });
+
+  // Line 58: Error in findMatchingStudents - matching students query
+  it('findMatchingStudents: throws error when fetching matching students fails', async () => {
+    // First query succeeds
+    tableMap.student_courses.eq.mockResolvedValueOnce({
+      data: [{ course_id: 'c1' }],
+      error: null,
+    });
+
+    // Second query fails
+    const matchError = new Error('Match query failed');
+    tableMap.student_courses.neq.mockResolvedValueOnce({
+      data: null,
+      error: matchError,
+    });
+
+    await expect(service.findMatchingStudents('u1')).rejects.toThrow('Match query failed');
+  });
+
+  // Lines 74-108: Error handling in addStudentCourses
+  it('addStudentCourses: throws error when studentId is missing', async () => {
+    await expect(service.addStudentCourses('', [{ course_code: 'CSC', course_name: 'CS' }]))
+      .rejects.toThrow('studentId and courses are required');
+  });
+
+  it('addStudentCourses: throws error when courses array is empty', async () => {
+    await expect(service.addStudentCourses('u1', []))
+      .rejects.toThrow('studentId and courses are required');
+  });
+
+  it('addStudentCourses: throws error when course check fails', async () => {
+    const checkError = new Error('Check failed');
+    tableMap.courses.single.mockResolvedValueOnce({
+      data: null,
+      error: checkError,
+    });
+
+    await expect(
+      service.addStudentCourses('u1', [{ course_code: 'CSC', course_name: 'CS' }])
+    ).rejects.toThrow('Check failed');
+  });
+
+  it('addStudentCourses: throws error when inserting new course fails', async () => {
+    // First course doesn't exist
+    tableMap.courses.single.mockResolvedValueOnce({
+      data: null,
+      error: { code: 'PGRST116' },
+    });
+
+    // Insert fails
+    const insertError = new Error('Insert failed');
+    tableMap.courses.insert.mockReturnValue(tableMap.courses);
+    tableMap.courses.select.mockReturnValue(tableMap.courses);
+    tableMap.courses.single.mockResolvedValueOnce({
+      data: null,
+      error: insertError,
+    });
+
+    await expect(
+      service.addStudentCourses('u1', [{ course_code: 'CSC', course_name: 'CS' }])
+    ).rejects.toThrow('Insert failed');
+  });
+
+  it('addStudentCourses: throws error when linking student_courses fails', async () => {
+    // Course exists
+    tableMap.courses.single.mockResolvedValueOnce({
+      data: { id: 'c1' },
+      error: null,
+    });
+
+    // student_courses insert fails
+    const linkError = new Error('Link failed');
+    tableMap.student_courses.insert.mockResolvedValueOnce({
+      data: null,
+      error: linkError,
+    });
+
+    await expect(
+      service.addStudentCourses('u1', [{ course_code: 'CSC', course_name: 'CS' }])
+    ).rejects.toThrow('Link failed');
+  });
+
+  // Line 113: Error handling in addCourse - validation
+  it('addCourse: throws error when course_code is missing', async () => {
+    await expect(service.addCourse({ course_code: '', course_name: 'Name' }))
+      .rejects.toThrow('course_code and course_name are required');
+  });
+
+  it('addCourse: throws error when course_name is missing', async () => {
+    await expect(service.addCourse({ course_code: 'CSC', course_name: '' }))
+      .rejects.toThrow('course_code and course_name are required');
+  });
+
+  // Lines 125-144: Error handling in addCourse
+  it('addCourse: throws error when course check fails (non-PGRST116)', async () => {
+    const checkError = new Error('Database error');
+    tableMap.courses.single.mockResolvedValueOnce({
+      data: null,
+      error: checkError,
+    });
+
+    await expect(
+      service.addCourse({ course_code: 'CSC', course_name: 'CS' })
+    ).rejects.toThrow('Database error');
+  });
+
+  it('addCourse: throws error when inserting course fails', async () => {
+    // Course doesn't exist
+    tableMap.courses.single.mockResolvedValueOnce({
+      data: null,
+      error: { code: 'PGRST116' },
+    });
+
+    // Insert fails
+    const insertError = new Error('Insert failed');
+    tableMap.courses.insert.mockReturnValue(tableMap.courses);
+    tableMap.courses.select.mockReturnValue(tableMap.courses);
+    tableMap.courses.single.mockResolvedValueOnce({
+      data: null,
+      error: insertError,
+    });
+
+    await expect(
+      service.addCourse({ course_code: 'CSC', course_name: 'CS' })
+    ).rejects.toThrow('Insert failed');
+  });
+
+  // Line 153: Self-matching prevention in addMatch
+  it('addMatch: throws error when trying to match with self', async () => {
+    await expect(service.addMatch('u1', 'u1'))
+      .rejects.toThrow('You cannot match with yourself.');
+  });
+
+  // Lines 188-189: Error handling in getMyMatches
+  it('getMyMatches: throws error when query fails', async () => {
+    const queryError = new Error('Query failed');
+    tableMap.matched_students.select.mockReturnValue(tableMap.matched_students);
+    tableMap.matched_students.eq.mockResolvedValueOnce({
+      data: null,
+      error: queryError,
+    });
+
+    await expect(service.getMyMatches('u1')).rejects.toThrow('Query failed');
+  });
+
+  // Additional edge cases for updateMatchStatus
+  it('updateMatchStatus: throws error when update fails', async () => {
+    const updateError = new Error('Update failed');
+    tableMap.matched_students.update.mockReturnValue(tableMap.matched_students);
+    tableMap.matched_students.eq.mockReturnValue(tableMap.matched_students);
+    tableMap.matched_students.eq.mockResolvedValueOnce({
+      data: null,
+      error: updateError,
+    });
+
+    await expect(service.updateMatchStatus('u1', 'u2', 'rejected'))
+      .rejects.toThrow('Update failed');
+  });
+
+  // Edge case for addMatch error
+  it('addMatch: throws error when upsert fails', async () => {
+    tableMap.matched_students.upsert.mockReturnValue(tableMap.matched_students);
+    tableMap.matched_students.select.mockResolvedValueOnce({
+      data: null,
+      error: new Error('Upsert failed'),
+    });
+
+    await expect(service.addMatch('u1', 'u2')).rejects.toThrow('Upsert failed');
+  });
+
+  // Edge case for findMatchingStudents with empty courseIds but non-empty array
+  it('findMatchingStudents: handles empty courseIds array gracefully', async () => {
+    // This case should theoretically not happen, but let's test it
+    tableMap.student_courses.eq.mockResolvedValueOnce({
+      data: [],
+      error: null,
+    });
+
+    const result = await service.findMatchingStudents('u1');
+    expect(result).toEqual([]);
+  });
+
+  // Test for proper grouping in findMatchingStudents with duplicate student entries
+
 });
+
+
+
+
