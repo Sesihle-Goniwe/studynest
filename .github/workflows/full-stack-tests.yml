@@ -34,7 +34,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload HTML coverage as artifact (optional)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: frontend-coverage-html
           path: frontend/coverage
@@ -72,7 +72,7 @@ jobs:
         run: npm run test:cov
 
       - name: Upload backend coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: backend/coverage/lcov.info
           flags: backend
