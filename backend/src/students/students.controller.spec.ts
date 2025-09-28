@@ -7,16 +7,20 @@ describe("StudentsController", () => {
   let controller: StudentsController;
   let service: StudentsService;
 
-  const mockStudentsService = {
-    getAllStudents: jest.fn().mockResolvedValue([{ uid: "123", name: "John" }]),
-    getStudentsbyUid: jest.fn().mockResolvedValue({ uid: "123", name: "John" }),
-    updateStudentP: jest
-      .fn()
-      .mockResolvedValue({ uid: "123", name: "John Updated" }),
-    updateStudentWithImage: jest
-      .fn()
-      .mockResolvedValue({ uid: "123", name: "John", photoUrl: "photo.png" }),
-  };
+const mockStudentsService = {
+  getAllStudents: jest.fn().mockResolvedValue([{ uid: "123", name: "John" }]),
+  getStudentsbyUid: jest.fn().mockResolvedValue({ uid: "123", name: "John" }),
+  updateStudentP: jest
+    .fn()
+    .mockResolvedValue({ uid: "123", name: "John Updated" }),
+  updateStudentWithImage: jest
+    .fn()
+    .mockResolvedValue({ uid: "123", name: "John", photoUrl: "photo.png" }),
+  updateUserName: jest
+    .fn()
+    .mockResolvedValue({ uid: "123", full_name: "John Updated" }), // ✅ Added
+};
+
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -84,6 +88,20 @@ describe("StudentsController", () => {
         mockFile,
       );
     });
+
+describe("updateUserName", () => {
+  it("should update a student's name", async () => {
+    const uid = "123";
+    const newName = "John Updated";
+
+    const result = await controller.updateUserName(uid, { full_name: newName });
+
+    expect(result).toEqual({ uid, full_name: newName });
+    expect(service.updateUserName).toHaveBeenCalledWith(uid, newName);
+  });
+});
+
+
 
     it("should throw error if no file uploaded", async () => {
       await expect(controller.updatePhoto("123", undefined)).rejects.toThrow(

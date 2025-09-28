@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import {Notifications, _Notifications } from '../../services/notifications';
-
+import {Dashboard} from '../../services/dashboard'; 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit {
 
 
   constructor(private authser: AuthService, private router: Router,
-    private notSer:Notifications
+    private notSer:Notifications, private userSer: Dashboard
   ) {}
 
   ngOnInit() 
@@ -36,10 +36,14 @@ export class DashboardComponent implements OnInit {
     if (user) {
       this.userID = user.id;
       this.displayName = this.authser.getUserDisplayName();
+      if (this.displayName) 
+        {
+        this.userSer.updateUserName(this.userID, this.displayName).subscribe();
+      }
+
+      
     }
     
-    // Calculate unread count
-    //this.unreadCount = this.notifications.filter(n => !n.read).length;
     this.loadNotifications();
   }
 
@@ -112,8 +116,4 @@ loadNotifications()
     this.router.navigate(['/matches']);
   }
   
-  createSession() {
-    console.log('Create session clicked');
-    // Implement create session functionality
-  }
 }

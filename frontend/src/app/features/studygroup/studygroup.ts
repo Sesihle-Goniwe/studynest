@@ -27,6 +27,9 @@ export class StudygroupComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
+  groupId: string | null = null;
+  groupName: string | null = null;
+
   //editing group
   editingGroup: StudyGroup | null = null;  // store group being edited
 editName: string = '';
@@ -40,7 +43,9 @@ editDescription: string = '';
 
   ngOnInit(): void {
     this.loadGroups();
-    const groupId = this.route.snapshot.paramMap.get('groupId');
+    this.groupId = this.route.snapshot.paramMap.get('groupId');
+    this.groupName = this.route.snapshot.paramMap.get('name');
+    console.log('Group ID:', this.groupId, 'Group Name:', this.groupName);
   }
 
   loadGroups() {
@@ -148,10 +153,13 @@ editDescription: string = '';
      this.router.navigate(['/viewGroups',groupId])
   }
 
-  viewGroupChat(groupId : string)
-  {
-     this.router.navigate(['/groupChats', groupId])
-  }
+  viewGroupChat(groupId: string, groupName: string) {
+  this.router.navigate(
+    ['/groupChats', groupId],
+    { queryParams: { name: groupName } } // pass name as query param
+  );
+}
+
 
   deleteGroup()
   {
