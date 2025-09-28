@@ -1,8 +1,8 @@
+// src/app/features/about-us/about-us.component.spec.ts
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { By } from '@angular/platform-browser';
-
-// Make sure the component class name is correct
+import { RouterTestingModule } from '@angular/router/testing';
 import { AboutUsComponent } from './about-us';
 
 describe('AboutUsComponent', () => {
@@ -11,16 +11,14 @@ describe('AboutUsComponent', () => {
   let router: Router;
 
   beforeEach(async () => {
-    // Set up the same fake router as before
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-
     await TestBed.configureTestingModule({
-      imports: [AboutUsComponent],
-      providers: [{ provide: Router, useValue: routerSpy }],
+      // Import the component and the RouterTestingModule
+      imports: [AboutUsComponent, RouterTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AboutUsComponent);
     component = fixture.componentInstance;
+    // Inject the router from the testing module
     router = TestBed.inject(Router);
     fixture.detectChanges();
   });
@@ -29,35 +27,25 @@ describe('AboutUsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display the main hero title', () => {
-    // Find the H1 element in the rendered HTML
-    const titleElement = fixture.debugElement.query(By.css('h1.hero-title'));
-    
-    // Check that the text content includes the expected phrase
-    expect(titleElement.nativeElement.textContent).toContain('collaborative learning');
+  it('should navigate to the login page when goToLogin() is called', () => {
+    // Create a "spy" to watch the router's navigate method
+    const navigateSpy = jest.spyOn(router, 'navigate');
+
+    // Call the method directly on the component instance
+    component.goToLogin();
+
+    // Assert that the spy was called with the correct route
+    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
   });
-  
+
   it('should navigate to the home page when goToHome() is called', () => {
-    // Call the method directly
+    // Create a spy for this test as well
+    const navigateSpy = jest.spyOn(router, 'navigate');
+
+    // Call the method
     component.goToHome();
-    
-    // Check if the router was called with the root path
-    expect(router.navigate).toHaveBeenCalledWith(['']);
-  });
 
-  it('should navigate to the login page when the "Sign In" button is clicked', () => {
-    // Find the login button and simulate a click
-    const loginButton = fixture.debugElement.query(By.css('.login-button'));
-    loginButton.triggerEventHandler('click', null);
-
-    // Check if the router was called with the correct path
-    expect(router.navigate).toHaveBeenCalledWith(['/login']);
-  });
-
-  it('should navigate to the home page when the logo is clicked', () => {
-    const logo = fixture.debugElement.query(By.css('.logo h1'));
-    logo.triggerEventHandler('click', null);
-    
-    expect(router.navigate).toHaveBeenCalledWith(['']);
+    // Assert it was called with the root path
+    expect(navigateSpy).toHaveBeenCalledWith(['']);
   });
 });

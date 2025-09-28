@@ -14,6 +14,9 @@ module.exports = {
       },
     ],
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!.*\\.mjs$|@angular|@firebase|firebase|marked)'
+  ],
   moduleFileExtensions: ['ts', 'html', 'js', 'json'],
   testMatch: ['**/?(*.)+(spec).ts'],
 };
