@@ -2,9 +2,11 @@ import { Component, HostListener, OnInit, AfterViewChecked, OnDestroy, ViewChild
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'; // ADDED: Import DomSanitizer
 import { AuthService } from '../auth/auth.service';
 import { GroupChatsService, GroupMessage } from '../../services/group-chats.service';
 import { Students } from '../../services/students';
+import { NotesApiService } from '../../services/notes-api.service';
 import { Subscription, interval } from 'rxjs';
 
 // Extend GroupMessage to include fullName and profileUrl
@@ -32,6 +34,10 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   menuX = 0;
   menuY = 0;
 
+  showPdfViewer = false;
+  // CHANGED: The type is now SafeResourceUrl to hold the sanitized URL
+  pdfSrc: SafeResourceUrl | null = null;
+
   private pollingSub!: Subscription;
   @ViewChild('chatMessages') chatMessagesRef!: ElementRef;
   @ViewChild('optionsMenu') optionsMenuRef!: ElementRef;
@@ -41,7 +47,9 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
     private route: ActivatedRoute,
     private authService: AuthService,
     private groupChatsService: GroupChatsService,
-    private studentsService: Students
+    private studentsService: Students,
+    private notesApiService: NotesApiService,
+    private sanitizer: DomSanitizer // ADDED: Inject the sanitizer service
   ) {}
 
   ngOnInit(): void {
@@ -121,11 +129,118 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
       });
   }
 
+  // Helper method to check if message is a file
+  isFileMessage(message: GroupMessageWithProfile): boolean {
+    return message.messageType === 'file';
+  }
+
+  // Helper method to get file icon based on mime type
+  getFileIcon(mimeType: string): string {
+    if (mimeType?.includes('pdf')) return '📄';
+    if (mimeType?.includes('image')) return '🖼️';
+    if (mimeType?.includes('document') || mimeType?.includes('word')) return '📝';
+    return '📎';
+  }
+
+  // Helper method to format file size
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // Method to view PDF file from chat
+  viewMessageFile(message: GroupMessageWithProfile): void {
+    if (!message.fileId) return;
+
+    this.notesApiService.getNoteUrl(message.fileId, this.currentUserId).subscribe({
+      next: (response) => {
+        // CHANGED: Sanitize the URL to tell Angular it is safe
+        this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(response.signedUrl);
+        this.showPdfViewer = true;
+      },
+      error: (err) => {
+        console.error('Failed to get PDF URL', err);
+        this.errorMessage = 'Failed to load PDF';
+      }
+    });
+  }
+
+  // Method to close PDF viewer
+  closePdfViewer(): void {
+    this.showPdfViewer = false;
+    this.pdfSrc = null;
+  }
+
+  // Updated file upload method
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    if (!this.groupId) return;
+
+    console.log('Uploading file:', file.name);
+
+    this.groupChatsService.uploadFileToChat(file, this.currentUserId, this.groupId)
+      .subscribe({
+        next: (response) => {
+          console.log('File uploaded successfully:', response);
+          if (response.success) {
+            const newMessage = {
+              ...response.message,
+              fullName: 'You',
+              profileUrl: 'assets/default-avatar.png'
+            } as GroupMessageWithProfile;
+            this.messages.push(newMessage);
+            setTimeout(() => this.scrollToBottom(), 100);
+          }
+        },
+        error: (err) => {
+          console.error('Error uploading file:', err);
+          this.errorMessage = 'Failed to upload file';
+        }
+      });
+
+    // Clear the input
+    input.value = '';
+  }
+
+  // Updated to prevent editing file messages and only allow editing text messages within 5 minutes
   isEditable(msg: GroupMessageWithProfile): boolean {
     const createdAt = new Date(msg.createdAt).getTime();
     const now = Date.now();
     const fiveMinutes = 5 * 60 * 1000;
-    return (now - createdAt) <= fiveMinutes && msg.userId === this.currentUserId;
+    return (now - createdAt) <= fiveMinutes && msg.userId === this.currentUserId && msg.messageType === 'text';
+  }
+
+  // Updated to prevent editing file messages
+  editMessage(msg: GroupMessageWithProfile) {
+    if (msg.messageType === 'file') {
+      alert('Cannot edit file messages');
+      return;
+    }
+
+    const newText = prompt('Edit your message:', msg.message);
+    if (!newText || newText.trim() === msg.message) return;
+
+    this.groupChatsService.editMessage(msg.id, this.currentUserId, newText)
+      .subscribe({
+        next: res => {
+          if (res.success && res.message) {
+            const index = this.messages.findIndex(m => m.id === msg.id);
+            if (index !== -1) this.messages[index] = {
+              ...res.message,
+              fullName: msg.fullName,
+              profileUrl: msg.profileUrl
+            } as GroupMessageWithProfile;
+            this.closeOptionsMenu();
+          } else alert('Failed to edit message');
+        },
+        error: () => alert('HTTP error editing message')
+      });
   }
 
   scrollToBottom(): void {
@@ -141,7 +256,6 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
     });
   }
 
-  // Options menu
   openOptionsMenu(msg: GroupMessageWithProfile, event: MouseEvent) {
     event.stopPropagation();
     this.selectedMessage = msg;
@@ -162,30 +276,9 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   onDocumentClick(event: Event) {
     if (!this.selectedMessage) return;
     const menuEl = this.optionsMenuRef?.nativeElement;
-    if (menuEl && !menuEl.contains(event.target)) {
+    if (menuEl && !menuEl.contains(event.target as Node)) {
       this.selectedMessage = null;
     }
-  }
-
-  editMessage(msg: GroupMessageWithProfile) {
-    const newText = prompt('Edit your message:', msg.message);
-    if (!newText || newText.trim() === msg.message) return;
-
-    this.groupChatsService.editMessage(msg.id, this.currentUserId, newText)
-      .subscribe({
-        next: res => {
-          if (res.success && res.message) {
-            const index = this.messages.findIndex(m => m.id === msg.id);
-            if (index !== -1) this.messages[index] = {
-              ...res.message,
-              fullName: msg.fullName,
-              profileUrl: msg.profileUrl
-            };
-            this.closeOptionsMenu();
-          } else alert('Failed to edit message');
-        },
-        error: () => alert('HTTP error editing message')
-      });
   }
 
   deleteMessage(msg: GroupMessageWithProfile) {
@@ -209,16 +302,10 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
       });
   }
 
-  // Inside GroupChatsComponent class
-
   onAvatarClick(msg: GroupMessageWithProfile) {
-    // Example: Open the user's profile in a new tab
+    // Your existing avatar click logic
     if (msg.userId) {
-      // If you have a profile route, you can navigate like this:
-      // this.router.navigate(['/profile', msg.userId]);
-
-      // Or simply open in a new tab
-      //window.open(`/profile/${msg.userId}`, '_blank');
+      // Navigate to profile or handle avatar click
     }
   }
 
@@ -227,7 +314,6 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   }
 
   triggerFileInput(type: 'image' | 'document') {
-    // Here you can filter file types if needed
     const fileInput: HTMLInputElement = this.fileInputRef.nativeElement;
     if (type === 'image') {
       fileInput.accept = 'image/*';
@@ -237,15 +323,4 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
     fileInput.click();
     this.showUploadMenu = false;
   }
-
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
-
-    const file = input.files[0];
-    console.log('Selected file:', file);
-
-    // TODO: upload the file to your backend or storage
-  }
-
 }
