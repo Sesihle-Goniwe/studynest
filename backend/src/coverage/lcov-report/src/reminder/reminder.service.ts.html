@@ -149,19 +149,12 @@
 <a name='L84'></a><a href='#L84'>84</a>
 <a name='L85'></a><a href='#L85'>85</a>
 <a name='L86'></a><a href='#L86'>86</a>
-<a name='L87'></a><a href='#L87'>87</a>
-<a name='L88'></a><a href='#L88'>88</a>
-<a name='L89'></a><a href='#L89'>89</a>
-<a name='L90'></a><a href='#L90'>90</a>
-<a name='L91'></a><a href='#L91'>91</a>
-<a name='L92'></a><a href='#L92'>92</a>
-<a name='L93'></a><a href='#L93'>93</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L87'></a><a href='#L87'>87</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -171,7 +164,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -184,16 +176,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -213,6 +201,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -245,66 +235,60 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Injectable,Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { SupabaseService } from 'src/supabase/supabase.service';
-import { MailerService } from 'src/mailer/mailer.service';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Injectable, Logger } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
+import { SupabaseService } from "src/supabase/supabase.service";
+import { MailerService } from "src/mailer/mailer.service";
 @Injectable()
 export class ReminderService {
+  private readonly logger = new Logger(ReminderService.name);
 &nbsp;
-private readonly logger = new Logger(ReminderService.name);
-&nbsp;
-constructor (
+  constructor(
     private readonly supabaseSer: SupabaseService<span class="branch-1 cbranch-no" title="branch not covered" >,</span>
-    private readonly mailer: MailerService<span class="branch-1 cbranch-no" title="branch not covered" ></span>
-){}
+    private readonly mailer: MailerService<span class="branch-1 cbranch-no" title="branch not covered" >,</span>
+  ) {}
 &nbsp;
-@Cron('*/5 * * * *')
-async sendReminder()
-{
+  @Cron("*/1 * * * *")
+  async sendReminder() {
     const now = new Date();
-    const oneHourLater =new Date(now.getTime()+ 60*60*1000);
-    const twenty4 = new Date(now.getTime()+24 *60*60*1000);
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+    const twenty4 = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 &nbsp;
-    const {data:session, error} = await this.supabaseSer
-    .getClient()
-    .from('sessions')
-    .select('*')
-    .gte('start_time', now.toISOString())
-    .lte('start_time', twenty4.toISOString())
+    const { data: session, error } = await this.supabaseSer
+      .getClient()
+      .from("sessions")
+      .select("*")
+      .gte("start_time", now.toISOString())
+      .lte("start_time", twenty4.toISOString());
 &nbsp;
-    if(error)
-    {
-        this.logger.error("failed to fetch sessions",error.message);
-&nbsp;
+    if (error) {
+      this.logger.error("failed to fetch sessions", error.message);
     }
 &nbsp;
     const sessions = session;
 &nbsp;
-    for (const session of sessions || [])
-    {
-&nbsp;
+    for (const session of sessions || []) {
       const start = new Date(session.start_time);
       const diffMs = start.getTime() - now.getTime();
       const diffHours = Math.round(diffMs / (1000 * 60 * 60));
 &nbsp;
-      let reminderType: '1h' | '24h' | null = null;
-      if (diffHours === 1) reminderType = '1h';
-      if (diffHours === 24) reminderType = '24h';
+      let reminderType: "1h" | "24h" | null = null;
+      if (diffHours === 1) reminderType = "1h";
+      if (diffHours === 24) reminderType = "24h";
 &nbsp;
       if (!reminderType) continue;
 &nbsp;
       // 2. Fetch group members
       const { data: members, error: membersErr } = await this.supabaseSer
         .getClient()
-        .from('group_members')
-        .select('user_id')
-        .eq('group_id', session.group_id);
+        .from("group_members")
+        .select("user_id")
+        .eq("group_id", session.group_id);
 &nbsp;
       <span class="missing-if-branch" title="if path not taken" >I</span>if (membersErr) {
-<span class="cstat-no" title="statement not covered" >        this.logger.error(`Failed to fetch members for group ${session.group_id}`);</span>
+<span class="cstat-no" title="statement not covered" >        this.logger.error(</span>
+          `Failed to fetch members for group ${session.group_id}`,
+        );
 <span class="cstat-no" title="statement not covered" >        continue;</span>
       }
 &nbsp;
@@ -312,21 +296,21 @@ async sendReminder()
       for (const member of members) {
         const { data: student, error: studentErr } = await this.supabaseSer
           .getClient()
-          .from('students')
-          .select('email')
-          .eq('user_id', member.user_id)
+          .from("students")
+          .select("email")
+          .eq("user_id", member.user_id)
           .single();
 &nbsp;
         <span class="missing-if-branch" title="else path not taken" >E</span>if (!studentErr &amp;&amp; student?.email) {
           await this.mailer.sendMail(
             student.email,
             `Reminder: Study Session "${session.title}"`,
-            `Your study session starts at ${session.start_time} in ${reminderType === '1h' ? '1 hour' : '24 hours'}.`,
+            `Your study session starts at ${session.start_time} in ${reminderType === "1h" ? "1 hour" : "24 hours"}.`,
             `&lt;h3&gt;Reminder: ${session.title}&lt;/h3&gt;
              &lt;p&gt;${session.description}&lt;/p&gt;
              &lt;p&gt;&lt;strong&gt;When:&lt;/strong&gt; ${session.start_time} - ${session.end_time}&lt;/p&gt;
              &lt;p&gt;&lt;strong&gt;Where:&lt;/strong&gt; ${session.location}&lt;/p&gt;
-             &lt;p&gt;&lt;em&gt;This is a ${reminderType} reminder.&lt;/em&gt;&lt;/p&gt;`
+             &lt;p&gt;&lt;em&gt;This is a ${reminderType} reminder.&lt;/em&gt;&lt;/p&gt;`,
           );
 &nbsp;
           this.logger.log(
@@ -335,9 +319,7 @@ async sendReminder()
         }
       }
     }
-&nbsp;
-}
-&nbsp;
+  }
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -346,7 +328,7 @@ async sendReminder()
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-25T00:26:38.340Z
+                at 2025-09-29T20:40:49.878Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

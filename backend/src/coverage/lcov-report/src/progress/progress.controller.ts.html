@@ -123,9 +123,32 @@
 <a name='L58'></a><a href='#L58'>58</a>
 <a name='L59'></a><a href='#L59'>59</a>
 <a name='L60'></a><a href='#L60'>60</a>
-<a name='L61'></a><a href='#L61'>61</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -149,7 +172,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -161,6 +183,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -182,23 +207,33 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// src/progress/progress.controller.ts
 &nbsp;
-import { Controller, Get, Post, Body, Param, Delete, UseGuards, Request, Query, Patch } from '@nestjs/common';
-import { ProgressService } from './progress.service';
-import { CreateTopicDto } from './dto/create-topic.dto';
-import { CreateStudyLogDto } from './dto/create-study-log.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  Query,
+  Patch,
+} from "@nestjs/common";
+import { ProgressService } from "./progress.service";
+import { CreateTopicDto } from "./dto/create-topic.dto";
+import { CreateStudyLogDto } from "./dto/create-study-log.dto";
 &nbsp;
 // Assume you have an AuthGuard, if not, we can adjust this.
 // import { AuthGuard } from '@nestjs/passport'; // Or your custom guard
 &nbsp;
-@Controller('progress')
+@Controller("progress")
 // @UseGuards(AuthGuard('jwt')) // SECURE YOUR ENDPOINTS!
 export class ProgressController {
   constructor(private readonly progressService: ProgressService<span class="branch-1 cbranch-no" title="branch not covered" >) {}</span>
 &nbsp;
-  @Post('topics')
+  @Post("topics")
   create(@Body() createTopicDto: CreateTopicDto<span class="branch-1 cbranch-no" title="branch not covered" >, @R</span>equest() req) {
     // --- IMPORTANT ---
     // You need to extract the user ID from the request.
@@ -207,42 +242,43 @@ export class ProgressController {
     return this.progressService.createTopic(createTopicDto);
   }
 &nbsp;
-&nbsp;
   // Reminder: Your backend endpoint should look like this for now
-  @Get('topics')
-  findAll(@Query('userId') userId: string) {
+  @Get("topics")
+  findAll(@Query("userId") userId: string) {
     return this.progressService.findAllTopicsForUser(userId);
   }
   // We'll add PATCH, DELETE, and session logging endpoints here later.
-  @Post('study-logs')
+  @Post("study-logs")
   addStudyLog(@Body() dto: CreateStudyLogDto<span class="branch-1 cbranch-no" title="branch not covered" >) {</span>
     return this.progressService.addStudyLog(dto);
   }
 &nbsp;
-  @Get('study-logs')
-  getStudyLogs(@Query('userId') userId: string, @Query('topicId') topicId?: string) {
+  @Get("study-logs")
+  getStudyLogs(
+    @Query("userId") userId: string,
+    @Query("topicId") topicId?: string,
+  ) {
     return this.progressService.getStudyLogs(userId, topicId);
   }
-  @Patch('topics/:id')
-  update(@Param('id') id: string, @Body() body: { status: string }) {
+  @Patch("topics/:id")
+  update(@Param("id") id: string, @Body() body: { status: string }) {
     return this.progressService.updateStatus(id, body.status);
   }
 &nbsp;
-  @Delete('topics/:id')
-  remove(@Param('id') id: string) {
+  @Delete("topics/:id")
+  remove(@Param("id") id: string) {
     return this.progressService.remove(id);
   }
-  @Get('user-groups')
-  findUserGroups(@Query('userId') userId: string) {
+  @Get("user-groups")
+  findUserGroups(@Query("userId") userId: string) {
     return this.progressService.findUserGroups(userId);
   }
 &nbsp;
-  @Get('rankings/:groupId')
-  getRankings(@Param('groupId') groupId: string) {
+  @Get("rankings/:groupId")
+  getRankings(@Param("groupId") groupId: string) {
     return this.progressService.getRankingsForGroup(groupId);
   }
 }
-&nbsp;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -250,7 +286,7 @@ export class ProgressController {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-25T00:26:38.340Z
+                at 2025-09-29T20:40:49.878Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
