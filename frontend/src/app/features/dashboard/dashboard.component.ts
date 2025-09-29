@@ -4,6 +4,7 @@ import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import {Notifications, _Notifications } from '../../services/notifications';
 import {Dashboard} from '../../services/dashboard'; 
+import { UpcomingEventsService, ClubEvent } from '../../services/upcoming-events.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -19,9 +20,16 @@ export class DashboardComponent implements OnInit {
   
   notifications: _Notifications[] = []
 
+  upcomingEvents: ClubEvent[] = [];
+  isLoadingEvents = true;
+  eventsError: string | null = null;
 
-  constructor(private authser: AuthService, private router: Router,
-    private notSer:Notifications, private userSer: Dashboard
+  constructor(
+    private authser: AuthService,
+    private router: Router,
+    private notSer: Notifications,
+    private userSer: Dashboard,
+    private eventsService: UpcomingEventsService
   ) {}
 
   ngOnInit() 
@@ -45,7 +53,24 @@ export class DashboardComponent implements OnInit {
     }
     
     this.loadNotifications();
+    this.loadUpcomingEvents();
   }
+
+  loadUpcomingEvents(): void {
+    this.isLoadingEvents = true;
+    this.eventsService.getStudyEvents().subscribe({
+      next: (data) => {
+        this.upcomingEvents = data;
+        this.isLoadingEvents = false;
+      },
+      error: (err) => {
+        console.error('Failed to load upcoming events', err);
+        this.eventsError = 'Could not load events at this time.';
+        this.isLoadingEvents = false;
+      }
+    });
+  }
+
 
 loadNotifications()
 {

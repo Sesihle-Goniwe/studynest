@@ -5,9 +5,9 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-    .setTitle("Study Partner App API")
+    .setTitle("Study Nest API")
     .setDescription(
-      "API for matching study partner and managing group sessions",
+      "API's for matching study partner and managing group sessions",
     )
     .setVersion("1.0")
     .build();

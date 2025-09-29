@@ -123,6 +123,41 @@
       </div>
     </div>
   </section>
+  <section class="events-board">
+    <div class="board-header">
+      <h2>📅 Upcoming Events</h2>
+      <p>Stay updated with the latest study-related meetups and workshops.</p>
+    </div>
+    
+    @if (isLoadingEvents) {
+      <p class="loading-text">Fetching latest events...</p>
+    }
+    
+    @if (eventsError) {
+      <p class="error-text">{{ eventsError }}</p>
+    }
+
+    @if (!isLoadingEvents && upcomingEvents.length > 0) {
+      <div class="events-grid">
+        @for (event of upcomingEvents; track event.id) {
+          <article class="event-card">
+            <h3>{{ event.title }}</h3>
+            <div class="event-details">
+              <span class="event-date">
+                {{ event.date | date:'fullDate' }} at {{ event.date | date:'shortTime' }}
+              </span>
+              <span class="event-location">{{ event.location }}</span>
+            </div>
+            <p class="event-description">{{ event.description }}</p>
+          </article>
+        }
+      </div>
+    }
+
+    @if (!isLoadingEvents && upcomingEvents.length === 0 && !eventsError) {
+      <p class="empty-text">No study-related events found at the moment.</p>
+    }
+  </section>
 </main>
 
 </div>
