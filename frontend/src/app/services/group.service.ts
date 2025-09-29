@@ -71,16 +71,16 @@ export class GroupService {
   });
   }
 
-  setGroupGoal(groupId: string, title: string, createdBy: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/set`, {
-      groupId,
-      title,
-      createdBy
-    });
-  }
+  setGroupGoal(groupId: string, title: string, createdBy: string) {
+  return this.http.post(`${this.baseUrl}/set`, {
+    groupId,
+    title,
+    createdBy
+  });
+}
 
-  getGroupGoals(groupId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/goals/${groupId}`);
-  }
+getGroupGoals(groupId: string) {
+  return this.http.get<any[]>(`${this.baseUrl}/goals/${groupId}`);
+}
 
 }
