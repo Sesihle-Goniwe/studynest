@@ -47,6 +47,7 @@
 
         <button (click)="viewGroup(item.group.id)">View Group</button>
         <button (click)="viewGroupChat(item.group.id, item.group.name)">Group Chat</button>
+        <button (click)="viewGroupGoals(item.group.id, item.group.name)">Group Goals</button>
 
         <!-- Admin-only actions -->
         <button *ngIf="item.role === 'admin'" (click)="startEdit(item.group)">
@@ -55,6 +56,22 @@
         <button *ngIf="item.role === 'admin'" (click)="deleteGroup()">
           Delete Group
         </button>
+
+         <button *ngIf="item.role === 'admin'" (click)="SetGroupGoals(item.group.id)">
+          Set Group Goals
+         </button>
+
+         <!-- Show input field when setting goal for this group -->
+        <div *ngIf="settingGoalForGroupId === item.group.id" class="set-goal-container">
+          <textarea
+            placeholder="Enter group goal"
+            [(ngModel)]="goalInput"
+            rows="4"
+          ></textarea>
+          <button (click)="submitGoal()">Submit Goal</button>
+          <button (click)="settingGoalForGroupId = null">Cancel</button>
+        </div>
+
       </ng-template>
     </li>
   </ul>

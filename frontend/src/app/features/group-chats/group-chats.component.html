@@ -64,7 +64,13 @@
         <h3>PDF Viewer</h3>
         <button class="close-viewer-btn" (click)="closePdfViewer()">×</button>
       </div>
-      <iframe [src]="pdfSrc" width="100%" height="calc(100% - 50px)" frameborder="0"></iframe>
+      <iframe 
+  [src]="pdfSrc" 
+  class="pdf-frame"
+  frameborder="0"
+  scrolling="auto">
+</iframe>
+
     </div>
   </div>
 

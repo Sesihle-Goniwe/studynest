@@ -1,14 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { GroupsService } from "./groups.service";
 import { CreateGroupDto } from "./dto/create-group.dto/create-group.dto";
+import { SetGroupGoalDto } from "./dto/create-group.dto/set-group_goal.dto";
 @Controller("groups")
 export class GroupsController {
   constructor(private supabaseSer: GroupsService) {}
@@ -31,6 +24,12 @@ export class GroupsController {
       createGroupDto.userId,
     );
   }
+ @Post("set")
+async setGroupGoal(@Body() setGroupGoalDto: SetGroupGoalDto) {
+  return this.supabaseSer.setGroupGoals(setGroupGoalDto);
+}
+
+
 
   @Post("join")
   async joinGroup(
