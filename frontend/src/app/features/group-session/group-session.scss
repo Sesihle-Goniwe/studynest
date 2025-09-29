@@ -198,3 +198,11 @@ section {
     flex-direction: column;
   }
 }
+
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  background-color: transparent;
+  padding: 0.25rem;
+  border-radius: 4px;
+}
