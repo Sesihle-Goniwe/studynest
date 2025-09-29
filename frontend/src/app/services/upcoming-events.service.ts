@@ -17,8 +17,8 @@ export interface ClubEvent {
   providedIn: 'root'
 })
 export class UpcomingEventsService {
-  //private apiUrl = 'http://localhost:3000/events/upcoming'; //https://studynester.onrender.com/
-  private apiUrl = ' //https://studynester.onrender.com/events/upcoming';
+  //private apiUrl = 'http://localhost:3000/events/upcoming';
+  private apiUrl = 'https://studynester.onrender.com/events/upcoming';
 
   constructor(private http: HttpClient) { }
 

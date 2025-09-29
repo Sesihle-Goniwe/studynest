@@ -15,6 +15,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 //import { HttpModule } from '@nestjs/axios';
 import { StudentCoursesModule } from "./student_courses/student_courses.module";
 import { ChatsModule } from "./chats/chats.module";
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ChatsModule } from "./chats/chats.module";
     MailerModule,
     SessionsModule,
     ChatsModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
