@@ -151,3 +151,30 @@ ul {
     }
   }
 }
+
+.set-goal-container {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    resize: vertical; // allows admin to drag and resize height
+  }
+
+  button {
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    align-self: flex-start;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}

@@ -64,11 +64,18 @@ export class GroupService {
      return this.http.delete(`${this.baseUrl}/${userId}`);
   }
 
-  updateGroup(groupId:string,name:string,description:string)
-  {
+  updateGroup(groupId:string,name:string,description:string){
       return this.http.patch(`${this.baseUrl}/${groupId}`, {
         name: name,
       description: description
   });
+  }
+
+  setGroupGoal(groupId: string, title: string, createdBy: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/set`, {
+      groupId,
+      title,
+      createdBy
+    });
   }
 }

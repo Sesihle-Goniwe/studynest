@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { SupabaseService } from "src/supabase/supabase.service";
 import { NotificationsService } from "src/notifications/notifications.service";
+import { SetGroupGoalDto } from "./dto/create-group.dto/set-group_goal.dto";
 @Injectable()
 export class GroupsService {
   constructor(
@@ -16,11 +17,26 @@ export class GroupsService {
       .select();
 
     if (error) {
-      console.log("Fsiled to create group");
+      console.log("Failed to create group");
     }
 
     return data;
   }
+
+  async setGroupGoals(dto: SetGroupGoalDto) {
+  const { groupId, title, createdBy } = dto;
+  const { data, error } = await this.supabaseSer
+    .getClient()
+    .from("group_goals")
+    .insert([{ group_id: groupId, title, createdby: createdBy }])
+    .select();
+
+  if (error) {
+    console.log("Failed to set group goal", error.message);
+  }
+
+  return data;
+}
 
   async getAllGroup() {
     const { data, error } = await this.supabaseSer

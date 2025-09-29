@@ -26,6 +26,8 @@ export class StudygroupComponent implements OnInit {
   newGroupDescription: string = '';
   isLoading = false;
   errorMessage = '';
+  goalInput: string = '';
+  settingGoalForGroupId: string | null = null;
 
   groupId: string | null = null;
   groupName: string | null = null;
@@ -160,6 +162,35 @@ editDescription: string = '';
   );
 }
 
+SetGroupGoals(groupId: string){
+  this.settingGoalForGroupId = groupId; // mark which group is being set
+  this.goalInput = ''; // reset input field
+
+}
+
+submitGoal() {
+  const user = this.authService.getCurrentUser();
+  if (!user || !this.settingGoalForGroupId || !this.goalInput.trim()) return;
+
+  this.groupService
+    .setGroupGoal(this.settingGoalForGroupId, this.goalInput.trim(), user.id)
+    .subscribe({
+      next: () => {
+        console.log('Goal set successfully');
+        alert('Goal set successfully!');
+        this.settingGoalForGroupId = null;
+        this.goalInput = '';
+      },
+      error: (err) => {
+        console.error('Failed to set goal', err);
+        alert('Failed to set goal');
+      },
+    });
+}
+
+viewGroupGoals(groupId: string, groupName: string){
+
+}
 
   deleteGroup()
   {
