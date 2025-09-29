@@ -8,17 +8,21 @@ export class MailerService {
   private readonly logger = new Logger(MailerService.name);
   private transporter;
 
-  constructor(private supabaseSer: SupabaseService) {
-    this.transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        //user: 'neststudy18@gmail.com',
-        //pass: 'ukglhwrdcudkzhmc',
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
-  }
+constructor(private supabaseSer: SupabaseService) {
+  this.transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",  // Use explicit host instead of service
+    port: 587,               // Keep port 587 (this is correct)
+    secure: false,           // Explicitly set secure false for port 587
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+    // Add connection timeouts for Render
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
+  });
+}
 
   joinGroupEmailTemplate(groupName: string) {
     const subject = `A new member on StudyNest 🎉`;
