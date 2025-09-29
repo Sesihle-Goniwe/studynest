@@ -78,4 +78,9 @@ export class GroupService {
       createdBy
     });
   }
+
+  getGroupGoals(groupId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/goals/${groupId}`);
+  }
+
 }

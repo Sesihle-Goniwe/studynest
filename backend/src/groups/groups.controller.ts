@@ -29,6 +29,11 @@ async setGroupGoal(@Body() setGroupGoalDto: SetGroupGoalDto) {
   return this.supabaseSer.setGroupGoals(setGroupGoalDto);
 }
 
+@Get('goals/:groupId')
+async getGroupGoals(@Param('groupId') groupId: string) {
+  return this.supabaseSer.getGroupGoals(groupId);
+}
+
 
 
   @Post("join")

@@ -27,16 +27,35 @@ export class GroupsService {
   const { groupId, title, createdBy } = dto;
   const { data, error } = await this.supabaseSer
     .getClient()
-    .from("group_goals")
-    .insert([{ group_id: groupId, title, createdby: createdBy }])
+    .from('group_goals')
+    .insert([{ group_id: groupId, title, created_by: createdBy }])
     .select();
 
   if (error) {
-    console.log("Failed to set group goal", error.message);
+    console.log('Failed to set group goal', error.message);
+    return null;
   }
 
   return data;
 }
+
+
+async getGroupGoals(groupId: string) {
+  const { data, error } = await this.supabaseSer
+    .getClient()
+    .from('group_goals')
+    .select('*')
+    .eq('group_id', groupId)
+    .order('created_at', { ascending: true }); // optional: order by creation time
+
+  if (error) {
+    console.log('Failed to fetch group goals', error.message);
+    return [];
+  }
+
+  return data;
+}
+
 
   async getAllGroup() {
     const { data, error } = await this.supabaseSer
