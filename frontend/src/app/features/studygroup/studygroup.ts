@@ -28,6 +28,7 @@ export class StudygroupComponent implements OnInit {
   errorMessage = '';
   goalInput: string = '';
   settingGoalForGroupId: string | null = null;
+  groupGoals: Record<string, any[]> = {};
 
   groupId: string | null = null;
   groupName: string | null = null;
@@ -178,6 +179,8 @@ submitGoal() {
       next: () => {
         console.log('Goal set successfully');
         alert('Goal set successfully!');
+        // refresh goals immediately
+        this.viewGroupGoals(this.settingGoalForGroupId!); 
         this.settingGoalForGroupId = null;
         this.goalInput = '';
       },
@@ -188,8 +191,19 @@ submitGoal() {
     });
 }
 
-viewGroupGoals(groupId: string, groupName: string){
 
+viewGroupGoals(groupId: string) {
+  this.groupService.getGroupGoals(groupId).subscribe({
+    next: (goals) => {
+      this.groupGoals[groupId] = goals;
+      // Optional: scroll to goal section or open modal
+      console.log('Goals for group:', goals);
+    },
+    error: (err) => {
+      console.error('Failed to fetch goals', err);
+      alert('Failed to fetch goals');
+    }
+  });
 }
 
   deleteGroup()
