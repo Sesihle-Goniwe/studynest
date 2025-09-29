@@ -17,7 +17,7 @@ export interface _Session
 })
 export class Sessions {
  private baseUrl ='https://studynester.onrender.com/sessions';
-  //private baseUrl= "http://localhost:3000/sessions"
+ // private baseUrl= "http://localhost:3000/sessions"
 
   constructor (private http: HttpClient){}
 
