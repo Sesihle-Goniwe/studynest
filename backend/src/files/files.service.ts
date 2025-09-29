@@ -82,11 +82,40 @@ export class FilesService {
       data: dbData,
     };
   }
-   async getSignedUrl(fileId: string, userId: string) {
+  async getPersonalFileSignedUrl(fileId: string, userId: string) {
     const supabase = this.supabaseService.getClient();
-    console.log(
-      `--- SECURE URL REQUEST for fileId: ${fileId} by userId: ${userId} ---`,
-    );
+    console.log(`--- PERSONAL URL REQUEST for fileId: ${fileId} by userId: ${userId} ---`);
+
+    // 1. Verify the user owns the file directly
+    const { data: fileData, error: fileError } = await supabase
+      .from("study_notes")
+      .select("file_path")
+      .eq("id", fileId)
+      .eq("user_id", userId) // The key check for ownership
+      .single();
+
+    if (fileError || !fileData) {
+      console.error("!!! PERSONAL FILE LOOKUP FAILED:", fileError);
+      throw new NotFoundException("File not found or access denied.");
+    }
+    
+    console.log(`--- FOUND PERSONAL FILE. GENERATING URL FOR: ${fileData.file_path} ---`);
+
+    // 2. Generate and return the signed URL
+    const { data, error } = await supabase.storage
+      .from("study-notes")
+      .createSignedUrl(fileData.file_path, 3600);
+
+    if (error) {
+      console.error("!!! URL GENERATION FAILED:", error);
+      throw new InternalServerErrorException("Could not generate file URL.");
+    }
+
+    return data;
+  }
+  async getGroupFileSignedUrl(fileId: string, userId: string) {
+    const supabase = this.supabaseService.getClient();
+    console.log(`--- GROUP URL REQUEST for fileId: ${fileId} by userId: ${userId} ---`);
 
     // 1. Find which group the file was posted in.
     const { data: chatMessage, error: messageError } = await supabase
@@ -96,25 +125,21 @@ export class FilesService {
       .single();
 
     if (messageError || !chatMessage) {
-      console.error("!!! FILE NOT FOUND IN ANY CHAT:", messageError);
       throw new NotFoundException(`File with ID ${fileId} not found in any chat.`);
     }
     const groupId = chatMessage.group_id;
-    console.log(`--- FILE BELONGS TO GROUP: ${groupId} ---`);
 
     // 2. Check if the requesting user is a member of that group.
     const { data: membership, error: membershipError } = await supabase
-      .from("group_members") // Your table for group members
+      .from("group_members")
       .select("id")
       .eq("group_id", groupId)
       .eq("user_id", userId)
       .single();
 
     if (membershipError || !membership) {
-      console.error("!!! MEMBERSHIP CHECK FAILED:", membershipError);
       throw new ForbiddenException("Access denied. User is not a member of the group.");
     }
-    console.log(`--- USER ${userId} IS A MEMBER. ACCESS GRANTED. ---`);
 
     // 3. Get the file path from the 'study_notes' table.
     const { data: fileData, error: fileError } = await supabase
@@ -124,22 +149,18 @@ export class FilesService {
       .single();
 
     if (fileError || !fileData) {
-      console.error("!!! FILE METADATA NOT FOUND:", fileError);
       throw new NotFoundException(`File data for ID ${fileId} not found.`);
     }
-    console.log(`--- GENERATING SIGNED URL FOR PATH: ${fileData.file_path} ---`);
-
+    
     // 4. Generate and return the signed URL.
     const { data, error: urlError } = await supabase.storage
-      .from("study-notes") // Your Supabase bucket name
-      .createSignedUrl(fileData.file_path, 3600); // URL is valid for 1 hour
+      .from("study-notes")
+      .createSignedUrl(fileData.file_path, 3600);
 
     if (urlError) {
-      console.error("!!! SIGNED URL GENERATION FAILED:", urlError);
       throw new InternalServerErrorException("Could not generate file URL.");
     }
 
-    console.log("--- SIGNED URL GENERATED SUCCESSFULLY ---");
     return data;
   }
   async summarize(fileId: string, userId: string) {
