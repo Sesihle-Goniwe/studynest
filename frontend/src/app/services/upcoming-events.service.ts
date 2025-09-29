@@ -17,7 +17,8 @@ export interface ClubEvent {
   providedIn: 'root'
 })
 export class UpcomingEventsService {
-  private apiUrl = 'https://clubs-connect-api.onrender.com/api/events';
+  //private apiUrl = 'http://localhost:3000/events/upcoming'; //https://studynester.onrender.com/
+  private apiUrl = ' //https://studynester.onrender.com/events/upcoming';
 
   constructor(private http: HttpClient) { }
 
@@ -31,6 +32,7 @@ export class UpcomingEventsService {
           event.title.toLowerCase().includes('ai') ||
           event.title.toLowerCase().includes('workshop') ||
           event.title.toLowerCase().includes('study') ||
+          event.title.toLowerCase().includes('CSAM') ||
           event.description.toLowerCase().includes('study')
         )
       )
