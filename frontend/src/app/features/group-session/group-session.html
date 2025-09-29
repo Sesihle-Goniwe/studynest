@@ -30,8 +30,9 @@
     <div class="session-card">
       <h4>{{ session.title }}</h4>
       <p>{{ session.description }}</p>
-      <p><strong>When:</strong> {{ session.start_time }} → {{ session.end_time }}</p>
-      <p><strong>Where:</strong> {{ session.location }}</p>
+      <p><strong>Date:</strong> {{ session.start_time | date:'fullDate' }} → {{ session.end_time | date:'fullDate' }}</p>
+      <p><strong>Time:</strong> {{ session.start_time | date:'shortTime' }} → {{ session.end_time | date:'shortTime' }}</p>
+      <p><strong>Location:</strong> {{ session.location }}</p>
 
       <button (click)="deleteSession(session.id)">Delete</button>
     </div>
