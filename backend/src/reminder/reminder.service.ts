@@ -11,7 +11,7 @@ export class ReminderService {
     private readonly mailer: MailerService,
   ) {}
 
-  @Cron("*/5 * * * *")
+  @Cron("*/1 * * * *")
   async sendReminder() {
     const now = new Date();
     const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
