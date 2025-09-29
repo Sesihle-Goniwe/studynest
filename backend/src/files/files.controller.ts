@@ -1,5 +1,5 @@
 /* --- 
-  BACKEND: src/files/files.controller.ts
+  BACKEND: src/files/files.controller.ts (Updated as requested)
 --- */
 import {
   Controller,
@@ -9,7 +9,7 @@ import {
   Body,
   Get,
   Param,
-  Query,
+  Query, // Query decorator is used for GET requests
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { FilesService } from "./files.service";
@@ -21,32 +21,37 @@ export class FilesController {
 
   @Post("upload")
   @UseInterceptors(FileInterceptor("file"))
-  // 1. Use the @Body() decorator to get the other form fields
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: { userId: string },
   ) {
-    // 2. Extract the userId from the body
     const userId = body.userId;
-
-    // 3. Pass both to the service
     return this.filesService.upload(file, userId);
   }
-  @Get(":fileId/url")
-  // 3. Get the userId from a @Query() parameter instead of @Request()
-  async getFileUrl(
-    @Param("fileId") fileId: string,
-    @Query("userId") userId: string,
+
+  @Get('personal/:id/url')
+  // Get the userId from the URL's query string (e.g., ?userId=abc-123)
+  getPersonalSignedUrl(
+    @Param('id') id: string,
+    @Query('userId') userId: string,
   ) {
-    return this.filesService.getSignedUrl(fileId, userId);
+    return this.filesService.getPersonalFileSignedUrl(id, userId);
   }
+
+  @Get('group/:id/url')
+  // Get the userId from the URL's query string (e.g., ?userId=abc-123)
+  getGroupSignedUrl(
+    @Param('id') id: string,
+    @Query('userId') userId: string,
+  ) {
+    return this.filesService.getGroupFileSignedUrl(id, userId);
+  }
+
   @Post(":fileId/summarize")
-  // Change @Request() req to @Body() body
   summarizeNote(
     @Param("fileId") fileId: string,
     @Body() body: { userId: string },
   ) {
-    // Get the userId from the body, not req.user
     const userId = body.userId;
     return this.filesService.summarize(fileId, userId);
   }

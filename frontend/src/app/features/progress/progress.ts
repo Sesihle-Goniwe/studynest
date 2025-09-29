@@ -172,7 +172,7 @@ export class ProgressTracker implements OnInit {
       console.log('This topic does not have a file associated with it.');
       return;
     }
-    this.notesApiService.getNoteUrl(topic.file_id, this.currentUser.id).subscribe({
+    this.notesApiService.getPersonalNoteUrl(topic.file_id, this.currentUser.id).subscribe({
       next: (response) => {
         this.pdfSrc = response.signedUrl;
         this.showPdfViewer = true;

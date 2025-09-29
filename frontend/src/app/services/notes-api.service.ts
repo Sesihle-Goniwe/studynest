@@ -24,10 +24,14 @@ export class NotesApiService {
 
     return this.http.post<any>(`${this.backendUrl}/upload`, formData);
   }
-  getNoteUrl(fileId: string, userId: string): Observable<{ signedUrl: string }> {
-  // Add the userId as a query parameter
-  return this.http.get<{ signedUrl: string }>(`${this.backendUrl}/${fileId}/url`, { params: { userId } });
-}
+   getPersonalNoteUrl(fileId: string, userId: string): Observable<{ signedUrl: string }> {
+    // Add the userId as a query parameter
+    return this.http.get<{ signedUrl: string }>(`${this.backendUrl}/personal/${fileId}/url`, { params: { userId } });
+  }
+  getGroupNoteUrl(fileId: string, userId: string): Observable<{ signedUrl: string }> {
+    // Add the userId as a query parameter
+    return this.http.get<{ signedUrl: string }>(`${this.backendUrl}/group/${fileId}/url`, { params: { userId } });
+  }
 getSummary(fileId: string, userId: string): Observable<{ summary: string }> {
     return this.http.post<{ summary: string }>(
       `${this.backendUrl}/${fileId}/summarize`,

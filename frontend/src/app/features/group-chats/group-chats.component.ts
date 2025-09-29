@@ -155,7 +155,7 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   viewMessageFile(message: GroupMessageWithProfile): void {
     if (!message.fileId) return;
 
-    this.notesApiService.getNoteUrl(message.fileId, this.currentUserId).subscribe({
+    this.notesApiService.getGroupNoteUrl(message.fileId, this.currentUserId).subscribe({
       next: (response) => {
         // CHANGED: Sanitize the URL to tell Angular it is safe
         this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(response.signedUrl);
