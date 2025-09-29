@@ -13,6 +13,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./group-session.scss']
 })
 export class GroupSession {
+
+  isLoading: boolean = false;
+
     sessionsArr: _Session[]= [];
     currentUser: string | null = null;
     currentUserRole: string | null = null;
@@ -72,12 +75,13 @@ export class GroupSession {
 
    createSession() 
    {
- 
+      this.isLoading = true; 
       this.sessionSer.createSession(this.newSession).subscribe({
       next: (res) => {
         console.log("Session created", res);
         this.sessionsArr.push(res); // update UI immediately
         this.resetForm();
+         this.isLoading = false; // hide spinner
       },
       error: (err) => console.error("Session creation failed", err)
     });

@@ -1,5 +1,6 @@
 <h2>Group Sessions</h2>
 
+
 <!-- Create Session Form -->
 <div class="create-session-form">
   <h3>Create a New Session</h3>
@@ -22,6 +23,9 @@
 
 <hr />
 
+<div *ngIf="isLoading" class="spinner-container">
+  <div class="spinner"></div>
+</div>
 <!-- Existing Sessions -->
 <div class="sessions-list">
   <h3>Sessions</h3>
