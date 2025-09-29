@@ -25,6 +25,7 @@ export class GroupsService {
 
   async setGroupGoals(dto: SetGroupGoalDto) {
   const { groupId, title, createdBy } = dto;
+
   const { data, error } = await this.supabaseSer
     .getClient()
     .from('group_goals')
@@ -46,7 +47,7 @@ async getGroupGoals(groupId: string) {
     .from('group_goals')
     .select('*')
     .eq('group_id', groupId)
-    .order('created_at', { ascending: true }); // optional: order by creation time
+    .order('created_at', { ascending: true });
 
   if (error) {
     console.log('Failed to fetch group goals', error.message);

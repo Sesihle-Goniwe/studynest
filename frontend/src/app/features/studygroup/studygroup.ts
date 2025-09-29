@@ -163,40 +163,41 @@ editDescription: string = '';
   );
 }
 
-SetGroupGoals(groupId: string){
-  this.settingGoalForGroupId = groupId; // mark which group is being set
-  this.goalInput = ''; // reset input field
-
+setGroupGoals(groupId: string) {
+  this.settingGoalForGroupId = groupId;
+  this.goalInput = ''; // clear input field
 }
 
+// Submit goal to backend
 submitGoal() {
   const user = this.authService.getCurrentUser();
   if (!user || !this.settingGoalForGroupId || !this.goalInput.trim()) return;
 
-  this.groupService
-    .setGroupGoal(this.settingGoalForGroupId, this.goalInput.trim(), user.id)
-    .subscribe({
-      next: () => {
-        console.log('Goal set successfully');
-        alert('Goal set successfully!');
-        // refresh goals immediately
-        this.viewGroupGoals(this.settingGoalForGroupId!); 
-        this.settingGoalForGroupId = null;
-        this.goalInput = '';
-      },
-      error: (err) => {
-        console.error('Failed to set goal', err);
-        alert('Failed to set goal');
-      },
-    });
+  this.groupService.setGroupGoal(
+    this.settingGoalForGroupId,
+    this.goalInput.trim(),
+    user.id
+  ).subscribe({
+    next: () => {
+      console.log('Goal set successfully');
+      alert('Goal set successfully!');
+      this.viewGroupGoals(this.settingGoalForGroupId!); // refresh goals
+      this.settingGoalForGroupId = null;
+      this.goalInput = '';
+    },
+    error: (err) => {
+      console.error('Failed to set goal', err);
+      alert('Failed to set goal');
+    },
+  });
 }
+
 
 
 viewGroupGoals(groupId: string) {
   this.groupService.getGroupGoals(groupId).subscribe({
     next: (goals) => {
       this.groupGoals[groupId] = goals;
-      // Optional: scroll to goal section or open modal
       console.log('Goals for group:', goals);
     },
     error: (err) => {

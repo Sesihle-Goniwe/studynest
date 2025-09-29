@@ -57,7 +57,7 @@
           Delete Group
         </button>
 
-         <button *ngIf="item.role === 'admin'" (click)="SetGroupGoals(item.group.id)">
+         <button *ngIf="item.role === 'admin'" (click)="setGroupGoals(item.group.id)">
           Set Group Goals
          </button>
 
@@ -77,7 +77,7 @@
           <h4>Goals:</h4>
           <ul>
             <li *ngFor="let goal of groupGoals[item.group.id]">
-              {{ goal.title }} <small>(set by {{ goal.created_by }})</small>
+              {{ goal.title }} 
             </li>
           </ul>
         </div>
