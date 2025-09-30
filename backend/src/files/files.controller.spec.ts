@@ -4,6 +4,7 @@ import { FilesService } from "./files.service";
 import {
   InternalServerErrorException,
   NotFoundException,
+  ForbiddenException,
 } from "@nestjs/common";
 import type { Express } from "express";
 
@@ -11,12 +12,15 @@ describe("FilesController", () => {
   let controller: FilesController;
   let service: FilesService;
 
+  // This mock will stand in for the real FilesService
   const mockFilesService = {
     upload: jest.fn(),
-    getSignedUrl: jest.fn(),
+    getPersonalFileSignedUrl: jest.fn(),
+    getGroupFileSignedUrl: jest.fn(),
     summarize: jest.fn(),
   };
 
+  // A mock file object to use in tests
   const mockFile: Express.Multer.File = {
     fieldname: "file",
     originalname: "test.pdf",
@@ -46,6 +50,7 @@ describe("FilesController", () => {
   });
 
   afterEach(() => {
+    // Clear all mocks after each test
     jest.clearAllMocks();
   });
 
@@ -53,142 +58,102 @@ describe("FilesController", () => {
     expect(controller).toBeDefined();
   });
 
+  // --- Tests for uploadFile ---
   describe("uploadFile", () => {
-    it("should upload a file successfully", async () => {
-      const userId = "user123";
+    it("should call service.upload and return the result on success", async () => {
+      const userId = "user-abc";
       const body = { userId };
-      const expectedResult = {
-        message: "File uploaded successfully",
-        data: {
-          id: "file123",
-          user_id: userId,
-          file_name: "test.pdf",
-          file_path: `public/${userId}/123456789-test.pdf`,
-          file_size: 1024,
-          mime_type: "application/pdf",
-        },
-      };
-
+      const expectedResult = { message: "File uploaded successfully" };
       mockFilesService.upload.mockResolvedValue(expectedResult);
 
       const result = await controller.uploadFile(mockFile, body);
 
       expect(result).toEqual(expectedResult);
       expect(service.upload).toHaveBeenCalledWith(mockFile, userId);
+      expect(service.upload).toHaveBeenCalledTimes(1);
     });
 
-    it("should handle upload errors", async () => {
-      const userId = "user123";
+    it("should forward exceptions from service.upload", async () => {
+      const userId = "user-abc";
       const body = { userId };
+      const error = new InternalServerErrorException("Upload failed");
+      mockFilesService.upload.mockRejectedValue(error);
 
-      mockFilesService.upload.mockRejectedValue(
-        new InternalServerErrorException("Failed to upload file to storage."),
-      );
-
-      await expect(controller.uploadFile(mockFile, body)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-    });
-
-    it("should handle missing file", async () => {
-      const userId = "user123";
-      const body = { userId };
-
-      mockFilesService.upload.mockRejectedValue(
-        new InternalServerErrorException("File is undefined."),
-      );
-
-      await expect(
-        controller.uploadFile(undefined as any, body),
-      ).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.uploadFile(mockFile, body)).rejects.toThrow(InternalServerErrorException);
     });
   });
 
-  describe("getFileUrl", () => {
-    it("should get signed URL successfully", async () => {
-      const fileId = "file123";
-      const userId = "user123";
-      const expectedResult = {
-        signedUrl: "https://example.com/signed-url",
-      };
+  // --- Tests for getPersonalSignedUrl ---
+  describe("getPersonalSignedUrl", () => {
+    it("should call service.getPersonalFileSignedUrl and return the result", async () => {
+      const fileId = "file-123";
+      const userId = "user-abc";
+      const expectedUrl = { signedUrl: "https://example.com/personal-url" };
+      mockFilesService.getPersonalFileSignedUrl.mockResolvedValue(expectedUrl);
 
-      mockFilesService.getSignedUrl.mockResolvedValue(expectedResult);
+      const result = await controller.getPersonalSignedUrl(fileId, userId);
 
-      const result = await controller.getFileUrl(fileId, userId);
-
-      expect(result).toEqual(expectedResult);
-      expect(service.getSignedUrl).toHaveBeenCalledWith(fileId, userId);
+      expect(result).toEqual(expectedUrl);
+      expect(service.getPersonalFileSignedUrl).toHaveBeenCalledWith(fileId, userId);
     });
 
-    it("should handle file not found", async () => {
-      const fileId = "nonexistent";
-      const userId = "user123";
+    it("should forward NotFoundException from the service", async () => {
+      const fileId = "file-404";
+      const userId = "user-abc";
+      const error = new NotFoundException("File not found");
+      mockFilesService.getPersonalFileSignedUrl.mockRejectedValue(error);
 
-      mockFilesService.getSignedUrl.mockRejectedValue(
-        new NotFoundException("File not found or access denied."),
-      );
-
-      await expect(controller.getFileUrl(fileId, userId)).rejects.toThrow(
-        NotFoundException,
-      );
-    });
-
-    it("should handle unauthorized access", async () => {
-      const fileId = "file123";
-      const userId = "wronguser";
-
-      mockFilesService.getSignedUrl.mockRejectedValue(
-        new NotFoundException("File not found or access denied."),
-      );
-
-      await expect(controller.getFileUrl(fileId, userId)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(controller.getPersonalSignedUrl(fileId, userId)).rejects.toThrow(NotFoundException);
     });
   });
 
+  // --- Tests for getGroupSignedUrl ---
+  describe("getGroupSignedUrl", () => {
+    it("should call service.getGroupFileSignedUrl and return the result", async () => {
+        const fileId = "file-group-123";
+        const userId = "user-group-abc";
+        const expectedUrl = { signedUrl: "https://example.com/group-url" };
+        mockFilesService.getGroupFileSignedUrl.mockResolvedValue(expectedUrl);
+  
+        const result = await controller.getGroupSignedUrl(fileId, userId);
+  
+        expect(result).toEqual(expectedUrl);
+        expect(service.getGroupFileSignedUrl).toHaveBeenCalledWith(fileId, userId);
+      });
+  
+      it("should forward ForbiddenException from the service", async () => {
+        const fileId = "file-group-123";
+        const userId = "user-not-in-group";
+        const error = new ForbiddenException("Access denied");
+        mockFilesService.getGroupFileSignedUrl.mockRejectedValue(error);
+  
+        await expect(controller.getGroupSignedUrl(fileId, userId)).rejects.toThrow(ForbiddenException);
+      });
+  });
+
+  // --- Tests for summarizeNote ---
   describe("summarizeNote", () => {
-    it("should summarize file successfully", async () => {
-      const fileId = "file123";
-      const body = { userId: "user123" };
-      const expectedResult = {
-        summary: "This is a summary of the PDF content...",
-      };
-
-      mockFilesService.summarize.mockResolvedValue(expectedResult);
+    it("should call service.summarize and return the summary", async () => {
+      const fileId = "file-123";
+      const body = { userId: "user-abc" };
+      const expectedSummary = { summary: "This is a summary." };
+      mockFilesService.summarize.mockResolvedValue(expectedSummary);
 
       const result = await controller.summarizeNote(fileId, body);
 
-      expect(result).toEqual(expectedResult);
+      expect(result).toEqual(expectedSummary);
       expect(service.summarize).toHaveBeenCalledWith(fileId, body.userId);
     });
 
-    it("should handle summarization errors", async () => {
-      const fileId = "file123";
-      const body = { userId: "user123" };
+    it("should forward exceptions from service.summarize", async () => {
+      const fileId = "file-123";
+      const body = { userId: "user-abc" };
+      const error = new InternalServerErrorException("Summarization failed");
+      mockFilesService.summarize.mockRejectedValue(error);
 
-      mockFilesService.summarize.mockRejectedValue(
-        new InternalServerErrorException(
-          "An unexpected error occurred during summarization.",
-        ),
-      );
-
-      await expect(controller.summarizeNote(fileId, body)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-    });
-
-    it("should handle file not found during summarization", async () => {
-      const fileId = "nonexistent";
-      const body = { userId: "user123" };
-
-      mockFilesService.summarize.mockRejectedValue(
-        new NotFoundException("File not found or access denied."),
-      );
-
-      await expect(controller.summarizeNote(fileId, body)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(controller.summarizeNote(fileId, body)).rejects.toThrow(InternalServerErrorException);
     });
   });
 });
+
+
