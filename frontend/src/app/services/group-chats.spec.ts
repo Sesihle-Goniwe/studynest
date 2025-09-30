@@ -28,16 +28,16 @@ describe('GroupChatsService', () => {
       success: true,
       message: {
         id: 'm1',
-        group_id: 'g1',
-        user_id: 'user-123',
+        groupId: 'g1',
+        userId: 'user-123',
         message: 'Hello!',
-        created_at: '2025-09-25T10:00:00Z',
+        createdAt: '2025-09-25T10:00:00Z',
       } as GroupMessage,
     };
 
     service.sendMessage('g1', 'user-123', 'Hello!').subscribe((r) => {
       expect(r).toEqual(resp);
-      expect(r.success).toBe(true);
+      expect(r.success).toBeTrue();
       expect(r.message.message).toBe('Hello!');
     });
 
@@ -64,19 +64,90 @@ describe('GroupChatsService', () => {
     const resp = {
       success: true,
       messages: [
-        { id: 'm1', group_id: 'g1', user_id: 'u1', message: 'hi' },
-        { id: 'm2', group_id: 'g1', user_id: 'u2', message: 'yo' },
+        {
+          id: 'm1',
+          groupId: 'g1',
+          userId: 'u1',
+          message: 'hi',
+          messageType: 'text',
+          createdAt: '2025-09-25T10:00:00Z',
+        },
+        {
+          id: 'm2',
+          groupId: 'g1',
+          userId: 'u2',
+          message: 'yo',
+          messageType: 'text',
+          createdAt: '2025-09-25T10:05:00Z',
+        },
       ] as GroupMessage[],
     };
 
     service.getMessages('g1').subscribe((r) => {
       expect(r).toEqual(resp);
       expect(r.messages.length).toBe(2);
-      expect(r.success).toBe(true);
+      expect(r.success).toBeTrue();
     });
 
     const req = http.expectOne(`${BASE}/group/g1`);
     expect(req.request.method).toBe('GET');
+    req.flush(resp);
+  });
+
+  it('uploadFileToChat() should POST to /upload with FormData', () => {
+    const file = new File(['dummy'], 'test.txt', { type: 'text/plain' });
+
+    service.uploadFileToChat(file, 'u1', 'g1', 'optional msg').subscribe((resp) => {
+      expect(resp.success).toBeTrue();
+    });
+
+    const req = http.expectOne(`${BASE}/upload`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body instanceof FormData).toBeTrue();
+
+    const body = req.request.body as FormData;
+    expect(body.get('file')).toBeTruthy();
+    expect(body.get('userId')).toBe('u1');
+    expect(body.get('groupId')).toBe('g1');
+    expect(body.get('message')).toBe('optional msg');
+
+    req.flush({ success: true });
+  });
+
+  it('editMessage() should PATCH to /edit/:id', () => {
+    const resp = {
+      success: true,
+      message: {
+        id: 'm1',
+        groupId: 'g1',
+        userId: 'u1',
+        message: 'updated',
+        messageType: 'text',
+        createdAt: '2025-09-25T10:10:00Z',
+      } as GroupMessage,
+    };
+
+    service.editMessage('m1', 'u1', 'updated').subscribe((r) => {
+      expect(r).toEqual(resp);
+      expect(r.message?.message).toBe('updated');
+    });
+
+    const req = http.expectOne(`${BASE}/edit/m1`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ userId: 'u1', text: 'updated' });
+    req.flush(resp);
+  });
+
+  it('deleteMessage() should DELETE to /delete/:id?userId', () => {
+    const resp = { success: true };
+
+    service.deleteMessage('m1', 'u1').subscribe((r) => {
+      expect(r).toEqual(resp);
+      expect(r.success).toBeTrue();
+    });
+
+    const req = http.expectOne(`${BASE}/delete/m1?userId=u1`);
+    expect(req.request.method).toBe('DELETE');
     req.flush(resp);
   });
 });
