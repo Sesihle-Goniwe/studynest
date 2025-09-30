@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1759178449954" clover="3.2.0">
-  <project timestamp="1759178449955" name="All files">
-    <metrics statements="662" coveredstatements="428" conditionals="387" coveredconditionals="196" methods="128" coveredmethods="94" elements="1177" coveredelements="718" complexity="0" loc="662" ncloc="662" packages="15" files="26" classes="26"/>
+<coverage generated="1759179619301" clover="3.2.0">
+  <project timestamp="1759179619301" name="All files">
+    <metrics statements="679" coveredstatements="412" conditionals="395" coveredconditionals="193" methods="132" coveredmethods="91" elements="1206" coveredelements="696" complexity="0" loc="679" ncloc="679" packages="15" files="27" classes="27"/>
     <package name="src">
       <metrics statements="9" coveredstatements="9" conditionals="4" coveredconditionals="3" methods="3" coveredmethods="3"/>
       <file name="app.controller.ts" path="C:\Users\doyen\OneDrive\Desktop\Study3\SDP\Pull\studynest\backend\src\app.controller.ts">
@@ -232,119 +232,139 @@
       </file>
     </package>
     <package name="src.groups">
-      <metrics statements="58" coveredstatements="41" conditionals="38" coveredconditionals="22" methods="14" coveredmethods="7"/>
+      <metrics statements="74" coveredstatements="44" conditionals="46" coveredconditionals="25" methods="18" coveredmethods="7"/>
       <file name="groups.controller.ts" path="C:\Users\doyen\OneDrive\Desktop\Study3\SDP\Pull\studynest\backend\src\groups\groups.controller.ts">
-        <metrics statements="17" coveredstatements="10" conditionals="9" coveredconditionals="6" methods="7" coveredmethods="0"/>
+        <metrics statements="22" coveredstatements="13" conditionals="13" coveredconditionals="9" methods="9" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="0" type="cond" truecount="3" falsecount="1"/>
         <line num="10" count="1" type="stmt"/>
-        <line num="11" count="1" type="stmt"/>
-        <line num="13" count="1" type="stmt"/>
-        <line num="14" count="0" type="cond" truecount="3" falsecount="1"/>
-        <line num="17" count="1" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="22" count="1" type="stmt"/>
-        <line num="23" count="0" type="stmt"/>
-        <line num="27" count="1" type="cond" truecount="3" falsecount="1"/>
-        <line num="28" count="0" type="stmt"/>
-        <line num="36" count="1" type="stmt"/>
-        <line num="41" count="0" type="stmt"/>
-        <line num="45" count="1" type="stmt"/>
-        <line num="46" count="0" type="stmt"/>
-        <line num="50" count="1" type="stmt"/>
-        <line num="54" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="20" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="28" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
       </file>
       <file name="groups.service.ts" path="C:\Users\doyen\OneDrive\Desktop\Study3\SDP\Pull\studynest\backend\src\groups\groups.service.ts">
-        <metrics statements="41" coveredstatements="31" conditionals="29" coveredconditionals="16" methods="7" coveredmethods="7"/>
+        <metrics statements="52" coveredstatements="31" conditionals="33" coveredconditionals="16" methods="9" coveredmethods="7"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="7" count="6" type="cond" truecount="6" falsecount="2"/>
-        <line num="8" count="6" type="stmt"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="18" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="19" count="0" type="stmt"/>
-        <line num="22" count="1" type="stmt"/>
-        <line num="26" count="1" type="stmt"/>
-        <line num="30" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="31" count="0" type="stmt"/>
-        <line num="34" count="1" type="stmt"/>
-        <line num="42" count="1" type="stmt"/>
-        <line num="48" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="49" count="0" type="stmt"/>
-        <line num="53" count="1" type="stmt"/>
-        <line num="60" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="61" count="0" type="stmt"/>
-        <line num="64" count="1" type="stmt"/>
-        <line num="67" count="1" type="stmt"/>
-        <line num="73" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="74" count="0" type="stmt"/>
-        <line num="76" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="77" count="1" type="stmt"/>
-        <line num="78" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="79" count="2" type="stmt"/>
-        <line num="84" count="1" type="stmt"/>
-        <line num="88" count="1" type="stmt"/>
-        <line num="94" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="95" count="0" type="stmt"/>
-        <line num="98" count="0" type="stmt"/>
-        <line num="102" count="1" type="stmt"/>
-        <line num="108" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="109" count="0" type="stmt"/>
-        <line num="112" count="1" type="stmt"/>
-        <line num="116" count="1" type="stmt"/>
-        <line num="125" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="126" count="0" type="stmt"/>
-        <line num="128" count="1" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="8" count="6" type="cond" truecount="6" falsecount="2"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="19" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="52" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="66" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="84" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="96" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="100" count="1" type="stmt"/>
+        <line num="103" count="1" type="stmt"/>
+        <line num="109" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="112" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="113" count="1" type="stmt"/>
+        <line num="114" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="115" count="2" type="stmt"/>
+        <line num="120" count="1" type="stmt"/>
+        <line num="124" count="1" type="stmt"/>
+        <line num="130" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="131" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="138" count="1" type="stmt"/>
+        <line num="144" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="148" count="1" type="stmt"/>
+        <line num="152" count="1" type="stmt"/>
+        <line num="161" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="162" count="0" type="stmt"/>
+        <line num="164" count="1" type="stmt"/>
       </file>
     </package>
     <package name="src.groups.dto.create-group.dto">
-      <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="create-group.dto.ts" path="C:\Users\doyen\OneDrive\Desktop\Study3\SDP\Pull\studynest\backend\src\groups\dto\create-group.dto\create-group.dto.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+      </file>
+      <file name="set-group_goal.dto.ts" path="C:\Users\doyen\OneDrive\Desktop\Study3\SDP\Pull\studynest\backend\src\groups\dto\create-group.dto\set-group_goal.dto.ts">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
       </file>
     </package>
     <package name="src.mailer">
-      <metrics statements="52" coveredstatements="35" conditionals="18" coveredconditionals="11" methods="5" coveredmethods="5"/>
+      <metrics statements="52" coveredstatements="15" conditionals="18" coveredconditionals="5" methods="5" coveredmethods="2"/>
       <file name="mailer.service.ts" path="C:\Users\doyen\OneDrive\Desktop\Study3\SDP\Pull\studynest\backend\src\mailer\mailer.service.ts">
-        <metrics statements="52" coveredstatements="35" conditionals="18" coveredconditionals="11" methods="5" coveredmethods="5"/>
+        <metrics statements="52" coveredstatements="15" conditionals="18" coveredconditionals="5" methods="5" coveredmethods="2"/>
         <line num="1" count="8" type="stmt"/>
         <line num="2" count="8" type="stmt"/>
         <line num="3" count="8" type="stmt"/>
         <line num="4" count="8" type="stmt"/>
         <line num="5" count="8" type="stmt"/>
         <line num="8" count="8" type="stmt"/>
-        <line num="9" count="13" type="stmt"/>
-        <line num="12" count="13" type="cond" truecount="3" falsecount="1"/>
-        <line num="14" count="13" type="stmt"/>
-        <line num="18" count="13" type="stmt"/>
-        <line num="22" count="3" type="stmt"/>
-        <line num="24" count="3" type="stmt"/>
-        <line num="33" count="3" type="stmt"/>
-        <line num="43" count="3" type="stmt"/>
-        <line num="47" count="1" type="stmt"/>
-        <line num="48" count="1" type="stmt"/>
-        <line num="52" count="3" type="stmt"/>
-        <line num="53" count="3" type="stmt"/>
-        <line num="74" count="2" type="stmt"/>
-        <line num="75" count="2" type="stmt"/>
-        <line num="77" count="1" type="stmt"/>
-        <line num="78" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="12" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="74" count="1" type="stmt"/>
+        <line num="75" count="1" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="78" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="79" count="0" type="stmt"/>
-        <line num="81" count="1" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
         <line num="86" count="8" type="stmt"/>
-        <line num="87" count="2" type="stmt"/>
-        <line num="88" count="2" type="stmt"/>
-        <line num="91" count="2" type="stmt"/>
-        <line num="95" count="2" type="stmt"/>
-        <line num="97" count="2" type="stmt"/>
-        <line num="103" count="2" type="cond" truecount="2" falsecount="0"/>
-        <line num="104" count="1" type="stmt"/>
-        <line num="105" count="1" type="stmt"/>
-        <line num="108" count="1" type="cond" truecount="3" falsecount="1"/>
-        <line num="109" count="1" type="stmt"/>
-        <line num="110" count="1" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="103" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="108" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
         <line num="113" count="0" type="stmt"/>
         <line num="115" count="0" type="stmt"/>
         <line num="117" count="0" type="stmt"/>

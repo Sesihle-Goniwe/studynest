@@ -71,14 +71,11 @@ Happy studying!
           ]
         });
 
-      this.logger.log(`✅ Email sent successfully to ${to}`);
       return result;
-    } catch (error) {
-      this.logger.error(`❌ Failed to send email to ${to}: ${error.message}`);
-      if (error.response) {
-        this.logger.error(`Mailjet response: ${JSON.stringify(error.response)}`);
-      }
-      throw error;
+    } 
+    catch (error) 
+    {
+      console.log(' Failed to send email');
     }
   }
 
@@ -92,7 +89,6 @@ Happy studying!
       .plus({ hours: 24 })
       .toFormat("yyyy-MM-dd HH:mm:ss");
 
-    this.logger.log('Checking for sessions to remind...');
 
     const { data: sessions, error } = await this.supabaseSer
       .getClient()
@@ -101,16 +97,11 @@ Happy studying!
       .in("start_time", [twoMinFromNow, fiveMinFromNow]);
 
     if (error) {
-      this.logger.error(`Failed to fetch sessions: ${error.message}`);
+      console.log('Failed to fetch sessions');
       return;
     }
 
-    if (!sessions || sessions.length === 0) {
-      this.logger.log('No sessions found for reminders');
-      return;
-    }
 
-    this.logger.log(`Found ${sessions.length} sessions for reminders`);
 
     for (const session of sessions) {
       // fetch group members
@@ -120,12 +111,12 @@ Happy studying!
         .select("user_id")
         .eq("group_id", session.group_id);
 
-      if (memError) {
-        this.logger.error(`Failed to fetch members for group ${session.group_id}: ${memError.message}`);
+      if (memError) 
+        {
+          console.log("Failed to fetch members");
         continue;
       }
 
-      this.logger.log(`Sending reminders for session "${session.title}" to ${members.length} members`);
 
       for (const member of members) {
         const { data: student } = await this.supabaseSer
@@ -155,8 +146,9 @@ Happy studying!
                  <p>Communication from your Campus Study buddy</p>
                </div>`,
             );
-          } catch (emailError) {
-            this.logger.error(`Failed to send reminder to ${student.email}: ${emailError.message}`);
+          } catch (emailError) 
+          {
+            console.log('Failed to send reminder ');
           }
         }
       }
