@@ -1,29 +1,25 @@
-// src/app/features/stats-dialog/stats-dialog.spec.ts
-
-import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { By } from '@angular/platform-browser';
-import { Chart } from 'chart.js';
 import { StatsDialogComponent } from './stats-dialog';
+import { Component } from '@angular/core';
 
-// Mocks
+// Mock Chart.js completely. We need to control its instances to test the 'destroy' method.
+const mockChartInstance = {
+  destroy: jest.fn(),
+};
+const ChartMock = jest.fn().mockImplementation(() => mockChartInstance);
+
 jest.mock('chart.js/auto', () => ({
-  Chart: jest.fn().mockImplementation(() => ({ destroy: jest.fn() })),
+  Chart: ChartMock,
 }));
 
-const mockDialogData = {
-  studyLogs: [{ date: '2025-01-01T12:00:00Z', hours: 5 }],
-  activeTopics: [{ id: 'a1' }],
-  completedTopics: [{ id: 'c1' }],
-};
-
-// ✅ --- THE CORRECTED TEST HOST FOR STANDALONE --- ✅
+// A test host component is the modern, correct way to test standalone components
+// that rely on content projection or @ViewChild queries.
 @Component({
   standalone: true,
-  // The host imports the component it needs to render
   imports: [StatsDialogComponent],
-  // The template includes the <canvas> elements required by @ViewChild
+  // The template MUST include the <canvas> elements so that @ViewChild can find them.
   template: `
     <app-stats-dialog>
       <div class="stats-container">
@@ -39,28 +35,111 @@ class TestHostComponent {}
 describe('StatsDialogComponent', () => {
   let fixture: ComponentFixture<TestHostComponent>;
   let component: StatsDialogComponent;
-  let mockedChart: jest.MockedClass<typeof Chart>;
 
-  beforeEach(async () => {
+  // --- Helper function to create the component with specific data ---
+  const configureTestingModule = async (dialogData: any) => {
     await TestBed.configureTestingModule({
-      // You only need to import the TestHostComponent now
       imports: [TestHostComponent],
-      providers: [{ provide: MAT_DIALOG_DATA, useValue: mockDialogData }],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: dialogData },
+      ],
     }).compileComponents();
 
-    // Create the HOST component
     fixture = TestBed.createComponent(TestHostComponent);
-    // Find the StatsDialogComponent instance inside the host
+    // Grab the instance of our actual component from within the test host
     component = fixture.debugElement.query(By.directive(StatsDialogComponent)).componentInstance;
-
-    mockedChart = Chart as jest.MockedClass<typeof Chart>;
-    mockedChart.mockClear();
     
-    fixture.detectChanges(); // Trigger ngAfterViewInit
+    // Clear any previous mock calls before each test scenario
+    ChartMock.mockClear();
+    mockChartInstance.destroy.mockClear();
+  };
+
+  describe('with all data provided', () => {
+    beforeEach(async () => {
+      await configureTestingModule({
+        studyLogs: [
+          { date: '2025-01-02T10:00:00Z', hours: 3 }, // Out of order to test sorting
+          { date: '2025-01-01T12:00:00Z', hours: 5 },
+          { date: '2025-01-01T18:00:00Z', hours: 2 }, // Same day to test aggregation
+        ],
+        activeTopics: [{ id: 'a1' }, { id: 'a2' }],
+        completedTopics: [{ id: 'c1' }],
+      });
+      fixture.detectChanges(); // This triggers ngAfterViewInit
+    });
+
+    it('should create and render both charts', () => {
+      expect(component).toBeTruthy();
+      // Verifies that both createHoursChart and createTopicsChart were called
+      expect(ChartMock).toHaveBeenCalledTimes(2);
+    });
+
+    it('should correctly process and sort study logs for the hours chart', () => {
+      // Get the configuration object passed to the Chart constructor for the first chart
+      const hoursChartConfig = ChartMock.mock.calls[0][1];
+      
+      // Test aggregation (5 + 2 = 7) and sorting
+      const expectedLabels = ['1/1/2025', '1/2/2025'];
+      const expectedData = [7, 3];
+
+      expect(hoursChartConfig.type).toBe('bar');
+      expect(hoursChartConfig.data.labels).toEqual(expectedLabels);
+      expect(hoursChartConfig.data.datasets[0].data).toEqual(expectedData);
+    });
+
+    it('should correctly count topics for the topics chart', () => {
+      // Get the configuration object for the second chart
+      const topicsChartConfig = ChartMock.mock.calls[1][1];
+      const expectedData = [2, 1]; // 2 active, 1 completed
+
+      expect(topicsChartConfig.type).toBe('doughnut');
+      expect(topicsChartConfig.data.labels).toEqual(['Active Topics', 'Completed Topics']);
+      expect(topicsChartConfig.data.datasets[0].data).toEqual(expectedData);
+    });
+
+    it('should destroy existing charts before creating new ones', () => {
+        // The first detectChanges() already created the charts.
+        // Let's call the creation methods again to simulate a refresh.
+        component.createHoursChart();
+        component.createTopicsChart();
+  
+        // Verify that the destroy method on our mock instance was called for both charts
+        expect(mockChartInstance.destroy).toHaveBeenCalledTimes(2);
+      });
   });
 
-  it('should create and render both charts with valid data', () => {
-    expect(component).toBeTruthy();
-    expect(mockedChart).toHaveBeenCalledTimes(2);
+  describe('with partial or no data', () => {
+    it('should only create the hours chart if only studyLogs are provided', async () => {
+      await configureTestingModule({
+        studyLogs: [{ date: '2025-01-01T12:00:00Z', hours: 5 }],
+        activeTopics: null, // Explicitly null
+        completedTopics: null
+      });
+      fixture.detectChanges();
+      
+      expect(ChartMock).toHaveBeenCalledTimes(1);
+      // Verify it was the hours chart by checking the label
+      expect(ChartMock.mock.calls[0][1].data.datasets[0].label).toBe('Hours Studied');
+    });
+
+    it('should only create the topics chart if only topic data is provided', async () => {
+        await configureTestingModule({
+          studyLogs: [], // Empty array
+          activeTopics: [{ id: 'a1' }],
+          completedTopics: [{ id: 'c1' }]
+        });
+        fixture.detectChanges();
+        
+        expect(ChartMock).toHaveBeenCalledTimes(1);
+        // Verify it was the topics chart by checking the label
+        expect(ChartMock.mock.calls[0][1].data.datasets[0].label).toBe('Topic Status');
+      });
+
+    it('should not create any charts if no data is provided', async () => {
+      await configureTestingModule({}); // Empty data object
+      fixture.detectChanges();
+      
+      expect(ChartMock).not.toHaveBeenCalled();
+    });
   });
 });
