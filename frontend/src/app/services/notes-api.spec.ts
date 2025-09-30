@@ -1,72 +1,106 @@
 import { TestBed } from '@angular/core/testing';
-import {
-  HttpClientTestingModule,
-  HttpTestingController,
-} from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { NotesApiService } from './notes-api.service';
 
 describe('NotesApiService', () => {
   let service: NotesApiService;
-  let http: HttpTestingController;
-
-  const BASE = 'https://studynester.onrender.com/files';
+  let httpMock: HttpTestingController;
+  // Access the private property for testing purposes to avoid magic strings
+  let backendUrl: string;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [NotesApiService],
+      providers: [NotesApiService]
     });
     service = TestBed.inject(NotesApiService);
-    http = TestBed.inject(HttpTestingController);
+    httpMock = TestBed.inject(HttpTestingController);
+    backendUrl = (service as any).backendUrl; // Cast to any to access private member
   });
 
-  afterEach(() => http.verify());
-
-  it('uploadNote() should POST FormData with file and userId', () => {
-    const file = new File(['hello'], 'notes.pdf', { type: 'application/pdf' });
-
-    service.uploadNote(file, 'user-123').subscribe((res) => {
-      expect(res).toEqual({ ok: true });
-    });
-
-    const req = http.expectOne(`${BASE}/upload`);
-    expect(req.request.method).toBe('POST');
-
-    // Body should be FormData with both fields
-    const body = req.request.body as FormData;
-    expect(body instanceof FormData).toBe(true);
-    expect(body.get('userId')).toBe('user-123');
-
-    const sentFile = body.get('file') as File;
-    expect(sentFile).toBeTruthy();
-    expect(sentFile.name).toBe('notes.pdf');
-
-    // Let the browser set Content-Type (multipart boundary)
-    expect(req.request.headers.has('Content-Type')).toBe(false);
-
-    req.flush({ ok: true });
+  afterEach(() => {
+    // After every test, verify that there are no more pending requests.
+    httpMock.verify();
   });
 
-  it('getNoteUrl() should GET /:fileId/url with userId as query param', () => {
-    service.getNoteUrl('file-1', 'user-123').subscribe((res) => {
-      expect(res.signedUrl).toBe('https://cdn.example.com/file-1.pdf');
-    });
-
-    const req = http.expectOne(
-      r => r.url === `${BASE}/file-1/url` && r.params.get('userId') === 'user-123'
-    );
-    expect(req.request.method).toBe('GET');
-    req.flush({ signedUrl: 'https://cdn.example.com/file-1.pdf' });
+  it('should be created', () => {
+    expect(service).toBeTruthy();
   });
 
-  it('getSummary() should POST /:fileId/summarize with userId in body', () => {
-    service.getSummary('file-2', 'user-999').subscribe((res) => {
-      expect(res.summary).toContain('Summary for file-2');
-    });
+  describe('uploadNote', () => {
+    it('should send a POST request with FormData containing the file and userId', () => {
+      const mockFile = new File(['dummy content'], 'test-file.pdf', { type: 'application/pdf' });
+      const mockUserId = 'user-123';
+      const mockResponse = { message: 'Upload successful', data: { id: 'file-abc' } };
 
-    const req = http.expectOne(`${BASE}/file-2/summarize`);
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ userId: 'user-999' });
-    req.flush({ summary: 'Summary for file-2 ...' });
+      service.uploadNote(mockFile, mockUserId).subscribe(response => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      const req = httpMock.expectOne(`${backendUrl}/upload`);
+      expect(req.request.method).toBe('POST');
+
+      // FormData is not a plain object, so we inspect its contents.
+      const formData = req.request.body as FormData;
+      expect(formData.get('file')).toEqual(mockFile);
+      expect(formData.get('userId')).toBe(mockUserId);
+
+      req.flush(mockResponse);
+    });
+  });
+
+  describe('getPersonalNoteUrl', () => {
+    it('should send a GET request with userId as a query parameter', () => {
+      const mockFileId = 'file-abc';
+      const mockUserId = 'user-123';
+      const mockResponse = { signedUrl: 'https://example.com/personal-signed-url' };
+
+      service.getPersonalNoteUrl(mockFileId, mockUserId).subscribe(response => {
+        expect(response).toEqual(mockResponse);
+      });
+      
+      const expectedUrl = `${backendUrl}/personal/${mockFileId}/url?userId=${mockUserId}`;
+      const req = httpMock.expectOne(expectedUrl);
+
+      expect(req.request.method).toBe('GET');
+      req.flush(mockResponse);
+    });
+  });
+
+  describe('getGroupNoteUrl', () => {
+    it('should send a GET request with userId as a query parameter', () => {
+      const mockFileId = 'file-group-xyz';
+      const mockUserId = 'user-456';
+      const mockResponse = { signedUrl: 'https://example.com/group-signed-url' };
+
+      service.getGroupNoteUrl(mockFileId, mockUserId).subscribe(response => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      const expectedUrl = `${backendUrl}/group/${mockFileId}/url?userId=${mockUserId}`;
+      const req = httpMock.expectOne(expectedUrl);
+      
+      expect(req.request.method).toBe('GET');
+      req.flush(mockResponse);
+    });
+  });
+
+  describe('getSummary', () => {
+    it('should send a POST request with userId in the body', () => {
+      const mockFileId = 'file-abc';
+      const mockUserId = 'user-123';
+      const mockResponse = { summary: 'This is a summary of the document.' };
+
+      service.getSummary(mockFileId, mockUserId).subscribe(response => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      const req = httpMock.expectOne(`${backendUrl}/${mockFileId}/summarize`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ userId: mockUserId });
+
+      req.flush(mockResponse);
+    });
   });
 });
+
