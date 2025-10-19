@@ -210,7 +210,7 @@ export class FilesService {
     // 4. Send the text to Gemini for summarization
     // ✅ FIXED: Changed model name to gemini-1.5-flash-latest
     const model = this.genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest", // ← Changed this line
+      model: "gemini-pro", // ← Changed this line
     });
     
     // Limit text length to avoid token limits
