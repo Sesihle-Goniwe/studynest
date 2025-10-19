@@ -66,6 +66,12 @@ Study Nest is a platform designed to help university students find study partner
 - **Backend**: NestJS
 - **Database & Auth**: Supabase
 
+## Documentation
+
+For a complete overview of the project architecture, API endpoints, and database schema, please see the full documentation.
+
+- [**View Full Project Documentation (PDF)**](documentation.pdf)
+
 ---
 
 ## Installation
