@@ -3,6 +3,12 @@
 Study Nest is a platform designed to help university students find study partners, join study groups, schedule sessions, and track their study progress. It acts as a community forum/social media for students to improve their learning experience and collaborate efficiently.
 
 ---
+## Live Application
+
+-   **Frontend (Angular on Cloudflare)**: [https://studynester.pages.dev/]
+-   **Backend API (NestJS on Render)**: [https://studynester.onrender.com/]
+
+---
 
 ## Features
 
