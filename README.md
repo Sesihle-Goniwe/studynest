@@ -1,6 +1,6 @@
-# Campus Study Buddy
+# Study Nest (Study Partner Tool)
 
-Campus Study Buddy is a platform designed to help university students find study partners, join study groups, schedule sessions, and track their study progress. It acts as a community forum/social media for students to improve their learning experience and collaborate efficiently.
+Study Nest is a platform designed to help university students find study partners, join study groups, schedule sessions, and track their study progress. It acts as a community forum/social media for students to improve their learning experience and collaborate efficiently.
 
 ---
 
@@ -47,7 +47,7 @@ Campus Study Buddy is a platform designed to help university students find study
   - CRUD for topics, completion status, and hour tracking
 
 - **Notifications API**
-  - Manage reminders and updates for sessions and tasks
+  - Manage reminders and updates for sessions
 
 ---
 
@@ -56,7 +56,7 @@ Campus Study Buddy is a platform designed to help university students find study
 - **User Profiles** – Student information, modules, and preferences
 - **Study Groups** – Group details and members
 - **Topics, Chapters, and Materials** – Learning materials and progress tracking
-- **Notifications & Reminders** – Alerts for sessions and deadlines
+- **Notifications & Reminders** – Alerts for sessions and reminders
 
 ---
 
