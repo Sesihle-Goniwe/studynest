@@ -164,50 +164,92 @@ export class FilesService {
     return data;
   }
   async summarize(fileId: string, userId: string) {
-    try {
-      // <-- Start of the try block
-      const supabase = this.supabaseService.getClient();
+  try {
+    console.log(`=== SUMMARIZATION START === FileId: ${fileId}, UserId: ${userId}`);
+    const supabase = this.supabaseService.getClient();
 
-      // 1. Find the file path in your database
-      const { data: fileData, error: fileError } = await supabase
-        .from("study_notes")
-        .select("file_path")
-        .eq("id", fileId)
-        .eq("user_id", userId)
-        .single();
-      if (fileError) {
-        throw new NotFoundException("File not found or access denied.");
-      }
-
-      // 2. Download the file from Supabase Storage
-      const { data: blob, error: downloadError } = await supabase.storage
-        .from("study-notes")
-        .download(fileData.file_path);
-      if (downloadError) {
-        throw new InternalServerErrorException("Failed to download file.");
-      }
-
-      // 3. Extract text from the PDF buffer
-      const buffer = Buffer.from(await blob.arrayBuffer());
-      const pdfData = await pdfParse(buffer);
-      const textContent = pdfData.text;
-
-      // 4. Send the text to Gemini for summarization
-      const model = this.genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-      });
-      const prompt = `Summarize the following study notes in clear, concise points:\n\n${textContent}`;
-      const result = await model.generateContent(prompt);
-
-      return { summary: result.response.text() };
-    } catch (error) {
-      // <-- Start of the catch block
-      // This will log the REAL error to your backend terminal
-      console.error("--- ERROR DURING SUMMARIZATION ---", error);
-      // Re-throw a standard error to the frontend
-      throw new InternalServerErrorException(
-        "An unexpected error occurred during summarization.",
-      );
+    // 1. Find the file path in your database
+    const { data: fileData, error: fileError } = await supabase
+      .from("study_notes")
+      .select("file_path")
+      .eq("id", fileId)
+      .eq("user_id", userId)
+      .single();
+      
+    if (fileError || !fileData) {
+      console.error("❌ File lookup failed:", fileError);
+      throw new NotFoundException("File not found or access denied.");
     }
+
+    console.log("✅ File path found:", fileData.file_path);
+
+    // 2. Download the file from Supabase Storage
+    const { data: blob, error: downloadError } = await supabase.storage
+      .from("study-notes")
+      .download(fileData.file_path);
+      
+    if (downloadError || !blob) {
+      console.error("❌ Download failed:", downloadError);
+      throw new InternalServerErrorException("Failed to download file from storage.");
+    }
+
+    console.log("✅ File downloaded successfully, size:", blob.size, "bytes");
+
+    // 3. Extract text from the PDF buffer
+    const buffer = Buffer.from(await blob.arrayBuffer());
+    console.log("✅ Buffer created, length:", buffer.length);
+    
+    const pdfData = await pdfParse(buffer);
+    const textContent = pdfData.text;
+    console.log("✅ PDF text extracted, length:", textContent.length, "chars");
+
+    if (!textContent || textContent.trim().length === 0) {
+      throw new InternalServerErrorException("No text content found in PDF.");
+    }
+
+    // 4. Send the text to Gemini for summarization
+    // ✅ FIXED: Changed model name to gemini-1.5-flash-latest
+    const model = this.genAI.getGenerativeModel({
+      model: "gemini-1.5-flash-latest", // ← Changed this line
+    });
+    
+    // Limit text length to avoid token limits
+    const maxLength = 50000;
+    const truncatedText = textContent.length > maxLength 
+      ? textContent.substring(0, maxLength) + "\n\n[Text truncated due to length...]"
+      : textContent;
+    
+    console.log("✅ Prepared text for Gemini, length:", truncatedText.length);
+    
+    const prompt = `Summarize the following study notes in clear, concise bullet points. Focus on key concepts and important information:\n\n${truncatedText}`;
+    
+    console.log("📤 Sending request to Gemini API...");
+    const result = await model.generateContent(prompt);
+    const summary = result.response.text();
+    
+    console.log("✅ Summary generated successfully, length:", summary.length);
+    console.log("=== SUMMARIZATION END ===");
+    
+    return { summary };
+    
+  } catch (error) {
+    console.error("❌❌❌ DETAILED ERROR DURING SUMMARIZATION ❌❌❌");
+    console.error("Error type:", error.constructor.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    console.error("❌❌❌ END ERROR LOG ❌❌❌");
+    
+    // If it's already a NestJS exception, rethrow it
+    if (error instanceof NotFoundException || 
+        error instanceof InternalServerErrorException ||
+        error instanceof ForbiddenException) {
+      throw error;
+    }
+    
+    // Otherwise wrap it with more details
+    throw new InternalServerErrorException(
+      `Summarization failed: ${error.message}`,
+    );
   }
+}
 }

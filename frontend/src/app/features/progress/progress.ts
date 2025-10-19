@@ -345,13 +345,23 @@ openLogHoursDialog(topic?: any): void {
       alert('This topic has no file to summarize.');
       return;
     }
-    // Get the summary as an Observable
+    
+    // Show loading state
     const summary$ = this.notesApiService.getSummary(topic.file_id, this.currentUser.id);
 
     // Open the dialog and pass the Observable to it
-    this.dialog.open(SummaryDialogComponent, {
+    const dialogRef = this.dialog.open(SummaryDialogComponent, {
       width: "1000px",
       data: { summary$ }
+    });
+    
+    // Optional: Add error handling here
+    summary$.subscribe({
+      error: (err) => {
+        console.error('Summarization error details:', err);
+        alert(`Failed to generate summary: ${err.error?.message || err.message || 'Unknown error'}`);
+        dialogRef.close();
+      }
     });
   }
 
