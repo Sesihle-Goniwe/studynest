@@ -28,11 +28,13 @@ export class UpcomingEventsService {
       map(events => 
         // The filter keeps only the events that match our criteria
         events.filter(event =>
-          event.title.toLowerCase().includes('tech') ||
-          event.title.toLowerCase().includes('ai') ||
-          event.title.toLowerCase().includes('workshop') ||
+          event.title.toLowerCase().includes('graduation') ||
+          event.title.toLowerCase().includes('chat') ||
+          event.title.toLowerCase().includes('coding') ||
           event.title.toLowerCase().includes('study') ||
-          event.title.toLowerCase().includes('CSAM') ||
+          event.title.toLowerCase().includes('cybersecurity') ||
+          event.title.toLowerCase().includes('panel') ||
+          event.description.toLowerCase().includes('education') ||
           event.description.toLowerCase().includes('study')
         )
       )
