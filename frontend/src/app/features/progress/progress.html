@@ -101,22 +101,18 @@
           <tr>
             <th scope="col">Topic</th>
             <th scope="col">Date Completed</th>
-            <th scope="col">Actions</th>
           </tr>
         </thead>
         @if (completedTopics.length) {
           <tbody>
-            @for (topic of completedTopics; track topic.id) { <tr>
-                <td>{{ topic.name | removeExtension }}</td>
-                <td>{{ topic.date_completed | date:'short' }}</td>
-                <td class="actions-cell">
-                  <button 
-                    type="button" 
-                    class="view-btn"
-                    (click)="viewTopicPdf(topic)">
-                    View
-                  </button>
+             @for (topic of completedTopics; track topic.id) { 
+              <tr>
+                <td>
+                  <span class="clickable-topic" (click)="viewTopicPdf(topic)">
+                    {{ topic.name | removeExtension }}
+                  </span>
                 </td>
+                <td>{{ topic.date_completed | date:'short' }}</td>
               </tr>
             }
           </tbody>
