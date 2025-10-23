@@ -97,14 +97,15 @@ export class ProgressTracker implements OnInit {
   // --- File Selection & Drag-and-Drop ---
 
   onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.selectedFile = input.files[0];
-      this.uploadStatus = null;
-      console.log(`File selected: ${this.selectedFile.name}`); 
-    }
+  const input = event.target as HTMLInputElement;
+  
+  if (input.files?.length) {
+    this.selectedFile = input.files[0];
+    this.uploadStatus = null;
+    console.log(`File selected: ${this.selectedFile.name}`);
+    this.cdr.detectChanges();
   }
-
+}
   onDragOver(event: DragEvent): void {
     event.preventDefault();
   }
