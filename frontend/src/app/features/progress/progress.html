@@ -7,14 +7,19 @@
             (drop)="onDrop($event)" 
             aria-label="Upload Study Notes">
       <label for="fileUpload" class="dropzone-label">
-        <input #fileInput type="file" id="fileUpload" (change)="onFileSelected($event)" hidden />
+        <input #fileInput 
+                type="file" 
+                id="fileUpload" 
+                (change)="onFileSelected($event)"
+                (input)="onFileSelected($event)"
+                hidden />
         <div class="dropzone-content">
           
           @if (!selectedFile) {
             <h2>Upload Study Notes</h2>
             <p>
               <strong>Drop your study topic here</strong> or 
-              <span class="upload-link" (click)="fileInput.click()">click to upload</span>
+              <span class="upload-link">click to upload</span>
             </p>
           } @else {
             <div class="file-ready-container">
