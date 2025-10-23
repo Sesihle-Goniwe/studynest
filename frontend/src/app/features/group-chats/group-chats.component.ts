@@ -53,6 +53,8 @@ export class GroupChatsComponent implements OnInit, AfterViewChecked, OnDestroy 
   ) {}
 
   ngOnInit(): void {
+    this.loadMessages();
+    this.startPolling();
     this.groupId = this.route.snapshot.paramMap.get('groupId');
     this.groupName = this.route.snapshot.queryParamMap.get('name');
 
