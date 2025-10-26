@@ -163,15 +163,14 @@ $accent: #4a9eff;
       }
       
       &.card-1 {
-        top: 0;
+        top: 10%;
         right: 0;
         animation: float 6s ease-in-out infinite;
       }
       
       &.card-2 {
-        top: 50%;
+        top: 40%;
         right: 20%;
-        transform: translateY(-50%);
         animation: float 6s ease-in-out infinite 2s;
       }
       
