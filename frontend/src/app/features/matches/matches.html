@@ -108,4 +108,10 @@
   <p>You haven't rejected any partners yet.</p>
 }
 
+@if (showNotification) {
+  <div class="notification notification-{{ notificationType }}">
+    {{ notificationMessage }}
+  </div>
+}
+
 
