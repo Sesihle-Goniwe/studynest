@@ -41,11 +41,10 @@ addStudentCourse(studentId: string, course: { course_code: string, course_name: 
 
   // skip a student
   skipMatch(userId: string, matchedUserId: string): Observable<any> {
-    // Changed to a PATCH request to the correct endpoint
-    return this.http.patch(`${this.apiUrl}/match-status`, {
+    //post request to /unmatch
+    return this.http.post(`${this.apiUrl}/unmatch`, {
       userId,
-      matchedUserId,
-      status: 'rejected' // Set the status to 'rejected' for skipping
+      matchedUserId
     });
   }
   // get already matched partners

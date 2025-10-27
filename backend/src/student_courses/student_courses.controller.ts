@@ -37,6 +37,12 @@ export class StudentCoursesController {
   async addMatch(@Body() body: { userId: string; matchedUserId: string }) {
     return this.studentCoursesService.addMatch(body.userId, body.matchedUserId);
   }
+  // ❌ Remove a match
+  @Post("unmatch")
+  async unMatch(@Body() body: { userId: string; matchedUserId: string }) {
+    return this.studentCoursesService.unMatch(body.userId, body.matchedUserId);
+  }
+
 
   // 🔄 Update match status (like, reject, matched, etc.)
   @Patch("match-status")
