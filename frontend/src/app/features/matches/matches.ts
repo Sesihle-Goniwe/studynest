@@ -24,6 +24,13 @@ export class Matches implements OnInit {
 
   currentUserId: string | null = null;
 
+  // notification state
+  showNotification: boolean = false;
+  notificationMessage: string | null = null;
+  notificationType: 'success' | 'info' | 'error' = 'success';
+  private notificationTimeoutId: any = null;
+
+
   constructor(private studentCoursesService: StudentCoursesService,
      private authService: AuthService,
      private router: Router) {}
@@ -92,6 +99,7 @@ export class Matches implements OnInit {
 
     this.studentCoursesService.saveMatch(this.currentUserId, student.students.user_id).subscribe({
       next: () => {
+        this.setNotification('Matched Successfully', 'success');
         this.nextStudent();
       },
       error: (err) => console.error(err)
@@ -106,6 +114,7 @@ export class Matches implements OnInit {
 
     this.studentCoursesService.skipMatch(this.currentUserId, student.students.user_id).subscribe({
       next: () => {
+        this.setNotification('Skipped Successfully', 'success');
         this.nextStudent();
       },
       error: (err) => console.error(err)
@@ -166,8 +175,22 @@ export class Matches implements OnInit {
 
   viewProfile(userId: string) {
     this.router.navigate(['/profile', userId]);
+  }
 
+  setNotification(message: string, type: 'success' | 'info' | 'error' = 'success', durationMs = 3000) 
+    {
+    this.notificationMessage = message;
+    this.notificationType = type;
+    this.showNotification = true;
 
+    if (this.notificationTimeoutId) {
+      clearTimeout(this.notificationTimeoutId);
+    }
+    this.notificationTimeoutId = setTimeout(() => {
+      this.showNotification = false;
+      this.notificationMessage = null;
+      this.notificationTimeoutId = null;
+    }, durationMs);
   }
 }
 
