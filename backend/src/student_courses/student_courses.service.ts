@@ -170,6 +170,31 @@ export class StudentCoursesService {
     if (error) throw error;
     return data;
   }
+  async unMatch(userId: string, matchedUserId: string) {
+    const supabase = this.supabaseService.getClient();
+
+    // Prevent self-matching
+    if (userId === matchedUserId) {
+      throw new Error("You cannot match with yourself.");
+    }
+
+    // Insert or update the match
+    const { data, error } = await supabase
+      .from("matched_students")
+      .upsert(
+        {
+          user_id: userId,
+          matched_user_id: matchedUserId,
+          status: "rejected",
+          updated_at: new Date(),
+        },
+        { onConflict: "user_id, matched_user_id" },
+      )
+      .select();
+
+    if (error) throw error;
+    return data;
+  }
 
   async updateMatchStatus(
     userId: string,
