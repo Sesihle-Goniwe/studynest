@@ -314,7 +314,7 @@ openLogHoursDialog(topic?: any): void {
       this.rankingsChart.destroy();
     }
     
-    const labels = this.rankingData.map(d => d.email.split('@')[0]);
+      const labels = this.rankingData.map(d => d.full_name || d.email?.split('@')[0] || 'Unknown');
     const data = this.rankingData.map(d => d.total_hours);
 
     const backgroundColors = this.rankingData.map(d => 
