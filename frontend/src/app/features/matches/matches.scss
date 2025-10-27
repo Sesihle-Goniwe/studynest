@@ -351,3 +351,18 @@ $warning: #ffc107;
   to { transform: scale(1); }
 }
 
+.notification {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 16px;
+  border-radius: 6px;
+  color: #fff;
+  z-index: 2000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.notification-success { background: #28a745; }
+.notification-info    { background: #007bff; }
+.notification-error   { background: #dc3545; }
+
