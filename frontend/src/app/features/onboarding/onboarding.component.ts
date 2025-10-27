@@ -82,7 +82,17 @@ export class OnboardingComponent {
     'Pharmacy',
     'Physics',
     'Psychology',
-    'Statistics'
+    'Statistics',
+    'Artificial Intelligence',
+    'Cybersecurity',
+    'Environmental Science',
+    'Entrepreneurship',
+    'Industrial Engineering',
+    'Human Resource Management',
+    'Political Science',
+    'Public Health',
+    'Social Work',
+    'Software Engineering'
   ];
 
   // Year of study options
