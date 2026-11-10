@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { AuthService } from './auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { Subscription, filter, take, timer } from 'rxjs';
@@ -41,19 +41,20 @@ export class CallbackComponent implements OnDestroy {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {
     // Set a timeout in case authentication hangs
-    this.timeoutSub = timer(10000).subscribe(() => {
+    this.timeoutSub = timer(12000).subscribe(() => {
       if (!this.error) {
         this.error = 'Login is taking longer than expected...';
       }
     });
 
-    // Subscribe to auth state changes
+    // Subscribe to auth state changes - single source of truth for routing
     this.authSub = this.authService.currentUser$.pipe(
-      filter(user => user !== null), // Only proceed when we have a user
-      take(1) // Complete after first emission
+      filter(user => user !== null),
+      take(1)
     ).subscribe({
       next: (user) => this.handleUserChange(user),
       error: (err) => this.handleError(err)
@@ -67,9 +68,20 @@ export class CallbackComponent implements OnDestroy {
     }
 
     try {
-      const isOnboarded = await this.authService.checkOnboardingStatus(user.id);
-      const redirectUrl = isOnboarded ? '/dashboard' : '/onboarding';
-      this.router.navigateByUrl(redirectUrl, { replaceUrl: true });
+      const isOnboarded = await this.authService.checkOnboardingStatus();
+      const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+
+      if (!isOnboarded) {
+        this.router.navigateByUrl('/onboarding', { replaceUrl: true });
+        return;
+      }
+
+      // If user is onboarded, honor returnUrl or fall back to dashboard
+      const targetUrl = returnUrl && !returnUrl.startsWith('/login') && !returnUrl.startsWith('/onboarding')
+        ? returnUrl
+        : '/dashboard';
+
+      this.router.navigateByUrl(targetUrl, { replaceUrl: true });
     } catch (err) {
       console.error('Onboarding check failed:', err);
       this.snackBar.open('Error verifying your account status', 'Close', {

@@ -32,26 +32,12 @@ export class DashboardComponent implements OnInit {
     private eventsService: UpcomingEventsService
   ) {}
 
-  ngOnInit() 
-  {
+  ngOnInit() {
     const user = this.authser.getCurrentUser();
-    if (user && !sessionStorage.getItem('dashboardRefreshed')) {
-    sessionStorage.setItem('dashboardRefreshed', 'true');
-    location.reload(); 
-    location.reload(); 
-    return; 
-  }
     if (user) {
       this.userID = user.id;
       this.displayName = this.authser.getUserDisplayName();
-      if (this.displayName) 
-        {
-        this.userSer.updateUserName(this.userID, this.displayName).subscribe();
-      }
-
-      
     }
-    
     this.loadNotifications();
     this.loadUpcomingEvents();
   }

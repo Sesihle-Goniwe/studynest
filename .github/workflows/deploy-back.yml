@@ -14,13 +14,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Install dependencies
+      # Step 2: Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      # Step 3: Setup Node.js & cache
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          cache-dependency-path: backend/pnpm-lock.yaml
+
+      # Step 4: Verify backend dependencies install cleanly
       - name: Install backend dependencies
         run: |
           cd backend
-          npm install
+          pnpm install --frozen-lockfile
 
-      # Step 3: Trigger Render deploy via hook
+      # Step 5: Trigger Render deploy via hook
       - name: Deploy to Render
         run: |
           echo "Triggering backend deploy on Render..."

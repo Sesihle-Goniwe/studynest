@@ -13,16 +13,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'pnpm'
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install dependencies & build frontend
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          API_BASE_URL: ${{ vars.API_BASE_URL || secrets.API_BASE_URL || 'https://studynester.onrender.com' }}
         run: |
           cd frontend
-          npm install --legacy-peer-deps
-          npm run build -- --base-href /
+          pnpm install --frozen-lockfile
+          pnpm run build -- --base-href /
 
       - name: Deploy to Cloudflare Pages via Wrangler
         uses: cloudflare/wrangler-action@v3

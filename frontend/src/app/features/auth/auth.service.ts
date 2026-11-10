@@ -1,9 +1,16 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Router } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { filter, take } from 'rxjs/operators';
+
+export interface OnboardingData {
+  university: string;
+  course: string;
+  year: number;
+  fullName?: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -11,17 +18,26 @@ import { FormBuilder, Validators } from '@angular/forms';
 export class AuthService {
   private supabase: SupabaseClient;
   private currentUser = new BehaviorSubject<User | null>(null);
-  private isLoading = new BehaviorSubject<boolean>(false);
+  private isOnboarded = new BehaviorSubject<boolean | null>(null);
+  private isLoading = new BehaviorSubject<boolean>(true);
+  private initialSessionResolved = new BehaviorSubject<boolean>(false);
 
   // Observable streams
   public currentUser$ = this.currentUser.asObservable();
+  public isOnboarded$ = this.isOnboarded.asObservable();
   public isLoading$ = this.isLoading.asObservable();
 
-  constructor(private router: Router, private fb: FormBuilder) {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+  private apiUrl = environment.apiBaseUrl;
+
+  constructor(private http: HttpClient) {
+    this.supabase = createClient(
+      environment.supabaseUrl,
+      environment.supabaseKey,
+      environment.supabaseOptions
+    );
 
     // Initialize auth state listener
-    this.supabase.auth.onAuthStateChange((event, session) => {
+    this.supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         this.handleAuthChange(session?.user ?? null);
       } else if (event === 'SIGNED_OUT') {
@@ -33,169 +49,152 @@ export class AuthService {
     this.loadInitialUser();
   }
 
-  // Initialize the onboarding form with validation
-  createOnboardingForm() {
-    return this.fb.group({
-      university: ['', Validators.required],
-      course: ['', Validators.required],
-      year: [null, [Validators.required, Validators.min(1)]]
-    });
+  getCurrentUser(): User | null {
+    return this.currentUser.value;
   }
 
-  getCurrentUser(): User | null {
-  return this.currentUser.value;
-}
-
-getUserDisplayName () : string | null{
+  getUserDisplayName(): string | null {
     const user = this.currentUser.value;
-
-
-    return(
+    return (
       user?.user_metadata?.['full_name'] ||
       user?.user_metadata?.['name'] ||
       user?.email ||
       null
     );
-}
+  }
 
-  // Handle authentication state changes
-  private async handleAuthChange(user: User | null) 
-  {
+  /**
+   * Retrieves the current active access token.
+   * Auto-refreshes if needed via Supabase client.
+   */
+  async getAccessToken(): Promise<string | null> {
+    const { data: { session } } = await this.supabase.auth.getSession();
+    return session?.access_token || null;
+  }
+
+  /**
+   * Awaits until initial session resolution is complete.
+   * Crucial for route guards preventing flash-redirect to /login on F5 refresh.
+   */
+  async waitForInitialSession(): Promise<User | null> {
+    if (this.initialSessionResolved.value) {
+      return this.currentUser.value;
+    }
+    await firstValueFrom(
+      this.initialSessionResolved.pipe(
+        filter(resolved => resolved === true),
+        take(1)
+      )
+    );
+    return this.currentUser.value;
+  }
+
+  // Handle authentication state changes purely in state (no navigation)
+  private handleAuthChange(user: User | null): void {
     this.currentUser.next(user);
-     if (user) {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-  } else {
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('currentUser');
+      this.isOnboarded.next(null);
+    }
+  }
+
+  private handleSignOut(): void {
+    this.currentUser.next(null);
+    this.isOnboarded.next(null);
     localStorage.removeItem('currentUser');
   }
-    
-    if (user) {
-      // For new users, redirect to onboarding
-      const isNewUser = await this.checkIsNewUser(user.id);
-      if (isNewUser) {
-        this.router.navigate(['/onboarding']);
-      } 
-    }
-  }
 
-  private handleSignOut() {
-    this.currentUser.next(null);
-    localStorage.removeItem('currentUser'); // ensure user cleared
-    this.router.navigate(['/login']);
-  }
-
-private async loadInitialUser() {
-  this.isLoading.next(true);
-  try {
-    // Try to restore from localStorage first
-    const stored = localStorage.getItem('currentUser');
-    if (stored) {
-      this.currentUser.next(JSON.parse(stored));
-    } else {
-      // Fallback: get from Supabase session
-      const { data: { user }, error } = await this.supabase.auth.getUser();
+  private async loadInitialUser(): Promise<void> {
+    this.isLoading.next(true);
+    try {
+      const { data: { session }, error } = await this.supabase.auth.getSession();
       if (error) throw error;
+      const user = session?.user ?? null;
       this.currentUser.next(user);
-      if (user) localStorage.setItem('currentUser', JSON.stringify(user));
-    }
-  } catch (error) {
-    console.error('Error loading initial user:', error);
-  } finally {
-    this.isLoading.next(false);
-  }
-}
-
-
-  private async checkIsNewUser(userId: string): Promise<boolean> {
-    if (!userId) return true;
-    
-    try {
-      const { data, error } = await this.supabase
-        .from('students')
-        .select('user_id')
-        .eq('user_id', userId)
-        .single();
-
-      return !data;
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+      }
     } catch (error) {
-      return true;
+      console.error('Error loading initial session:', error);
+      this.currentUser.next(null);
+    } finally {
+      this.isLoading.next(false);
+      this.initialSessionResolved.next(true);
     }
   }
 
-  // Check if user has completed onboarding
-  public async checkOnboardingStatus(userId: string): Promise<boolean> {
-    try {
-      const { data, error } = await this.supabase
-        .from('students')
-        .select('university, course, year')
-        .eq('user_id', userId)
-        .single();
+  /**
+   * Check onboarding status through the backend API.
+   * Caches the result in this.isOnboarded state.
+   */
+  async checkOnboardingStatus(): Promise<boolean> {
+    if (this.isOnboarded.value !== null) {
+      return this.isOnboarded.value;
+    }
 
-      if (error) throw error;
-      return !!data?.university && !!data?.course && !!data?.year;
+    try {
+      const token = await this.getAccessToken();
+      if (!token) return false;
+
+      const response = await firstValueFrom(
+        this.http.get<{ isOnboarded: boolean }>(`${this.apiUrl}/students/me/status`)
+      );
+      const status = Boolean(response?.isOnboarded);
+      this.isOnboarded.next(status);
+      return status;
     } catch (error) {
-      console.error('Error checking onboarding status:', error);
+      console.error('Error checking onboarding status from backend:', error);
       return false;
     }
   }
 
-async signInWithGoogle() {
-  return this.supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${window.location.origin}/auth-callback`,
-      queryParams: {
-          prompt: 'select_account' 
-        }
-    }
-  });
-}
-
-async signInWithMicrosoft(): Promise<void> {
-  this.isLoading.next(true);
-  try {
-    const { error } = await this.supabase.auth.signInWithOAuth({
-      provider: 'azure',
+  async signInWithGoogle() {
+    return this.supabase.auth.signInWithOAuth({
+      provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth-callback`,
-        scopes: 'openid email profile',
         queryParams: {
           prompt: 'select_account'
-         
         }
       }
     });
-    if (error) throw error;
-  } finally {
-    this.isLoading.next(false);
   }
-}
 
-  async completeOnboarding(profileData: {
-    university: string;
-    course: string;
-    year: number;
-  }): Promise<void> {
+  async signInWithMicrosoft(): Promise<void> {
     this.isLoading.next(true);
-    const user = this.currentUser.value;
-    
-    if (!user) {
-      this.isLoading.next(false);
-      throw new Error('No authenticated user');
-    }
-
     try {
-      const { error } = await this.supabase.from('students').upsert({
-        user_id: user.id,
-        email: user.email,
-        university: profileData.university,
-        course: profileData.course,
-        year: profileData.year,
-        created_at: new Date(),
-        updated_at: new Date()
+      const { error } = await this.supabase.auth.signInWithOAuth({
+        provider: 'azure',
+        options: {
+          redirectTo: `${window.location.origin}/auth-callback`,
+          scopes: 'openid email profile',
+          queryParams: {
+            prompt: 'select_account'
+          }
+        }
       });
-
       if (error) throw error;
-      this.router.navigate(['/dashboard']);
+    } finally {
+      this.isLoading.next(false);
+    }
+  }
+
+  /**
+   * Submit onboarding data via the backend POST /students/onboard endpoint.
+   */
+  async completeOnboarding(profileData: OnboardingData): Promise<any> {
+    this.isLoading.next(true);
+    try {
+      const response = await firstValueFrom(
+        this.http.post<{ success: boolean; student: any }>(
+          `${this.apiUrl}/students/onboard`,
+          profileData
+        )
+      );
+      this.isOnboarded.next(true);
+      return response;
     } catch (error) {
       console.error('Onboarding completion error:', error);
       throw error;
@@ -208,8 +207,7 @@ async signInWithMicrosoft(): Promise<void> {
   async signOut(): Promise<void> {
     this.isLoading.next(true);
     try {
-      const { error } = await this.supabase.auth.signOut();
-      if (error) throw error;
+      await this.supabase.auth.signOut();
       this.handleSignOut();
     } catch (error) {
       console.error('Sign out error:', error);

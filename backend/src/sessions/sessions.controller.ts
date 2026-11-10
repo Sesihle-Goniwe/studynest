@@ -1,5 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { SessionsService } from "./sessions.service";
+import { CurrentUser } from "../decorators/current-user.decorator";
+
 @Controller("sessions")
 export class SessionsController {
   constructor(private readonly sessionsSer: SessionsService) {}
@@ -18,8 +20,10 @@ export class SessionsController {
   async getUserRole(
     @Param("groupId") groupId: string,
     @Param("userId") userId: string,
+    @CurrentUser("id") callerId?: string,
   ) {
-    return this.sessionsSer.getUserRole(groupId, userId);
+    const targetId = userId === "me" ? callerId : callerId || userId;
+    return this.sessionsSer.getUserRole(groupId, targetId!);
   }
 
   @Delete(":sessionId")
@@ -31,7 +35,9 @@ export class SessionsController {
   async leaveGroup(
     @Param("groupId") groupId: string,
     @Param("userId") userId: string,
+    @CurrentUser("id") callerId?: string,
   ) {
-    return this.sessionsSer.leaveGroup(groupId, userId);
+    const targetId = userId === "me" ? callerId : callerId || userId;
+    return this.sessionsSer.leaveGroup(groupId, targetId!);
   }
 }

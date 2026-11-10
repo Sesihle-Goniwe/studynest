@@ -1,13 +1,15 @@
 import { Routes } from '@angular/router';
-import { LayoutComponent } from './layout/layout'; // Corrected import
+import { LayoutComponent } from './layout/layout';
 import { CallbackComponent } from './features/auth/callback.component';
 import { Home } from './features/home/home';
-import {Profile} from './features/profile/profile';
+import { Profile } from './features/profile/profile';
+import { authGuard, onboardingGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  // --- Routes WITHOUT the sidebar ---
+  // --- Public Unprotected Routes ---
   {
     path: '',
+    pathMatch: 'full',
     component: Home,
   },
   {
@@ -16,43 +18,49 @@ export const routes: Routes = [
   },
   {
     path: 'signup',
-    loadComponent: () => import('./features/signup/signup.component').then(m => m.SignupComponent)
+    loadComponent: () => import('./features/signup/signup.component').then(m => m.SignupComponent),
   },
   {
     path: 'auth-callback',
-    component: CallbackComponent
+    component: CallbackComponent,
   },
   {
     path: 'about',
-    loadComponent: () => import('./features/about-us/about-us').then(m => m.AboutUsComponent)
+    loadComponent: () => import('./features/about-us/about-us').then(m => m.AboutUsComponent),
   },
-  {
-        path: 'dashboard', // It's good practice to keep the dashboard here too
-        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
-  },
+
+  // --- Onboarding Route (Requires auth session, blocks if already completed) ---
   {
     path: 'onboarding',
-    loadComponent: () => import('./features/onboarding/onboarding.component').then(m => m.OnboardingComponent)
+    canActivate: [authGuard, onboardingGuard],
+    loadComponent: () => import('./features/onboarding/onboarding.component').then(m => m.OnboardingComponent),
   },
-  
 
-  // --- Parent route that USES the sidebar layout ---
+  // --- Protected Routes (Requires auth session + completed onboarding) ---
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [authGuard, onboardingGuard],
     children: [
-      // --- All routes inside this 'children' array WILL have the sidebar ---
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
+      },
       {
         path: 'students',
         loadComponent: () => import('./features/students/students').then(m => m.StudentsList),
       },
       {
         path: 'profile',
-        loadComponent: () => import('./features/profile/profile').then(m => m.Profile)
+        loadComponent: () => import('./features/profile/profile').then(m => m.Profile),
+      },
+      {
+        path: 'profile/:userId',
+        component: Profile,
       },
       {
         path: 'studygroup',
-        loadComponent: () => import('./features/studygroup/studygroup').then(m => m.StudygroupComponent)
+        loadComponent: () => import('./features/studygroup/studygroup').then(m => m.StudygroupComponent),
       },
       {
         path: 'progress',
@@ -68,18 +76,18 @@ export const routes: Routes = [
       },
       {
         path: 'matches',
-        loadComponent: () => import('./features/matches/matches').then(m => m.Matches)
+        loadComponent: () => import('./features/matches/matches').then(m => m.Matches),
       },
       {
         path: 'groupChats/:groupId',
-        loadComponent: () => import('./features/group-chats/group-chats.component').then(m => m.GroupChatsComponent)
+        loadComponent: () => import('./features/group-chats/group-chats.component').then(m => m.GroupChatsComponent),
       },
+    ],
+  },
 
-      { 
-      path: 'profile/:userId', component: Profile
-     },
-    ]
-  }
+  // Fallback
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
-
-

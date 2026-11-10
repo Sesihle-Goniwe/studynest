@@ -1,14 +1,18 @@
 import { Controller, Get, Patch, Param, Post, Body } from "@nestjs/common";
 import { StudentCoursesService } from "./student_courses.service";
+import { CurrentUser } from "../decorators/current-user.decorator";
 
 @Controller("student-courses")
 export class StudentCoursesController {
-  constructor(private studentCoursesService: StudentCoursesService) {} //
+  constructor(private studentCoursesService: StudentCoursesService) {}
 
-  // Change your route to accept userId as a path param
   @Get("matches/:userId")
-  async findMatches(@Param("userId") userId: string) {
-    return this.studentCoursesService.findMatchingStudents(userId);
+  async findMatches(
+    @Param("userId") userId: string,
+    @CurrentUser("id") callerId?: string,
+  ) {
+    const targetId = userId === "me" ? callerId : callerId || userId;
+    return this.studentCoursesService.findMatchingStudents(targetId!);
   }
 
   @Post("add-course")
@@ -22,48 +26,60 @@ export class StudentCoursesController {
   async addStudentCourses(
     @Body()
     body: {
-      studentId: string;
+      studentId?: string;
       courses: { course_code: string; course_name: string }[];
     },
+    @CurrentUser("id") callerId?: string,
   ) {
+    const studentId = callerId || body?.studentId;
     return this.studentCoursesService.addStudentCourses(
-      body.studentId,
+      studentId!,
       body.courses,
     );
   }
 
-  // ✅ Create a match
   @Post("match")
-  async addMatch(@Body() body: { userId: string; matchedUserId: string }) {
-    return this.studentCoursesService.addMatch(body.userId, body.matchedUserId);
+  async addMatch(
+    @Body() body: { userId?: string; matchedUserId: string },
+    @CurrentUser("id") callerId?: string,
+  ) {
+    const userId = callerId || body?.userId;
+    return this.studentCoursesService.addMatch(userId!, body.matchedUserId);
   }
-  // ❌ Remove a match
+
   @Post("unmatch")
-  async unMatch(@Body() body: { userId: string; matchedUserId: string }) {
-    return this.studentCoursesService.unMatch(body.userId, body.matchedUserId);
+  async unMatch(
+    @Body() body: { userId?: string; matchedUserId: string },
+    @CurrentUser("id") callerId?: string,
+  ) {
+    const userId = callerId || body?.userId;
+    return this.studentCoursesService.unMatch(userId!, body.matchedUserId);
   }
 
-
-  // 🔄 Update match status (like, reject, matched, etc.)
   @Patch("match-status")
   async updateMatchStatus(
     @Body()
     body: {
-      userId: string;
+      userId?: string;
       matchedUserId: string;
       status: "pending" | "liked" | "matched" | "rejected";
     },
+    @CurrentUser("id") callerId?: string,
   ) {
+    const userId = callerId || body?.userId;
     return this.studentCoursesService.updateMatchStatus(
-      body.userId,
+      userId!,
       body.matchedUserId,
       body.status,
     );
   }
 
-  // 👀 Get my matched partners
   @Get("matched/:userId")
-  async getMyMatches(@Param("userId") userId: string) {
-    return this.studentCoursesService.getMyMatches(userId);
+  async getMyMatches(
+    @Param("userId") userId: string,
+    @CurrentUser("id") callerId?: string,
+  ) {
+    const targetId = userId === "me" ? callerId : callerId || userId;
+    return this.studentCoursesService.getMyMatches(targetId!);
   }
 }

@@ -12,32 +12,30 @@ import { NotificationsModule } from "./notifications/notifications.module";
 import { MailerModule } from "./mailer/mailer.module";
 import { ProgressModule } from "./progress/progress.module";
 import { ScheduleModule } from "@nestjs/schedule";
-//import { HttpModule } from '@nestjs/axios';
 import { StudentCoursesModule } from "./student_courses/student_courses.module";
 import { ChatsModule } from "./chats/chats.module";
-import { EventsModule } from './events/events.module';
+import { EventsModule } from "./events/events.module";
+import { ReminderModule } from "./reminder/reminder.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
+    MulterModule.register({
+      dest: "./uploads",
+    }),
     SupabaseModule,
     StudentsModule,
     NotificationsModule,
     SessionsModule,
     GroupsModule,
     FilesModule,
-    //HttpModule, // <-- this is required
     StudentCoursesModule,
     MailerModule,
     ProgressModule,
-    ScheduleModule.forRoot(),
-    MulterModule.register({
-      dest: "./uploads", // Optional: specify a destination for temporary files
-    }),
-    MailerModule,
-    SessionsModule,
     ChatsModule,
     EventsModule,
+    ReminderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

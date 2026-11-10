@@ -1,13 +1,12 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
   Param,
   Patch,
-  Post,
 } from "@nestjs/common";
 import { NotificationsService } from "./notifications.service";
+import { CurrentUser } from "../decorators/current-user.decorator";
 
 @Controller("notifications")
 export class NotificationsController {
@@ -15,19 +14,34 @@ export class NotificationsController {
 
   @Get()
   async getAll() {
-    return await this.supabaseService.getAllNotifications();
+    return this.supabaseService.getAllNotifications();
   }
+
+  @Get("my-notifications")
+  async getMyNotifications(@CurrentUser("id") callerId?: string) {
+    return this.supabaseService.getNotifications(callerId!);
+  }
+
   @Get(":userId")
-  async getNotifications(@Param("userId") userId: string) {
-    return this.supabaseService.getNotifications(userId);
+  async getNotifications(
+    @Param("userId") userId: string,
+    @CurrentUser("id") callerId?: string,
+  ) {
+    const targetId = userId === "me" ? callerId : callerId || userId;
+    return this.supabaseService.getNotifications(targetId!);
   }
+
   @Patch(":id")
   async markAsRead(@Param("id") id: string) {
     return this.supabaseService.markAsRead(id);
   }
 
   @Delete(":userId")
-  async clearNotifications(@Param("userId") userId: string) {
-    return this.supabaseService.clearNotifications(userId);
+  async clearNotifications(
+    @Param("userId") userId: string,
+    @CurrentUser("id") callerId?: string,
+  ) {
+    const targetId = userId === "me" ? callerId : callerId || userId;
+    return this.supabaseService.clearNotifications(targetId!);
   }
 }

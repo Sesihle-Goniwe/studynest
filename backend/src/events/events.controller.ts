@@ -1,13 +1,13 @@
-// backend/src/events/events.controller.ts
-
 import { Controller, Get } from '@nestjs/common';
 import { EventsService } from './events.service';
+import { Public } from '../decorators/public.decorator';
 
-@Controller('events') // This means all routes in this controller start with /events
+@Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  @Get('upcoming') // This creates the final route: GET /events/upcoming
+  @Public()
+  @Get('upcoming')
   getUpcomingEvents() {
     return this.eventsService.getUpcomingEvents();
   }
