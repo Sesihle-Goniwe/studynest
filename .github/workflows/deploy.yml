@@ -33,7 +33,7 @@ jobs:
         run: |
           cd frontend
           pnpm install --frozen-lockfile
-          pnpm run build -- --base-href /
+          pnpm run build --base-href /
 
       - name: Deploy to Cloudflare Pages via Wrangler
         uses: cloudflare/wrangler-action@v3
