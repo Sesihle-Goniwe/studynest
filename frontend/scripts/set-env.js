@@ -2,27 +2,32 @@
 const fs = require('fs');
 const path = require('path');
 
-// 1. Read from process.env (CI) or parse local frontend/.env if present
-const envFilePath = path.join(__dirname, '..', '.env');
+// 1. Read from process.env (CI) or parse local .env files
 const envVars = { ...process.env };
 
-if (fs.existsSync(envFilePath)) {
-  const envContent = fs.readFileSync(envFilePath, 'utf8');
-  envContent.split('\n').forEach(line => {
-    const trimmed = line.trim();
-    if (trimmed && !trimmed.startsWith('#')) {
-      const [key, ...vals] = trimmed.split('=');
-      const val = vals.join('=').trim().replace(/^["']|["']$/g, '');
-      if (key && !envVars[key.trim()]) {
-        envVars[key.trim()] = val;
+// Helper to parse key=val lines from a .env file
+function loadEnvFile(filePath) {
+  if (fs.existsSync(filePath)) {
+    const envContent = fs.readFileSync(filePath, 'utf8');
+    envContent.split('\n').forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const [key, ...vals] = trimmed.split('=');
+        const val = vals.join('=').trim().replace(/^["']|["']$/g, '');
+        const cleanKey = key.trim();
+        if (cleanKey && !envVars[cleanKey]) {
+          envVars[cleanKey] = val;
+        }
       }
-    }
-  });
+    });
+  }
 }
 
-// 2. Extract values with safe fallbacks
+// Check frontend/.env first, then fallback to backend/.env if available locally
+loadEnvFile(path.join(__dirname, '..', '.env'));
+
 const supabaseUrl = envVars.SUPABASE_URL || 'https://peuusdwgybtmnhizadqh.supabase.co';
-const supabaseKey = envVars.SUPABASE_ANON_KEY || envVars.SUPABASE_KEY || '';
+const supabaseKey = envVars.SUPABASE_ANON_KEY || envVars.SUPABASE_KEY;
 const apiBaseUrl = envVars.API_BASE_URL || 'https://studynester.onrender.com';
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -52,7 +57,4 @@ export const environment = {
   apiBaseUrl: '${apiBaseUrl}'
 };
 `;
-
 fs.writeFileSync(targetPath, environmentFileContent, 'utf8');
-console.log(`[set-env] Generated ${targetPath} successfully.`);
-

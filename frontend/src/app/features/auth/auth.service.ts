@@ -92,12 +92,7 @@ export class AuthService {
   // Handle authentication state changes purely in state (no navigation)
   private handleAuthChange(user: User | null): void {
     this.currentUser.next(user);
-    if (user) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('currentUser');
-      this.isOnboarded.next(null);
-    }
+
   }
 
   private handleSignOut(): void {
@@ -113,9 +108,7 @@ export class AuthService {
       if (error) throw error;
       const user = session?.user ?? null;
       this.currentUser.next(user);
-      if (user) {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-      }
+
     } catch (error) {
       console.error('Error loading initial session:', error);
       this.currentUser.next(null);
