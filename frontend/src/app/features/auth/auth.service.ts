@@ -92,7 +92,9 @@ export class AuthService {
   // Handle authentication state changes purely in state (no navigation)
   private handleAuthChange(user: User | null): void {
     this.currentUser.next(user);
-
+    if (!user) {
+      this.isOnboarded.next(null);
+    }
   }
 
   private handleSignOut(): void {
